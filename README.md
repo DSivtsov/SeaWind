@@ -1,18 +1,15 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/username/repo/branch/assets/logo.png" alt="SeaWind Logo" width="200"/>
+  <img src="https://raw.githubusercontent.com/DSivtsov/SeaWind/main/assets/ChatGPSeaWindLogo.png" alt="SeaWind Logo" width="200"/>
 </p>
 
 <h1 align="center">SeaWind ASP.NET Project</h1>
 
 <p align="center">
-  <a href="https://github.com/username/repo/actions">
-    <img src="https://github.com/username/repo/workflows/build/badge.svg" alt="Build Status"/>
-  </a>
   <a href="https://github.com/username/repo/blob/main/LICENSE">
-    <img src="https://img.shields.io/github/license/username/repo" alt="License"/>
+    <img src="https://img.shields.io/github/license/DSivtsov/SeaWind" alt="License"/>
   </a>
   <a href="https://github.com/username/repo/stargazers">
-    <img src="https://img.shields.io/github/stars/username/repo?style=social" alt="GitHub Stars"/>
+    <img src="https://img.shields.io/github/stars/DSivtsov/SeaWind?style=social" alt="GitHub Stars"/>
   </a>
 </p>
 
@@ -44,3 +41,19 @@ cd repo
 
 # Run the project
 dotnet run
+```
+
+---
+
+## ✅ CI/CD Status
+
+🚧 CI/CD workflow will be added soon (GitHub Actions planned).  
+<!-- Later replace this line with a badge, e.g.:
+[![.NET Build](https://github.com/username/SeaWind/actions/workflows/dotnet.yml/badge.svg)](https://github.com/username/SeaWind/actions/workflows/dotnet.yml)
+-->
+
+---
+
+## 📜 License
+
+This project is licensed under the [MIT License](LICENSE).
