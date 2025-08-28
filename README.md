@@ -54,6 +54,16 @@ dotnet run
 
 ---
 
+=======
+## 👥 Project Team
+
+[![Tatyana Basargina](https://img.shields.io/badge/Tatyana-Basargina-blue)](team/TatyanaBasargina.md)
+[![Denis Sivtsov](https://img.shields.io/badge/Denis-Sivtsov-green)](team/DenisSivtsov.md)
+[![Magomed Chapaev](https://img.shields.io/badge/Magomed-Chapaev-blue)](team/MagomedChapaev.md)
+[![Oleg Kalashnikov](https://img.shields.io/badge/Oleg-Kalashnikov-green)](team/OlegKalashnikov.md)
+
+---
+
 ## 📜 License
 
 This project is licensed under the [MIT License](LICENSE).
