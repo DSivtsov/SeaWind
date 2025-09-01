@@ -16,3 +16,4 @@
 
 ## 🔗 Контакты
 - GitHub: https://github.com/Kalashnikoff77  
+- Telegram: [kalashnikoff77](https://t.me/kalashnikoff77)
