@@ -61,6 +61,7 @@ dotnet run
 [![Denis Sivtsov](https://img.shields.io/badge/Denis-Sivtsov-green)](team/DenisSivtsov.md)
 [![Magomed Chapaev](https://img.shields.io/badge/Magomed-Chapaev-blue)](team/MagomedChapaev.md)
 [![Oleg Kalashnikov](https://img.shields.io/badge/Oleg-Kalashnikov-green)](team/OlegKalashnikov.md)
+[![Aleksei Opeikin](https://img.shields.io/badge/Aleksei-Opeikin-blue)](team/AlekseiOpeikin.md)
 
 ---
 
