@@ -1,0 +1,31 @@
+name: Epic
+description: Create a high-level container issue (Epic)
+title: "[EPIC] "
+labels: ["EPIC"]
+assignees: []   # Epics should never be assigned
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: High-level description of the epic (scope and purpose)
+    validations:
+      required: true
+
+  - type: textarea
+    id: checklist
+    attributes:
+      label: Subfunctions (checklist)
+      description: List the main subfunctions that belong to this Epic
+      placeholder: |
+        - [ ] Subfunction A
+        - [ ] Subfunction B
+
+  - type: textarea
+    id: linked-stories
+    attributes:
+      label: Linked User Stories
+      description: Add issue numbers of related User Stories (they will render as checkboxes)
+      placeholder: |
+        - [ ] #123
+        - [ ] #124

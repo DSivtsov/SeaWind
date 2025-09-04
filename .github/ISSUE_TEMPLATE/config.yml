@@ -1,0 +1,6 @@
+blank_issues_enabled: false
+
+contact_links:
+  - name: 📚 Project Brief (MVP)
+    url: https://github.com/DSivtsov/SeaWind/wiki
+    about: Read the brief and docs before filing an issue.
