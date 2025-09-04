@@ -1,0 +1,97 @@
+name: Guard Epics (EPIC label only)
+
+on:
+  issues:
+    types: [closed, assigned, milestoned]
+  pull_request:
+    types: [opened, edited, synchronize, ready_for_review]
+
+jobs:
+  guard-issues:
+    if: github.event_name == 'issues'
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    steps:
+      - name: Is EPIC?
+        id: detect
+        run: |
+          is_epic=false
+          while read -r name; do
+            [ "$name" = "EPIC" ] && is_epic=true
+          done < <(jq -r '.issue.labels[].name' "$GITHUB_EVENT_PATH")
+          echo "is_epic=$is_epic" >> "$GITHUB_OUTPUT"
+
+      - name: Reopen if EPIC got closed
+        if: steps.detect.outputs.is_epic == 'true' && github.event.action == 'closed'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const {owner, repo} = context.repo;
+            const issue_number = context.payload.issue.number;
+            await github.rest.issues.update({ owner, repo, issue_number, state: "open" });
+            await github.rest.issues.createComment({
+              owner, repo, issue_number,
+              body: "❌ This is an **EPIC** (container). Close User Stories / Tasks instead."
+            });
+            core.setFailed("EPIC cannot be closed.");
+
+      - name: Unassign if someone assigned an EPIC
+        if: steps.detect.outputs.is_epic == 'true' && github.event.action == 'assigned'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const {owner, repo} = context.repo;
+            const issue_number = context.payload.issue.number;
+            const assignee = context.payload.assignee.login;
+            await github.rest.issues.removeAssignees({ owner, repo, issue_number, assignees: [assignee] });
+            await github.rest.issues.createComment({
+              owner, repo, issue_number,
+              body: "❌ **EPICs are containers** and must not be assigned. Assign concrete User Stories / Tasks."
+            });
+            core.setFailed("EPIC must not be assigned.");
+
+      - name: Remove milestone if set on EPIC
+        if: steps.detect.outputs.is_epic == 'true' && github.event.action == 'milestoned'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const {owner, repo} = context.repo;
+            const issue_number = context.payload.issue.number;
+            await github.rest.issues.update({ owner, repo, issue_number, milestone: null });
+            await github.rest.issues.createComment({
+              owner, repo, issue_number,
+              body: "❌ **EPICs must not have milestones.** Put milestones on User Stories / Tasks."
+            });
+            core.setFailed("Milestone removed from EPIC.");
+
+  guard-prs:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: read
+      issues: read
+    steps:
+      - name: Block PR if it closes an EPIC (via closes #N)
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const body = context.payload.pull_request.body || "";
+            const {owner, repo} = context.repo;
+
+            const refs = [...body.matchAll(/\b(?:close[sd]?|fixe?[sd]?|resolve[sd]?)\s+#(\d+)/ig)]
+              .map(m => Number(m[1]));
+            if (!refs.length) return;
+
+            const epicRefs = [];
+            for (const issue_number of refs) {
+              try {
+                const { data: issue } = await github.rest.issues.get({ owner, repo, issue_number });
+                const labels = issue.labels.map(l => typeof l === "string" ? l : l.name);
+                if (labels.includes("EPIC")) epicRefs.push(issue_number);
+              } catch {}
+            }
+
+            if (epicRefs.length) {
+              core.setFailed(`PR attempts to close EPIC(s): #${epicRefs.join(", #")}. Disallowed.`);
+            }
