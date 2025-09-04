@@ -1,0 +1,31 @@
+name: Task
+description: Create a technical sub-task linked to a User Story
+title: "Task: "
+labels: ["TASK"]
+body:
+  - type: input
+    id: parent-story
+    attributes:
+      label: Linked User Story
+      description: Provide the issue number of the parent User Story
+      placeholder: "#123"
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: What needs to be implemented/fixed?
+      placeholder: Short technical description
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance-criteria
+    attributes:
+      label: Acceptance Criteria
+      description: List the exact steps/results to validate this task
+      placeholder: |
+        - [ ] Step 1
+        - [ ] Step 2

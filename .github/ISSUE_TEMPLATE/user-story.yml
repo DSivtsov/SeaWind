@@ -1,0 +1,45 @@
+name: User Story
+description: Create an assignable User Story
+title: "User Story: "
+labels: ["USER STORY"]
+body:
+  - type: input
+    id: role
+    attributes:
+      label: As a
+      placeholder: Student / Mentor / Admin / Guest
+    validations:
+      required: true
+
+  - type: input
+    id: goal
+    attributes:
+      label: I want
+      placeholder: Describe what the user wants to achieve
+    validations:
+      required: true
+
+  - type: input
+    id: reason
+    attributes:
+      label: So that
+      placeholder: Why does the user need this?
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance-criteria
+    attributes:
+      label: Acceptance Criteria
+      description: List the conditions when this story is considered done
+      placeholder: |
+        - [ ] Condition 1
+        - [ ] Condition 2
+    validations:
+      required: true
+
+  - type: textarea
+    id: technical-notes
+    attributes:
+      label: Technical Notes (optional)
+      description: Add implementation details, APIs, DB tables, etc.
