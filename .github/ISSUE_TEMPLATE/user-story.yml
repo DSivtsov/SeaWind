@@ -7,7 +7,7 @@ body:
     id: role
     attributes:
       label: As a
-      placeholder: Student / Mentor / Admin / Guest
+      placeholder: Student / FreeStudent / Mentor / Admin / Guest
     validations:
       required: true
 
