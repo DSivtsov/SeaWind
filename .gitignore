@@ -1,0 +1,114 @@
+## Must Have
+
+### General build outputs
+bin/
+obj/
+[Bb]uild/
+[Ll]og/
+[Ll]ogs/
+out/
+publish/
+*.cache
+*.pdb
+*.tmp
+*.bak
+*.swp
+*.log
+
+### OS
+.DS_Store
+Thumbs.db
+
+### IDEs
+# Visual Studio / VS Code
+.vs/
+.vscode/
+*.user
+*.suo
+*.rsuser
+*.sln.docstates
+*.vsconfig
+
+# Rider / JetBrains
+.idea/
+*.sln.iml
+*.iml
+_ReSharper*/
+*.[Rr]e[Ss]harper
+*.DotSettings.user
+
+### .NET / ASP.NET Core
+# Keep base appsettings.json in repo; ignore local/env-specific
+appsettings.Development.json
+appsettings.Local.json
+appsettings.*.local.json
+.env
+.env.*.local
+
+# Local DB files
+*.db
+*.sqlite
+*.sqlite3
+*.db-wal
+*.db-shm
+*.mdf
+*.ldf
+*.dbmdl
+*.bak
+
+# NuGet
+*.nupkg
+*.snupkg
+*.nuspec
+packages/
+*.psmdcp
+project.lock.json
+project.fragment.lock.json
+
+### Test & Coverage
+.sonarqube/
+.scannerwork/
+.stylecop/
+BenchmarkDotNet.Artifacts/
+.coverage
+coverage/
+coverage-*.json
+*.coverage
+*.coveragexml
+TestResults/
+nunit-*.xml
+*.trx
+
+### Azure Functions / local tooling
+local.settings.json
+.azure/
+
+---
+
+## Optional
+
+### Frontend (if SPA present in solution)
+node_modules/
+bower_components/
+dist/
+.tmp/
+.pnpm-store/
+.npm/
+.yarn/
+.yarn/cache/
+.yarn/unplugged/
+.yarn/install-state.gz
+
+### Docker / Devcontainer
+docker-compose.*.override.yml
+**/.docker/
+**/.devcontainer/
+**/.compose/
+
+### Other common temps
+*.orig
+*.rej
+*.patch
+*.orig.*
+*.tmp.*
+~$*
