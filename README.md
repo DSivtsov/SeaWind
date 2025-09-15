@@ -63,6 +63,7 @@ dotnet run
 [![Oleg Kalashnikov](https://img.shields.io/badge/Oleg-Kalashnikov-green)](team/OlegKalashnikov.md)
 [![Aleksei Opeikin](https://img.shields.io/badge/Aleksei-Opeikin-blue)](team/AlekseiOpeikin.md)
 [![Petr Liapidevskiy](https://img.shields.io/badge/Petr-Liapidevskiy-green)](team/PetrLiapidevskiy.md)
+[![OlegFilippskii](https://img.shields.io/badge/Oleg-Filippskii-blue)](team/OlegFilippskii.md)
 
 ---
 
