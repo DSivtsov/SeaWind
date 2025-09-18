@@ -26,10 +26,13 @@ docker-compose.yml
 ## ⚙️ Core Decisions
 - Единые порты: **5000 (http)**, **5001 (https)**
 - Swagger доступен: https://localhost:5001/swagger
+- Swagger будет открываться автоматически
 - Middleware `UseHttpsRedirection()` включен по умолчанию
 - Node.js версия зафиксирована: **v22.19.0 LTS**
 - Pull Request создаются только по задачам (Task) из Backlog
 - CI окружение проверяет build, тесты и миграции
+- SSOT: для сборки, тестов и запуска: **`dotnet CLI`** для build/test и **Docker CLI/Compose** для запуска.
+- Фиксация SDK проекта - global.json
 
 ## 🖼️ Architecture Diagram (ASCII) [DRAFT]
 ```
