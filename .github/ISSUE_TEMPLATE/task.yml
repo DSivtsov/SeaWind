@@ -2,12 +2,13 @@ name: Task
 description: Create a technical sub-task linked to a User Story
 title: "Task: "
 labels: ["TASK"]
+
 body:
   - type: input
     id: parent-story
     attributes:
-      label: Linked User Story
-      description: Provide the issue number of the parent User Story
+      label: "Linked User Story"
+      description: "Provide the issue number of the parent User Story"
       placeholder: "#123"
     validations:
       required: true
@@ -15,17 +16,33 @@ body:
   - type: textarea
     id: description
     attributes:
-      label: Description
-      description: What needs to be implemented/fixed?
-      placeholder: Short technical description
+      label: "Description"
+      description: "What needs to be implemented/fixed?"
+      placeholder: "Short technical description"
     validations:
       required: true
 
   - type: textarea
+    id: tech-notes
+    attributes:
+      label: "Tech Notes (optional)"
+      description: "Architecture decisions, libraries, or important implementation details"
+      placeholder: "- Use ASP.NET Identity\n- Hash password with PasswordHasher"
+    validations:
+      required: false
+
+  - type: textarea
+    id: out-of-scope
+    attributes:
+      label: "Out of Scope (optional)"
+      description: "What is explicitly NOT part of this task (UI, tests, other endpoints)"
+      placeholder: "- UI form\n- Password reset"
+    validations:
+      required: false
+
+  - type: textarea
     id: acceptance-criteria
     attributes:
-      label: Acceptance Criteria
-      description: List the exact steps/results to validate this task
-      placeholder: |
-        - [ ] Step 1
-        - [ ] Step 2
+      label: "Acceptance Criteria"
+      description: "List the exact steps/results to validate this task"
+      placeholder: "- [ ] Step 1\n- [ ] Step 2\n"
