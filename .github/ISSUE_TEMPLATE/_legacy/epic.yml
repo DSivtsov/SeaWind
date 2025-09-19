@@ -1,5 +1,4 @@
 name: Epic
-hidden: true
 description: Create a high-level container issue (Epic)
 title: "[EPIC] "
 labels: ["EPIC"]
