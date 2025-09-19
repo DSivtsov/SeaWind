@@ -28,5 +28,3 @@ body:
       description: "Add each User Story as a checkbox with a #link to enable native progress"
       placeholder: |
         - [ ] #<user-story-id>
-    validations:
-      required: true

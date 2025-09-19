@@ -52,5 +52,3 @@ body:
       description: "Add every Task as a checkbox `- [ ] #<task-id>` to enable native progress"
       placeholder: |
         - [ ] #<task-id>
-    validations:
-      required: true
