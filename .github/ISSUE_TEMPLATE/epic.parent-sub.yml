@@ -15,11 +15,11 @@ body:
   - type: textarea
     id: checklist
     attributes:
-      label: Subfunctions (checklist)
+      label: Subfunctions (list)
       description: List the main subfunctions that belong to this Epic
       placeholder: |
-        - [ ] Subfunction A
-        - [ ] Subfunction B
+        * Registration
+        * Authorization
 
   - type: textarea
     id: substories
@@ -30,14 +30,3 @@ body:
         - [ ] #<user-story-id>
     validations:
       required: true
-
-  - type: textarea
-    id: linked-stories-deprecated
-    attributes:
-      label: "Linked User Stories (deprecated — use tasklist above)"
-      description: "Backward compatibility only. Prefer the tasklist above."
-      placeholder: |
-        - [ ] #123
-        - [ ] #124
-    validations:
-      required: false
