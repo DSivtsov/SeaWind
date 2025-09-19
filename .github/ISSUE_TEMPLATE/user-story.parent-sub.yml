@@ -28,13 +28,20 @@ body:
       required: true
 
   - type: textarea
+    id: technical-notes
+    attributes:
+      label: Technical Notes (optional)
+      description: Add implementation details, APIs, DB tables, etc.
+
+  - type: textarea
     id: acceptance
     attributes:
       label: Acceptance Criteria
       description: List the conditions when this story is considered done
       placeholder: |
-        - [ ] Condition 1
-        - [ ] Condition 2
+        * All required fields validated
+        * Error message shown for invalid data
+        * Successful operation updates Journal
     validations:
       required: true
 
@@ -47,18 +54,3 @@ body:
         - [ ] #<task-id>
     validations:
       required: true
-
-  - type: input
-    id: epic-parent
-    attributes:
-      label: Epic (optional)
-      description: "If applicable, link the parent Epic by number (e.g., #1). Note: Epic should also include this US in its tasklist."
-      placeholder: "#<epic-id>"
-    validations:
-      required: false
-
-  - type: textarea
-    id: technical-notes
-    attributes:
-      label: Technical Notes (optional)
-      description: Add implementation details, APIs, DB tables, etc.

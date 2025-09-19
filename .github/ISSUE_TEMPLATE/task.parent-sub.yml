@@ -14,39 +14,9 @@ body:
       required: true
 
   - type: textarea
-    id: acceptance
-    attributes:
-      label: Acceptance Criteria
-      description: Checklist to verify this Task
-      placeholder: |
-        - [ ] Build green (`dotnet build -c Release`)
-        - [ ] Tests green (`dotnet test -c Release --no-build`)
-        - [ ] API contract updated (Swagger)
-    validations:
-      required: true
-
-  - type: checkboxes
-    id: parent-confirm
-    attributes:
-      label: Parent/Sub-issue (required)
-      description: "Link this Task under its User Story using the parent tasklist: open the US and add `- [ ] #<this-task-id>`"
-      options:
-        - label: "I added this Task to its User Story tasklist"
-          required: true
-
-  - type: input
-    id: parent-story-deprecated
-    attributes:
-      label: "Linked User Story (deprecated — use US tasklist instead)"
-      description: "Backward compatibility only. Prefer the Parent/Sub-issue tasklist on the User Story."
-      placeholder: "#<user-story-id>"
-    validations:
-      required: false
-
-  - type: textarea
     id: tech-notes
     attributes:
-      label: "Tech Notes (optional)"
+      label: "Technical Notes (optional)"
       description: "Architecture decisions, libraries, or important implementation details"
       placeholder: "- Use ASP.NET Identity\n- Hash password with PasswordHasher"
     validations:
@@ -60,3 +30,15 @@ body:
       placeholder: "- Not handling social login in this Task"
     validations:
       required: false
+
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance Criteria
+      description: List the conditions for this Task to be considered complete.
+      placeholder: |
+        * Build green (`dotnet build -c Release`)
+        * Tests green (`dotnet test -c Release --no-build`)
+        * API contract updated (Swagger)
+    validations:
+      required: true
