@@ -1,5 +1,4 @@
 name: Epic
-hidden: true
 description: Create a high-level container issue (Epic)
 title: "[EPIC] "
 labels: ["EPIC"]
@@ -23,10 +22,22 @@ body:
         - [ ] Subfunction B
 
   - type: textarea
-    id: linked-stories
+    id: substories
     attributes:
-      label: Linked User Stories
-      description: Add issue numbers of related User Stories (they will render as checkboxes)
+      label: User Stories (Sub-issues)
+      description: "Add each User Story as a checkbox with a #link to enable native progress"
+      placeholder: |
+        - [ ] #<user-story-id>
+    validations:
+      required: true
+
+  - type: textarea
+    id: linked-stories-deprecated
+    attributes:
+      label: "Linked User Stories (deprecated — use tasklist above)"
+      description: "Backward compatibility only. Prefer the tasklist above."
       placeholder: |
         - [ ] #123
         - [ ] #124
+    validations:
+      required: false

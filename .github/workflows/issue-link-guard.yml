@@ -1,0 +1,28 @@
+name: Issue Link Guard (Advisory)
+on:
+  issues:
+    types: [opened, edited]
+permissions:
+  contents: read
+  issues: write
+jobs:
+  advisory:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Detect deprecated Linked User Story field
+        uses: actions-ecosystem/action-regex-match@v2
+        id: match
+        with:
+          text: ${{ github.event.issue.body }}
+          regex: '(?s)Linked User Story \(deprecated.*?\)(.*?#\d+)'
+      - name: Comment advisory if field found
+        if: ${{ steps.match.outputs.match != '' }}
+        uses: peter-evans/create-or-update-comment@v4
+        with:
+          issue-number: ${{ github.event.issue.number }}
+          body: |
+            ℹ️ **Heads-up**: We detected a value in **Linked User Story (deprecated)**.
+            **New standard** is Parent/Sub-issue via the User Story tasklist:
+            1) Open the parent User Story
+            2) Under **Tasks (Sub-issues)** add: `- [ ] #${{ github.event.issue.number }}`
+            The tasklist is the source of truth; this field is kept temporarily for compatibility.

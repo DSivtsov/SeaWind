@@ -1,5 +1,4 @@
 name: User Story
-hidden: true
 description: Create an assignable User Story
 title: "User Story: "
 labels: ["USER STORY"]
@@ -16,20 +15,20 @@ body:
     id: goal
     attributes:
       label: I want
-      placeholder: Describe what the user wants to achieve
-    validations:
-      required: true
-
-  - type: input
-    id: reason
-    attributes:
-      label: So that
-      placeholder: Why does the user need this?
+      placeholder: Briefly describe what the user wants to achieve
     validations:
       required: true
 
   - type: textarea
-    id: acceptance-criteria
+    id: value
+    attributes:
+      label: So that
+      description: Explain why this is valuable to the user (business value / problem solved)
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance
     attributes:
       label: Acceptance Criteria
       description: List the conditions when this story is considered done
@@ -38,6 +37,25 @@ body:
         - [ ] Condition 2
     validations:
       required: true
+
+  - type: textarea
+    id: tasks-subissues
+    attributes:
+      label: Tasks (Sub-issues)
+      description: "Add every Task as a checkbox `- [ ] #<task-id>` to enable native progress"
+      placeholder: |
+        - [ ] #<task-id>
+    validations:
+      required: true
+
+  - type: input
+    id: epic-parent
+    attributes:
+      label: Epic (optional)
+      description: "If applicable, link the parent Epic by number (e.g., #1). Note: Epic should also include this US in its tasklist."
+      placeholder: "#<epic-id>"
+    validations:
+      required: false
 
   - type: textarea
     id: technical-notes
