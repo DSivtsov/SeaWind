@@ -1,4 +1,5 @@
 name: Task
+hidden: true
 description: Create a technical sub-task linked to a User Story
 title: "Task: "
 labels: ["TASK"]
