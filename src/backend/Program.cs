@@ -12,17 +12,17 @@ public class Program
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
 
-        // Настройка генерирования JSON в ответах
+        // РќР°СЃС‚СЂРѕР№РєР° РіРµРЅРµСЂРёСЂРѕРІР°РЅРёСЏ JSON РІ РѕС‚РІРµС‚Р°С…
         builder.Services.AddControllers()
             .AddJsonOptions(opt =>
             {
-                // Игнорировать циклические ссылки
+                // РРіРЅРѕСЂРёСЂРѕРІР°С‚СЊ С†РёРєР»РёС‡РµСЃРєРёРµ СЃСЃС‹Р»РєРё
                 opt.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
-                // Не добавлять свойства со значениями null
+                // РќРµ РґРѕР±Р°РІР»СЏС‚СЊ СЃРІРѕР№СЃС‚РІР° СЃРѕ Р·РЅР°С‡РµРЅРёСЏРјРё null
                 opt.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
             });
 
-        // Максимальный размер загружаемых файлов = 35 Мб.
+        // РњР°РєСЃРёРјР°Р»СЊРЅС‹Р№ СЂР°Р·РјРµСЂ Р·Р°РіСЂСѓР¶Р°РµРјС‹С… С„Р°Р№Р»РѕРІ = 35 РњР±.
         builder.Services.Configure<KestrelServerOptions>(options =>
         {
             options.Limits.MaxRequestBodySize = 35 * 1024 * 1024;
