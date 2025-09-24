@@ -1,6 +1,6 @@
-namespace backend.tests;
+namespace Backend.Tests;
 
-public class SmokeTests
+public class TestTests
 {
     [Fact]
     public void Always_Passes()
