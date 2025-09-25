@@ -1,4 +1,4 @@
-# Architecture Overview — WorkshopCode (SeaWind)
+# Architecture Overview — WorkshopCode (Current)
 
 ## 📐 Project Architecture (MVP)
 - **Backend:** ASP.NET Core Web API (.NET 8)
@@ -33,18 +33,3 @@ docker-compose.yml
 - CI окружение проверяет build, тесты и миграции
 - SSOT: для сборки, тестов и запуска: **`dotnet CLI`** для build/test и **Docker CLI/Compose** для запуска.
 - Фиксация SDK проекта - global.json
-
-## 🖼️ Architecture Diagram (ASCII) [DRAFT]
-```
- [Frontend: React+Vite]
-            │  (REST/SignalR)
-            ▼
- [Backend: ASP.NET Core Web API]
-   │        │         │
-   │        │         │
-   ▼        ▼         ▼
-PostgreSQL MongoDB   Redis
-   │
-   ▼
-RabbitMQ (Message Broker)
-```
