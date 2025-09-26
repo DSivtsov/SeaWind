@@ -1,16 +1,16 @@
-﻿//namespace Backend.Tests;
+﻿using Backend.Models;
 
-//public class WeatherForecastTests
-//{
-//    [Theory]
-//    [InlineData(0, 32)]
-//    [InlineData(25, 77)]
-//    [InlineData(30, 86)]
-//    public void TemperatureF_IsCalculated_From_TemperatureC(int c, int expected)
-//    {
-//        var wf = new WeatherForecast(DateOnly.FromDateTime(DateTime.UtcNow), c, "Any");
-//        Assert.InRange(wf.TemperatureF, expected - 1, expected + 1);
+namespace Backend.Tests;
 
-//        Assert.True(true);
-//    }
-//}
+public class WeatherForecastTests
+{
+    [Theory]
+    [InlineData(0, 32)]
+    [InlineData(25, 77)]
+    [InlineData(30, 86)]
+    public void TemperatureF_IsCalculated_From_TemperatureC(int c, int expected)
+    {
+        var wf = new WeatherForecast(DateOnly.FromDateTime(DateTime.UtcNow), c, "Any");
+        Assert.InRange(wf.TemperatureF, expected - 1, expected + 1);
+    }
+}

@@ -5,7 +5,7 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{8C9EE67E-F730-41E5-91CB-90DB19AA07CE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "backend", "src\backend\backend.csproj", "{8A61FC35-E851-4C94-AE73-0834F2F0CB0E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Backend", "src\backend\Backend.csproj", "{8A61FC35-E851-4C94-AE73-0834F2F0CB0E}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{3F877839-27FE-4B3C-9D2F-1F8914764643}"
 EndProject
