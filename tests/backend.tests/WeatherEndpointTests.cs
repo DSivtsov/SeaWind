@@ -15,12 +15,8 @@ public class WeatherEndpointTests : IClassFixture<WebApplicationFactory<Program>
     [Fact]
     public async Task WeatherForecast_Returns_Ok_And_Array()
     {
-        //var resp = await _client.GetAsync("/weatherforecast");
-        //Assert.Equal(HttpStatusCode.OK, resp.StatusCode);
-
-        //var payload = await resp.Content.ReadFromJsonAsync<object[]>();
-        //Assert.NotNull(payload);
-        //Assert.NotEmpty(payload!);
+        var resp = await _client.GetAsync("/api/test/get");
+        Assert.Equal(HttpStatusCode.OK, resp.StatusCode);
 
         Assert.True(true);
     }
