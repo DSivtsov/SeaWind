@@ -8,18 +8,12 @@ body:
     id: description
     attributes:
       label: Description
-      description: High-level description of the epic (scope and purpose)
-    validations:
-      required: true
-
-  - type: textarea
-    id: checklist
-    attributes:
-      label: Subfunctions (list)
       description: List the main subfunctions that belong to this Epic
       placeholder: |
         * Registration
         * Authorization
+    validations:
+      required: true
 
   - type: textarea
     id: substories
