@@ -1,0 +1,69 @@
+name: Guard Issues (EPIC rules)
+
+on:
+  issues:
+    types: [closed, assigned, milestoned]
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  guard-issues:
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Detect EPIC label
+        id: detect
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const labels = (context.payload.issue.labels || []).map(l => typeof l === 'string' ? l : (l?.name || ''));
+            const isEpic = labels.includes('EPIC');
+            core.setOutput('is_epic', String(isEpic));
+
+      - name: Reopen if EPIC got closed
+        if: steps.detect.outputs.is_epic == 'true' && github.event.action == 'closed'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { owner, repo } = context.repo;
+            const issue_number = context.payload.issue.number;
+            await github.rest.issues.update({ owner, repo, issue_number, state: 'open' });
+            await github.rest.issues.createComment({
+              owner, repo, issue_number,
+              body: 'Попытка закрыть EPIC. Согласно workflow, закрытие эпика выполняется только в рамках релизного процесса, а не вручную. \
+                          Эпик был открыт снова автоматически.'
+            });
+
+      - name: Unassign if someone assigned an EPIC
+        if: steps.detect.outputs.is_epic == 'true' && github.event.action == 'assigned'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { owner, repo } = context.repo;
+            const issue_number = context.payload.issue.number;
+            const login = context.payload.assignee?.login;
+            if (login) {
+              await github.rest.issues.removeAssignees({ owner, repo, issue_number, assignees: [login] });
+              await github.rest.issues.createComment({
+                owner, repo, issue_number,
+                body: `Назначение исполнителя на EPIC не допускается правилами workflow. Назначенный исполнитель @${login} снят.`
+              });
+            }
+
+      - name: Remove milestone if set on EPIC
+        if: steps.detect.outputs.is_epic == 'true' && github.event.action == 'milestoned'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { owner, repo } = context.repo;
+            const issue_number = context.payload.issue.number;
+            await github.rest.issues.update({ owner, repo, issue_number, milestone: null });
+            await github.rest.issues.createComment({
+              owner, repo, issue_number,
+              body: 'Milestone был удалён. EPIC-и не отслеживаются через Milestone.'
+            });
+
+      - name: Done
+        run: echo "Guard Issues checks completed."

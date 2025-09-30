@@ -1,0 +1,39 @@
+name: Guard PRs (EPIC rules)
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize, ready_for_review]
+
+jobs:
+  guard-prs:
+    runs-on: ubuntu-22.04
+    permissions:
+      pull-requests: read
+      issues: read
+    steps:
+      - name: Block PR if it closes an EPIC (via closes #N)
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const body = context.payload.pull_request.body || "";
+            const { owner, repo } = context.repo;
+
+            // ищем ссылки вида "closes #123" / "fixes #123" / "resolves #123"
+            const refs = [...body.matchAll(/\b(?:close[sd]?|fixe?[sd]?|resolve[sd]?)\s+#(\d+)/ig)]
+              .map(m => Number(m[1]));
+            if (!refs.length) return;
+
+            const epicRefs = [];
+            for (const issue_number of refs) {
+              try {
+                const { data: issue } = await github.rest.issues.get({ owner, repo, issue_number });
+                const labels = issue.labels.map(l => typeof l === "string" ? l : l.name);
+                if (labels.includes("EPIC")) epicRefs.push(issue_number);
+              } catch (err) {
+                core.info(`Could not fetch issue #${issue_number}: ${err.message}`);
+              }
+            }
+
+            if (epicRefs.length) {
+              core.setFailed(`PR attempts to close EPIC(s): #${epicRefs.join(", #")}. Disallowed.`);
+            }

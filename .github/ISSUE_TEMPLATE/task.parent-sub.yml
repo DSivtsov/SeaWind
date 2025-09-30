@@ -1,5 +1,5 @@
 name: Task
-description: Create a technical sub-task linked to a User Story
+description: Создайте описание технической задачи (часть User Story)
 title: "Task: "
 labels: ["TASK"]
 
@@ -8,26 +8,26 @@ body:
     id: description
     attributes:
       label: Description
-      description: What should be implemented or fixed?
-      placeholder: "Implement POST /api/auth/register ..."
+      description: "Что нужно реализовать или исправить?"
+      placeholder: "Реализовать POST /api/auth/register ..."
     validations:
       required: true
 
   - type: textarea
     id: tech-notes
     attributes:
-      label: "Technical Notes (optional)"
-      description: "Architecture decisions, libraries, or important implementation details"
-      placeholder: "- Use ASP.NET Identity\n- Hash password with PasswordHasher"
+      label: Technical Notes (optional)
+      description: "Архитектурные решения, библиотеки, важные детали реализации"
+      placeholder: "- Использовать ASP.NET Identity\n- Хэшировать пароль через PasswordHasher"
     validations:
       required: false
 
   - type: textarea
     id: out-of-scope
     attributes:
-      label: "Out of Scope (optional)"
-      description: "What is explicitly not included in this Task"
-      placeholder: "- Not handling social login in this Task"
+      label: Out of Scope (optional)
+      description: "Что явно не входит в этот Task"
+      placeholder: "- В этой задаче не реализуем social login"
     validations:
       required: false
 
@@ -35,10 +35,10 @@ body:
     id: acceptance
     attributes:
       label: Acceptance Criteria
-      description: List the conditions for this Task to be considered complete.
+      description: "Условия, при которых Task считается выполненным"
       placeholder: |
-        * Build green (`dotnet build -c Release`)
-        * Tests green (`dotnet test -c Release --no-build`)
-        * API contract updated (Swagger)
+        * Сборка проходит (`dotnet build -c Release`)
+        * Тесты проходят (`dotnet test -c Release --no-build`)
+        * API-документация обновлена (Swagger)
     validations:
       required: true

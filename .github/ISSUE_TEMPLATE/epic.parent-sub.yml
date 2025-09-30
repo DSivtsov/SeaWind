@@ -1,17 +1,17 @@
 name: Epic
-description: Create a high-level container issue (Epic)
+description: Создайте высокоуровневую задачу (Epic)
 title: "[EPIC] "
 labels: ["EPIC"]
-assignees: []   # Epics should never be assigned
+assignees: []   # Эпики не назначаются конкретным исполнителям
 body:
   - type: textarea
     id: description
     attributes:
       label: Description
-      description: List the main subfunctions that belong to this Epic
+      description: "Список основных подфункций, входящих в данный Epic"
       placeholder: |
-        * Registration
-        * Authorization
+        * Регистрация
+        * Авторизация
     validations:
       required: true
 
@@ -19,6 +19,6 @@ body:
     id: substories
     attributes:
       label: User Stories (Sub-issues)
-      description: "Add each User Story as a checkbox with a #link to enable native progress"
+      description: "Список связанных User Story (удобнее добавить после создания Epic через *Create sub-issue*)"
       placeholder: |
-        - [ ] #<user-story-id>
+        #<user-story-id>
