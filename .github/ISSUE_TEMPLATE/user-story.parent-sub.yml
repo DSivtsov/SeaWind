@@ -1,5 +1,5 @@
 name: User Story
-description: Create an assignable User Story
+description: Создайте и опишите User Story
 title: "User Story: "
 labels: ["USER STORY"]
 body:
@@ -15,33 +15,31 @@ body:
     id: goal
     attributes:
       label: I want
-      placeholder: Briefly describe what the user wants to achieve
+      placeholder: Описание того, что пользователь хочет получить или сделать
     validations:
       required: true
 
-  - type: textarea
+  - type: input
     id: value
     attributes:
       label: So that
-      description: Explain why this is valuable to the user (business value / problem solved)
-    validations:
-      required: true
+      description: Зачем это нужно пользователю (какую проблему решает, какую ценность даёт)
 
   - type: textarea
     id: technical-notes
     attributes:
       label: Technical Notes (optional)
-      description: Add implementation details, APIs, DB tables, etc.
+      description: "Указание основных технологий (решений): APIs, DB tables, etc."
 
   - type: textarea
     id: acceptance
     attributes:
       label: Acceptance Criteria
-      description: List the conditions when this story is considered done
+      description: Перечень конкретных пунктов, которые должны быть выполнены
       placeholder: |
-        * All required fields validated
-        * Error message shown for invalid data
-        * Successful operation updates Journal
+        * Поля «логин», «пароль» и «email» обязательны для заполнения.
+        * При успешной регистрации создаётся новая учётная запись.
+        * После регистрации происходит автоматический вход в систему.
     validations:
       required: true
 
@@ -49,6 +47,6 @@ body:
     id: tasks-subissues
     attributes:
       label: Tasks (Sub-issues)
-      description: "Add every Task as a checkbox `- [ ] #<task-id>` to enable native progress"
+      description: "Список связанных TASK (удобнее добавить после создания User Story через *Create sub-issue*)."
       placeholder: |
-        - [ ] #<task-id>
+        #<task-id>
