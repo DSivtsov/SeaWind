@@ -8,7 +8,7 @@ namespace Backend.Controllers;
 public class WeatherForecastController : ControllerBase
 {
     [Route("Get"), HttpGet]
-    public async Task<WeatherForecast[]> GetAsync()
+    public WeatherForecast[] Get()
     {
         var summaries = new[]
         {
