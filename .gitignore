@@ -83,27 +83,10 @@ nunit-*.xml
 local.settings.json
 .azure/
 
----
 
-## Optional
-
-### Frontend (if SPA present in solution)
-node_modules/
-bower_components/
-dist/
-.tmp/
-.pnpm-store/
-.npm/
-.yarn/
-.yarn/cache/
-.yarn/unplugged/
-.yarn/install-state.gz
-
-### Docker / Devcontainer
-docker-compose.*.override.yml
-**/.docker/
-**/.devcontainer/
-**/.compose/
+# Игнорировать все package-lock.json во всех проектах
+# (за исключением тех где это разрешено)
+**/package-lock.json
 
 ### Other common temps
 *.orig
@@ -112,3 +95,11 @@ docker-compose.*.override.yml
 *.orig.*
 *.tmp.*
 ~$*
+
+#---For Future modification
+
+### Docker / Devcontainer
+docker-compose.*.override.yml
+**/.docker/
+**/.devcontainer/
+**/.compose/
