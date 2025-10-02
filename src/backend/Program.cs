@@ -1,3 +1,4 @@
+using Backend.Filters;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using System.Text.Json.Serialization;
 using static System.Net.WebRequestMethods;
@@ -39,12 +40,11 @@ public class Program
             options.Limits.MaxRequestBodySize = 35 * 1024 * 1024;
         });
 
-        //TODO after merge PR #45 "Добавлена централизованная обработка исключений"
-        //// Подключаем фильтр исключений
-        //builder.Services.AddMvc(options =>
-        //{
-        //    options.Filters.Add<CustomExceptionFilter>();
-        //});
+        // Подключаем фильтр исключений
+        builder.Services.AddMvc(options =>
+        {
+            options.Filters.Add<CustomExceptionFilter>();
+        });
 
         var app = builder.Build();
 
