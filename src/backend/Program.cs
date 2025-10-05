@@ -11,7 +11,9 @@ public class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
-        builder.Services.AddEndpointsApiExplorer();
+        // в MVC для Swagger это не нужно, есть Services.AddControllers()
+        //builder.Services.AddEndpointsApiExplorer();
+
         builder.Services.AddSwaggerGen();
 
         // Настройка генерирования JSON в ответах

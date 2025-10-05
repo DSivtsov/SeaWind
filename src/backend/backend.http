@@ -1,6 +1,6 @@
-@backend_HostAddress = http://localhost:5245
+@backend_HostAddress = http://localhost:5000
 
-GET {{backend_HostAddress}}/Api/Test/Get
+GET {{backend_HostAddress}}/Api/WeatherForecast/Get
 Accept: application/json
 
 ###
