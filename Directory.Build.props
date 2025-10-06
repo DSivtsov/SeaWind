@@ -1,0 +1,6 @@
+<Project>
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <AssemblyName>SeaWind.$(MSBuildProjectName)</AssemblyName>
+  </PropertyGroup>
+</Project>

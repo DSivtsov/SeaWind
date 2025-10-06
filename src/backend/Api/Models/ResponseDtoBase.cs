@@ -1,4 +1,4 @@
-﻿namespace Backend.Models;
+﻿namespace Api.Models;
 
 // Базовый класс ответа
 public class ResponseDtoBase

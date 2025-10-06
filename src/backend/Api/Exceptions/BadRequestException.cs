@@ -1,4 +1,4 @@
-﻿namespace Backend.Exceptions;
+﻿namespace Api.Exceptions;
 
 // Неверный запрос
 public class BadRequestException : Exception

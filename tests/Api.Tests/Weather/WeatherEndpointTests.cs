@@ -1,9 +1,8 @@
 ﻿using System.Net;
 using System.Net.Http.Json;
 using Microsoft.AspNetCore.Mvc.Testing;
-using Xunit;
 
-namespace Backend.Tests;
+namespace Api.Tests.Weather;
 
 public class WeatherEndpointTests : IClassFixture<WebApplicationFactory<Program>>
 {

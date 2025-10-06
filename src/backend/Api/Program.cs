@@ -1,9 +1,8 @@
 using Backend.Filters;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using System.Text.Json.Serialization;
-using static System.Net.WebRequestMethods;
 
-namespace Backend;
+namespace Api;
 
 public class Program
 {

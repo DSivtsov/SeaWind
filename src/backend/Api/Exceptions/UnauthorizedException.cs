@@ -1,4 +1,4 @@
-﻿namespace Backend.Exceptions;
+﻿namespace Api.Exceptions;
 
 // Пользователь не авторизован
 public class UnauthorizedException : Exception
