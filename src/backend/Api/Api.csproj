@@ -13,4 +13,9 @@
 	<ItemGroup>
 		<InternalsVisibleTo Include="SeaWind.Api.Tests" />
 	</ItemGroup>
+	<!--Это не логическая связь Api c Application и Infrastructure, а технологическая для запуска DI-->
+	<ItemGroup>
+		<ProjectReference Include="..\Application\Application.csproj" />
+		<ProjectReference Include="..\Infrastructure\Infrastructure.csproj" />
+	</ItemGroup>
 </Project>

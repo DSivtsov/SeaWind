@@ -1,9 +1,14 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
 	<RootNamespace>Infrastructure</RootNamespace>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
-
+	<ItemGroup>
+		<ProjectReference Include="..\Application\Application.csproj" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+	</ItemGroup>
+	<ItemGroup>
+	  <Folder Include="Postgres\" />
+	</ItemGroup>
 </Project>
