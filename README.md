@@ -34,14 +34,25 @@ It demonstrates best practices for building modern web apps with C#, .NET, and G
 
 ## 📦 Getting Started
 
-```bash
-# Clone the repository
-git clone https://github.com/username/repo.git
-cd repo
 
-# Run the project
-dotnet run
+# Клонирование репозитория
+```bash
+git clone https://github.com/DSivtsov/SeaWind.git
 ```
+
+# Задание секретов
+Перед запуском проекта произведи локальную настройку секретов для окружения DEV.
+Необходимо создать и настроить локальные файлы внутри директории решения `<локальная_копия_репозитория_SeaWind>`.
+Настройки в этих файлах должны быть между собой согласованы и не конфликтовать с другими локальными приложениями (порты и т.п.).
+
+```bash
+\docker\.env # смотри пример —  .env.example
+
+\src\backend\Api\appsettings.Development.json # смотри пример —  appsettings.Development.json.example
+```
+
+# Запуск проекта для окружения DEV
+Смотри документ [WorkshopCode_ProjectRun] (https://github.com/DSivtsov/SeaWind/wiki/WorkshopCode_ProjectRun)
 
 ---
 
