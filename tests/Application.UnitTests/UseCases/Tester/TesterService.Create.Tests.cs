@@ -3,7 +3,7 @@ using Application.DtoTester;
 using Application.Models;
 using Application.UseCasesTester;
 
-namespace Api.Tests.Users
+namespace Application.UnitTests.UseCasesTester
 {
     // Simple in-memory fake repository for tests (no concurrency needed here)
     internal sealed class FakeUsersRepository : ITesterRepository

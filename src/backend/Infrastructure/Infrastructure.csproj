@@ -8,7 +8,4 @@
 		<ProjectReference Include="..\Application\Application.csproj" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection" />
 	</ItemGroup>
-	<ItemGroup>
-	  <Folder Include="Postgres\" />
-	</ItemGroup>
 </Project>

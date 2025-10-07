@@ -9,7 +9,7 @@
 	</ItemGroup>
 	<ItemGroup>
 		<AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
-			<_Parameter1>SeaWind.Api.Tests</_Parameter1>
+			<_Parameter1>SeaWind.Application.UnitTests</_Parameter1>
 		</AssemblyAttribute>
 	</ItemGroup>
 	<ItemGroup>
