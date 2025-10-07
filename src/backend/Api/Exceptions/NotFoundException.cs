@@ -1,4 +1,4 @@
-﻿namespace Backend.Exceptions;
+﻿namespace Api.Exceptions;
 
 // Ресурс не найден
 public class NotFoundException : Exception

@@ -1,6 +1,6 @@
-﻿using Backend.Models;
+﻿using Api.Models;
 
-namespace Backend.Tests;
+namespace Api.Tests.Weather;
 
 public class WeatherForecastTests
 {

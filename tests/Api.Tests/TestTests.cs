@@ -1,4 +1,4 @@
-namespace Backend.Tests;
+namespace Api.Tests;
 
 public class TestTests
 {
