@@ -1,6 +1,8 @@
 using Backend.Filters;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using System.Text.Json.Serialization;
+using Application;
+using Infrastructure;
 
 namespace Api;
 
@@ -10,12 +12,9 @@ public class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
-        // в MVC для Swagger это не нужно, есть Services.AddControllers()
-        //builder.Services.AddEndpointsApiExplorer();
-
         builder.Services.AddSwaggerGen();
 
-        // Настройка генерирования JSON в ответах
+        // Регистрация контроллеров и настройка поведения сериализации JSON-ответов
         builder.Services.AddControllers()
             .AddJsonOptions(opt =>
             {
@@ -46,6 +45,10 @@ public class Program
         {
             options.Filters.Add<CustomExceptionFilter>();
         });
+
+        // Application/Infrastructure registration
+        builder.Services.AddApplication();
+        builder.Services.AddInfrastructure();
 
         var app = builder.Build();
 
