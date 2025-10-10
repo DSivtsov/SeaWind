@@ -1,3 +1,4 @@
+#Важно сохранять в формате Unix (LF)
 #!/usr/bin/env bash
 set -euo pipefail
 
