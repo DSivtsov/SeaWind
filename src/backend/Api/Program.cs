@@ -1,5 +1,5 @@
 using Application;
-using Infrastructure;
+using Infrastructure.Postgres;
 
 namespace Api;
 

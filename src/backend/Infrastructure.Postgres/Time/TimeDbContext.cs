@@ -1,11 +1,11 @@
 ﻿using Application.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace Infrastructure.Postgres;
+namespace Infrastructure.Postgres.Time;
 
-public sealed class AppDbContext : DbContext
+public sealed class TimeDbContext : DbContext
 {
-    public AppDbContext(DbContextOptions<AppDbContext> opts) : base(opts) { }
+    public TimeDbContext(DbContextOptions<TimeDbContext> opts) : base(opts) { }
 
     public DbSet<Tester> Testers => Set<Tester>();
 

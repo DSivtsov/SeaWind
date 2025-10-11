@@ -7,7 +7,6 @@ set -euo pipefail
 #APP_USER_EFF="${APP_USER:-wc_app}"
 #APP_PASSWORD_EFF="${APP_PASSWORD:-wc_app_pwd}"
 
-
 echo "===DEMO SHOW VAR"
 echo "APP_USER=${APP_USER}"
 echo "APP_PASSWORD=${APP_PASSWORD}"

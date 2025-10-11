@@ -1,0 +1,8 @@
+﻿# Оставить папку в репозитории, но игнорировать её содержимое (только заглушка)
+#*
+#!.gitignore
+
+# В будущем здесь будет храниться слой EF Core для DbContext Main - основные таблицы проекта WorkshopCode
+#   MainDbContext.cs
+#   Repositories/				— репозитории для сущностей DbContext Main 
+#   Migrations/                 — миграции для DbContext Main

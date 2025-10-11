@@ -20,6 +20,6 @@
 	<!--Это не логическая связь Api c Application и Infrastructure, а технологическая для запуска DI-->
 	<ItemGroup>
 		<ProjectReference Include="..\Application\Application.csproj" />
-		<ProjectReference Include="..\Infrastructure\Infrastructure.csproj" />
+		<ProjectReference Include="..\Infrastructure.Postgres\Infrastructure.Postgres.csproj" />
 	</ItemGroup>
 </Project>

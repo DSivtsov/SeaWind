@@ -2,12 +2,12 @@
 using Application.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace Infrastructure.Postgres.Repositories;
+namespace Infrastructure.Postgres.Time.Repositories;
 
 public sealed class TesterRepositoryPostgres : ITesterRepository
 {
-    private readonly AppDbContext _db;
-    public TesterRepositoryPostgres(AppDbContext db) => _db = db;
+    private readonly TimeDbContext _db;
+    public TesterRepositoryPostgres(TimeDbContext db) => _db = db;
 
     public IEnumerable<Tester> GetAll() => _db.Testers.AsNoTracking().ToList();
     public Tester? Find(Guid id) => _db.Testers.AsNoTracking().FirstOrDefault(x => x.Id == id);
