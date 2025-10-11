@@ -10,7 +10,7 @@ COPY ./Directory.Packages.props ./
 
 # 2) Скопировать только .csproj (все зависимые проекты тоже)
 COPY ./src/backend/Api/ ./Api/
-COPY ./src/backend/Infrastructure/ ./Infrastructure/
+COPY ./src/backend/Infrastructure.Postgres/ ./Infrastructure.Postgres/
 COPY ./src/backend/Application/ ./Application/
 RUN dotnet restore ./Api
 RUN dotnet publish ./Api -c Release -o /app/publish
