@@ -40,10 +40,7 @@ _ReSharper*/
 ### .NET / ASP.NET Core
 # Keep base appsettings.json in repo; ignore local/env-specific
 appsettings.Development.json
-appsettings.Local.json
-appsettings.*.local.json
 .env
-.env.*.local
 
 # Local DB files
 *.db

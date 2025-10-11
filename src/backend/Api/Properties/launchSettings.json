@@ -10,6 +10,18 @@
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
+    },
+    "Api-Verbose": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "launchBrowser": true,
+      "launchUrl": "swagger",
+      "applicationUrl": "http://localhost:5000",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "Logging__LogLevel__Default": "Debug",
+        "Logging__LogLevel__Microsoft.AspNetCore": "Information"
+      }
     }
   }
 }

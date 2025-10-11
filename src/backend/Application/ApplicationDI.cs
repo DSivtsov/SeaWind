@@ -4,11 +4,11 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Application;
 
-public static class DependencyInjection
+public static class ApplicationDI
 {
     public static IServiceCollection AddApplication(this IServiceCollection services)
     {
-        services.AddSingleton<ITesterService, TesterService>();
+        services.AddScoped<ITesterService, TesterService>();
         return services;
     }
 }

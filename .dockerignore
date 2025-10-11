@@ -1,0 +1,34 @@
+# Общие системные файлы
+**/.git
+**/.gitignore
+**/.idea
+**/.vscode
+**/.vs
+**/node_modules
+**/bin
+**/obj
+**/TestResults
+
+# Конфиги IDE и CI
+**/*.user
+**/*.suo
+**/*.swp
+**/.DS_Store
+**/Thumbs.db
+
+# Docker и окружение
+docker/volumes/
+docker/init/
+docker/.env*
+docker-compose*.yml
+
+# Не тянем тесты в образ
+tests/
+**/*.Tests/
+**/*.tests/
+
+# Исключаем все md, кроме нужных
+*.md
+
+# Исключаем локальные publish-артефакты (если есть)
+**/publish/
