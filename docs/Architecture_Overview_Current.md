@@ -1,10 +1,16 @@
 # Architecture Overview — WorkshopCode (Current)
-**Version:** v3
-**Date:** 2025-10-04
+**Version:** v4
+**Date:** 2025-10-12
 
-## Общая Архитектура
+## 🧾 About
+ Описывает решения принятые в процесс разработки проекта.
+Данные решения принимались на митинга проектной команды либо в рамках переписки в чаты проекта.
+Источники
+- протоколы митингов
+- закрпеленные сообщения чаты проекта.
+- ADR записи в директории [doc/adr](https://github.com/DSivtsov/SeaWind/tree/develop/docs/adr) репо
 
-### 📐 Основные Решения и Технологии
+## 📐 Основные Решения и Технологии
 - **Backend:** ASP.NET Core Web API (.NET 8)
 - **Frontend:** React + Vite (Node.js LTS v22.19.0)
 - **Database:**
@@ -16,27 +22,83 @@
 - **CI/CD:** GitHub Actions (build + тесты + миграции)
 - **Containerization:** Docker + docker-compose (backend, frontend, db, broker)
 
+## Общая Архитектура
+Общая архитектура — **Clean без Domain (MVC)**
+
+- **API** — тонкие контроллеры, валидация, DTO.
+- **Application** — use-case сервисы, контракты, CQS.
+- **Infrastructure** — EF Core/PostgreSQL, миграции, репозитории.
+- **Domain** отсутствует в MVP.
+
+См. раздел wiki — документы описывают использование архитектуры Clean w/o Domain в проекте WorkshopCode.
+**Ссылка:** https://github.com/DSivtsov/SeaWind/wiki/Clean_Wiki_Index
+
 ### 📂 Общая структура репозитория
 ```
 SeaWind.sln
-src/
-  backend/        # ASP.NET Core Web API
-  frontend/       # React + Vite
-tests/
-  backend.tests/  # xUnit
-docker-compose.yml
-```
+├── .github\                       # GitHub workflows и issue templates
+│   ├── ISSUE_TEMPLATE\
+│   └── workflows\
+│
+├── docker\                        # Скрипты и конфиги для контейнеров
+│   ├── dpkeys\                    # Ключи Data Protection
+│   └── init\                      # Инициализация БД, сиды и т.п.
+│
+├── docs\                          # Документация проекта (ADR, Wiki export)
+│   └── adr\
+│
+├── src\                           # Исходный код приложения
+│   ├── backend\                   # Серверная часть (Clean w/o Domain)
+│   │   ├── Api\                   # Слой API (MVC-контроллеры, фильтры, DTO)
+│   │   │   ├── wwwroot\           # Папка для фронтенд-артефактов (SPA build)
+│   │   │   └── Api.csproj
+│   │   │
+│   │   ├── Application\           # Слой Application (use-case сервисы, контракты)
+│   │   │   └── Application.csproj
+│   │   │
+│   │   ├── Infrastructure\        # Слой Infrastructure (EF Core, репозитории)
+│   │   │   └── Infrastructure.csproj
+│   │   │
+│   │   └── Infrastructure.Postgres\ # Вариант инфраструктуры под PostgreSQL
+│   │       └── Infrastructure.Postgres.csproj
+│   │
+│   └── frontend\                  # Фронтенд (SPA React + Vite)
+│       └── web\
+│           └── package.json
+│
+└── tests\                         # Автотесты
+    ├── Api.UnitTests\             # Unit-тесты слоя API
+    │   └── Api.UnitTests.csproj
+    │
+    └── Application.UnitTests\     # Unit-тесты слоя Application
+        └── Application.UnitTests.csproj
 
-## Решения в процесс разработки проекта
-Данные решения принимались на митинга проектной команды либо в рамках переписки в чаты проекта.
-Источники
-- протоколы митингов
-- закрпеленные сообщения чаты проекта.
-- ADR записи в директории [doc/adr](https://github.com/DSivtsov/SeaWind/tree/develop/docs/adr) репо
+```
+### Развёртывание с Docker Compose
+В контейнере описаны сервисы **api** (backend) и **db** (PostgreSQL).
+- **backend** может запускаться как в контейнере, так и локально на хосте.  
+- **PostgreSQL** — всегда в контейнере.  
+- Общение между сервисами в контейнере идёт по внутренним адресам и портам сервисов внутри сети Docker.  
+- Доступ к API или к БД c локальной машине идёт по внешнем адресам и портам сервисов.
+- В файле окружения контейнера `docker/etc` и конфигурационном файле `docker/docker-compose.yml` прописаны:
+  - Все внутренние и внешние порты и адреса сервисов
+  - Переменная окружения ASPNETCORE_ENVIRONMENT
+  - Все конфигурационный параметры БД, как системной, так и рабочей (включая логины и  пароли пользователей)
+  - ConnectionStrings__Default для подключения сервиса **api** к **db** по внутренней сети
+  - Место хранения и монтажа инициализационных скриптов PostgreSQL и томов сервиса **db**
+  - Место хранения и монтажа  dpkeys сервиса **api** 
+  - Настройки сервисов `healthcheck` для контейнеров
+ - В папке  `docker/Api.Dockerfile` хранятся инициализационные скриптов PostgreSQL
+- Файл `docker/Api.Dockerfile` хранит параметры для сборки образа сервиса **api** (backend)
+- Для образа сервиса **db** (PostgreSQL) используется стандартный образ postgres:16 `DockerHub`
+- ConnectionStrings__Default для подключения сервиса **api** (VS/CLI dotnet) к **db** по внешней сети определяются
+   - файлом `launchSettings.json`
+   - файлами `appsettings.json` и `appsettings.Development.json`
+- Volume `pgdata` сохраняет состояние базы данных между перезапусками.
 
 ### ⚙️ Core Decisions
-- Единые порты: **5000 (http)**, **5001 (https)**
-- Swagger доступен: https://localhost:5001/swagger
+- Единые порты: **5000 (http)**
+- Swagger доступен: http://localhost:5000/swagger
 - Swagger будет открываться автоматически
 - Middleware `UseHttpsRedirection()` включен по умолчанию
 - Node.js версия зафиксирована: **v22.19.0 LTS**
@@ -65,6 +127,28 @@ docker-compose.yml
 * Возможность задать результат (context.Result), если вы хотите перехватить и обработать исключение.
 Если в фильтре установить context.ExceptionHandled = true, то исключение считается обработанным, и дальше по конвейеру оно уже не пойдёт (глобальный обработчик ошибок не вызовется).
 
+### Data Protection
+
+ **Зачем использует Data Protection keys**
+
+ASP.NET Core автоматически включает систему защиты данных (Data Protection API), даже если её явно не настраивать.  
+Эта система используется для шифрования временных данных, которые фреймворк хранит «под капотом».
+
+**Что именно использует Data Protection**
+
+- **Cookies** — авторизационные и аутентификационные куки (например, при использовании Identity, JWT + cookies).  
+  Куки шифруются и подписываются ключом.  
+  Без прежнего ключа старые куки становятся нечитаемыми → пользователь вылетает из сессии.  
+
+- **Antiforgery tokens** — защита форм от CSRF (например, `@Html.AntiForgeryToken()` в MVC).  
+
+- **TempData и Session** — когда данные временно сохраняются между запросами, ASP.NET тоже использует Data Protection.  
+
+- **Другие библиотеки**, использующие `IDataProtector`:  
+  - IdentityServer, OpenIddict  
+  - встроенные middleware для внешней авторизации (Google, Microsoft и др.)
+
+📎 Дополнительно см. ADR-0011 «Хранение Data Protection Keys в контейнерах» — опиасние архитектурного решение о способе хранения ключей в Docker-окружениях.
 
 ## Описание архитектуры фронтенда
 
@@ -102,7 +186,7 @@ frontend/
 
 ### Интеграция с backend (Program.cs + SPA fallback)
 
-В моде **Dev** фронтенд запускается на Vite (`5173`), а API (порт `5000/5001`) отдельно.  
+В моде **Dev** фронтенд запускается на Vite (`5173`), а API (порт `5000`) отдельно.  
 В **Prod** собранный SPA (`frontend/dist`) копируется в `backend/wwwroot/`, где бэкенд отдаёт статику и обеспечивает **SPA fallback** на `index.html`.
 
 #### Middleware и порядок в Program.cs
@@ -124,15 +208,19 @@ frontend/
 - В Prod: бэкенд обслуживает и API, и SPA на одном домене.
 - Порядок в Program.cs (сначала Controllers, затем Fallback) гарантирует разделение `/api/*` и роутов SPA.
 
-#### DEV vs PROD доступ
+#### DEV vs PROD совместная работа фроненда и бекенда
 - **DEV:**  
+  - **CORS** включён только в Dev, чтобы фронтенд (SPA на `5173`) мог обращаться к API (`5000`).  
   - SPA: `http://localhost:5173`  
   - API: `http://localhost:5000/api/...`  
   - Swagger: `http://localhost:5000/swagger`
+  - В директории `wwwroot` сервиса API находится заглушка, которая отдаёт статику и выполняет fallback на `index.html`.
 - **PROD:**  
-  - SPA и API на одном домене, fallback на `index.html`.
+  - SPA и API на одном домене
+  - Готовая сборка фронтенда копируется в `wwwroot`, где API отдаёт статику и выполняет fallback на `index.html`
 
 ## Change Log Удалить локальную ветку задачи 
+- v4 (2025-10-12) — добавлены разделы "Развёртывание с Docker Compose" и "Data Protection", обновлены разделы "Общая Архитектура" и "Общая структура репозитория" в связи с Clean архитектурой
 - v3 (2025-10-04) — добавлен раздел "Описание архитектуры фронтенда" 
 - v2 (2025-09-30) — добавлен раздел "Правила добавления новых контроллеров и методов действий" (OK) 
 - v1 (2025-09-18) — первоначальная версия (DS)
