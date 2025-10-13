@@ -1,7 +1,4 @@
-﻿using Application.Abstractions.Repositories;
-using Infrastructure.Postgres.Time;
-using Infrastructure.Postgres.Time.Repositories;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -15,11 +12,10 @@ public static class InfrastructureDI
             ?? throw new InvalidOperationException("ConnectionStrings:Default is missing.");
 
         Console.WriteLine($"[AddInfrastructure]: ConnectionStrings=[{cs}]");
+        
+        services.AddTimeDbContext(cs);
 
-        services.AddDbContext<TimeDbContext>(o => o.UseNpgsql(cs));
-
-        // Репозитории MainDbContext
-        services.AddScoped<ITesterRepository, TesterRepositoryPostgres>();
+        services.AddAppIdentityContext(cfg, cs);
 
         return services;
     }

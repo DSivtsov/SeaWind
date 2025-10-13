@@ -9,7 +9,8 @@ public static class PresentationDI
     public static IServiceCollection AddPresentation(this IServiceCollection services, IConfiguration cfg,
         IWebHostEnvironment env)
     {
-        services.AddSwaggerGen();
+        // AddSwaggerGen() делается через AddSwaggerGen(this IServiceCollection services)
+        // services.AddSwaggerGen();
 
         // Регистрация контроллеров и настройка поведения сериализации JSON-ответов
         services.AddControllers()
@@ -78,9 +79,11 @@ public static class PresentationDI
         }
 
         app.UseRouting();
-        // Отключены пока нет ASP.NET Identity / JWT 
-        //app.UseAuthentication();
-        //app.UseAuthorization();
+
+        // ASP.NET Identity сервисы - между UseRouting() и MapControllers()
+        // и первым должен идти UseAuthentication()
+        app.UseAuthentication();
+        app.UseAuthorization();
 
         // СНАЧАЛА API-маршруты (чтобы их не перехватывал SPA-fallback)
         app.MapControllers();

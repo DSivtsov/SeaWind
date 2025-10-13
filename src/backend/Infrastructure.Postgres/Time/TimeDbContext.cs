@@ -11,6 +11,7 @@ public sealed class TimeDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
+        // Таблицы будут создаваться в схеме public
         builder.Entity<Tester>( action =>
         {
             action.HasKey(x => x.Id);
