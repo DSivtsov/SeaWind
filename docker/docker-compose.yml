@@ -27,13 +27,19 @@ services:
     build:
       context: ..
       dockerfile: docker/Api.Dockerfile
+      args:
+        API_PORT_INT: ${HTTP_PORT_INT}
     env_file:
       - .env
+    volumes:
+      - ./dpkeys:/keys
     environment:
       # перекрывает appsettings.Development.json:
       ConnectionStrings__Default: "Host=db;Port=${POSTGRES_PORT_INT};Database=${POSTGRES_DB};Username=${APP_USER};Password=${APP_PASSWORD};Pooling=true"
       ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENVIRONMENT}
-      ASPNETCORE_URLS: "http://+:${HTTP_PORT_INT}"
+      ASPNETCORE_DataProtection__ApplicationName: WorkshopCode.Dev
+      DataProtection__Path: /keys
+      ASPNETCORE_HTTP_PORTS: "${HTTP_PORT_INT}"
     depends_on:
       db:
         condition: service_healthy

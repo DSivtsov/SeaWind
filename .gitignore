@@ -42,6 +42,12 @@ _ReSharper*/
 appsettings.Development.json
 .env
 
+# DP keys Api
+docker/dpkeys/*.xml
+docker/dpkeys/*.key
+docker/dpkeys/
+
+
 # Local DB files
 *.db
 *.sqlite

@@ -17,6 +17,9 @@ public class Program
             .AddInfrastructure(builder.Configuration)
             .AddPresentation(builder.Configuration, builder.Environment);
 
+        // При запуске в контейнере необходимо указать явное место хранения ключей Data Protection.
+        builder.AddStorageForContainers();
+
         var app = builder.Build();
 
         app.UsePresentation();
