@@ -168,7 +168,9 @@ SeaWind.sln
 * Само исключение (context.Exception),
 * Контекст HTTP-запроса (context.HttpContext),
 * Возможность задать результат (context.Result), если вы хотите перехватить и обработать исключение.
-Если в фильтре установить context.ExceptionHandled = true, то исключение считается обработанным, и дальше по конвейеру оно уже не пойдёт (глобальный обработчик ошибок не вызовется).
+* Если в фильтре установить context.ExceptionHandled = true, то исключение считается обработанным, и дальше по конвейеру оно уже не пойдёт (глобальный обработчик ошибок не вызовется).
+
+  📘 **Подробнее см.** руководство по использованию  `CustomExceptionFilter` —  [Use_CustomExceptionFilter](./dev/Use_CustomExceptionFilter.md)
 
 ### Data Protection
 

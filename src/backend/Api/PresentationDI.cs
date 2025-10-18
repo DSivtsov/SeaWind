@@ -1,5 +1,6 @@
 ﻿using Backend.Filters;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
+using Microsoft.Extensions.Options;
 using System.Text.Json.Serialization;
 
 namespace Api;
@@ -9,16 +10,25 @@ public static class PresentationDI
     public static IServiceCollection AddPresentation(this IServiceCollection services, IConfiguration cfg,
         IWebHostEnvironment env)
     {
-        services.AddSwaggerGen();
+        // AddSwaggerGen() делается через AddSwaggerGen(this IServiceCollection services)
+        // services.AddSwaggerGen();
 
-        // Регистрация контроллеров и настройка поведения сериализации JSON-ответов
-        services.AddControllers()
+        // Регистрация контроллеров
+        // - подключение фильтров
+        // - настройка поведения сериализации JSON-ответов
+        services.AddControllers(optControllers =>
+            {
+                // Подключаем фильтр исключений
+                optControllers.Filters.Add<CustomExceptionFilter>();
+            })
             .AddJsonOptions(opt =>
             {
                 // Игнорировать циклические ссылки
                 opt.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
                 // Не добавлять свойства со значениями null
                 opt.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+
+
             });
 
         // CORS только для DEV (Vite dev-server на 5173 только по http)
@@ -37,11 +47,12 @@ public static class PresentationDI
             options.Limits.MaxRequestBodySize = 35 * 1024 * 1024;
         });
 
-        // Подключаем фильтр исключений
-        services.AddMvc(options =>
-        {
-            options.Filters.Add<CustomExceptionFilter>();
-        });
+        // Т.к. мы не используем (Views, Razor Pages, форматтеры и пр.), что не нужно в чистом API.
+        // подключение фильтров перенесено в AddControllers
+        //services.AddMvc(options =>
+        //{
+        //    options.Filters.Add<CustomExceptionFilter>();
+        //});
 
         services.AddHealthChecks();
 
@@ -78,9 +89,11 @@ public static class PresentationDI
         }
 
         app.UseRouting();
-        // Отключены пока нет ASP.NET Identity / JWT 
-        //app.UseAuthentication();
-        //app.UseAuthorization();
+
+        // ASP.NET Identity сервисы - между UseRouting() и MapControllers()
+        // и первым должен идти UseAuthentication()
+        app.UseAuthentication();
+        app.UseAuthorization();
 
         // СНАЧАЛА API-маршруты (чтобы их не перехватывал SPA-fallback)
         app.MapControllers();

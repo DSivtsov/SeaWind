@@ -24,6 +24,9 @@ public class CustomExceptionFilter : IExceptionFilter
             case NotFoundException:
                 statusCode = (int)HttpStatusCode.NotFound; break;
 
+            case ConflictException:
+                statusCode = (int)HttpStatusCode.Conflict; break;
+
             default:
                 statusCode = (int)HttpStatusCode.InternalServerError; break;
         }
