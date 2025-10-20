@@ -1,4 +1,5 @@
 using Application.Abstractions.Services;
+using Application.UseCases.Course;
 using Application.UseCasesTester;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -9,6 +10,7 @@ public static class ApplicationDI
     public static IServiceCollection AddApplication(this IServiceCollection services)
     {
         services.AddScoped<ITesterService, TesterService>();
+        services.AddScoped<ICourseService, CourseService>();
         return services;
     }
 }
