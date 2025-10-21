@@ -7,8 +7,12 @@ public class CourseService : ICourseService
 {
     public Task<IEnumerable<CourseDto>> GetAllAsync()
     {
-        //throw new NotImplementedException();
-        // TODO: https://github.com/DSivtsov/SeaWind/issues/67
-        return Task.FromResult<IEnumerable<CourseDto>>(Array.Empty<CourseDto>());
+        IEnumerable<CourseDto> demo = new[]
+        {
+            new CourseDto(Guid.NewGuid(), "C# Basics", "Intro to C#"),
+            new CourseDto(Guid.NewGuid(), "Unity Intro", "GameDev basics")
+        };
+
+        return Task.FromResult(demo);
     }
 }

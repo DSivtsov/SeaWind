@@ -24,7 +24,6 @@ public class CoursesController : ControllerBase
     /// </returns>
     [HttpGet]
     [ProducesResponseType(typeof(IEnumerable<CourseDto>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ResponseDtoBase), StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<IEnumerable<CourseDto>>> GetAll()
     {
         IEnumerable<CourseDto>? courses = await _service.GetAllAsync();
