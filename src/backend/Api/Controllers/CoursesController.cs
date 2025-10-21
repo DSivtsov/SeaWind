@@ -23,19 +23,16 @@ public class CoursesController : ControllerBase
     /// Возвращает коллекцию курсов. Если курсы не найдены возвращает пустую коллекцию
     /// </returns>
     [HttpGet]
-    [ProducesResponseType(typeof(IEnumerable<CourseShortResponse>), StatusCodes.Status200OK)]
-    public async Task<ActionResult<IEnumerable<CourseShortResponse>>> GetAll()
+    [ProducesResponseType(typeof(IEnumerable<CourseDto>), StatusCodes.Status200OK)]
+    public async Task<ActionResult<IEnumerable<CourseDto>>> GetAll()
     {
         IEnumerable<CourseDto>? courses = await _service.GetAllAsync();
 
         if (courses is null)
         {
-            return Ok(Array.Empty<CourseShortResponse>());
+            return Ok(Array.Empty<CourseDto>());
         }
 
-        var coursesResponse = courses
-            .Select(c => new CourseShortResponse(c.Id, c.Title, c?.Description));
-
-        return Ok(coursesResponse);
+        return Ok(courses);
     }
 }
