@@ -9,8 +9,8 @@ public class CourseService : ICourseService
     {
         IEnumerable<CourseDto> demo = new[]
         {
-            new CourseDto(Guid.NewGuid(), "C# Basics", "Intro to C#"),
-            new CourseDto(Guid.NewGuid(), "Unity Intro", "GameDev basics")
+            new CourseDto(Guid.NewGuid(), "C# Basics", "CS101", "Intro to C#", DateTime.Now, null),
+            new CourseDto(Guid.NewGuid(), "Unity Intro", "UN201", "GameDev basics", DateTime.Now, null)
         };
 
         return Task.FromResult(demo);

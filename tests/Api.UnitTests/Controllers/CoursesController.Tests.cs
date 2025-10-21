@@ -22,7 +22,7 @@ public class CoursesControllerTests
     }
 
     /// <summary>
-    /// Проверяет, что GetAll контроллера возвращает OkObjectResult, содержащий коллекцию объектов CourseDto, когда курсы доступны.
+    /// Проверяет, что GetAll контроллера возвращает OkObjectResult, содержащий коллекцию объектов CourseShortResponse, когда курсы доступны.
     /// </summary>
     /// <remarks>
     /// Этот тест гарантирует, что метод GetAll контроллера отвечает HTTP 200 OK 
@@ -46,7 +46,7 @@ public class CoursesControllerTests
 
         // Assert
         OkObjectResult coursesResultType = Assert.IsType<OkObjectResult>(actionResult.Result);
-        IEnumerable<CourseDto> coursesResult = Assert.IsAssignableFrom<IEnumerable<CourseDto>>(coursesResultType.Value);
+        IEnumerable<CourseShortResponse> coursesResult = Assert.IsAssignableFrom<IEnumerable<CourseShortResponse>>(coursesResultType.Value);
 
         Assert.Equal(countCourses, coursesResult.Count());
 
@@ -78,7 +78,7 @@ public class CoursesControllerTests
 
         // Assert
         OkObjectResult coursesResultType = Assert.IsType<OkObjectResult>(actionResult.Result);
-        IEnumerable<CourseDto> coursesResult = Assert.IsAssignableFrom<IEnumerable<CourseDto>>(coursesResultType.Value);
+        IEnumerable<CourseShortResponse> coursesResult = Assert.IsAssignableFrom<IEnumerable<CourseShortResponse>>(coursesResultType.Value);
 
         Assert.Empty(coursesResult);
     }
