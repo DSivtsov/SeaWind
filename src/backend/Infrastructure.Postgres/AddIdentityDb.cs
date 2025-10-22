@@ -13,8 +13,13 @@ internal static class AddIdentityDb
     {
         // DB для Identity (использует уже существующий connection string из твоей конфигурации)
         services.AddDbContext<AppIdentityDbContext>(opt =>
-            opt.UseNpgsql(connectionString)
-               .UseNpgsql(n => n.MigrationsHistoryTable("__EFMigrationsHistory", AppIdentityDbContext.Schema)));
+                opt.UseNpgsql(connectionString, npg =>
+                {
+                    npg.EnableRetryOnFailure();
+                    npg.MigrationsAssembly(typeof(AppIdentityDbContext).Assembly.FullName);
+                    npg.MigrationsHistoryTable("__EFMigrationsHistory", schema: AppIdentityDbContext.Schema);
+                })
+            );
 
         return services;
     }

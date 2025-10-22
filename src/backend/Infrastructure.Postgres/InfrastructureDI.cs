@@ -17,6 +17,8 @@ public static class InfrastructureDI
 
         services.AddAppIdentityContext(cfg, cs);
 
+        services.AddMainDbContext(cfg, cs);
+
         return services;
     }
 }
