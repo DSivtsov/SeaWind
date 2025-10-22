@@ -1,9 +1,6 @@
 # WorkshopCode Frontend — Quick Start & Architecture
-Version: v4
-Date: 2025-10-06
-
-**Version:** v2  
-**Date:** 2025-10-04  
+**Version:** v4  
+**Date:** 2025-10-22  
 **Status:** In Review  
 
 Короткий гид для быстрого старта фронтенда WorkshopCode (MVP) и единых правил работы со SPA. Адресат: фронтенд/фулл-стек разработчики команды.
@@ -41,49 +38,50 @@ Date: 2025-10-06
 ```
 frontend/
   src/
-    app.jsx            # маршруты
-    main.jsx           # React root
+    app.tsx            # маршруты
+    main.tsx           # React root
     api/
       client.js        # fetch-обёртка
       auth.js          # вход/регистрация
     pages/
-      AuthLogin.jsx
-      CoursesList.jsx
-      CourseDetails.jsx
-      Lectures.jsx
-      Journal.jsx
-      Exercises.jsx
-      ExerciseChat.jsx
-      MentorWork.jsx
-      AdminTopups.jsx
-      Profile.jsx
+      AuthLogin.tsx
+      CoursesList.tsx
+      CourseDetails.tsx
+      Lectures.tsx
+      Journal.tsx
+      Exercises.tsx
+      ExerciseChat.tsx
+      MentorWork.tsx
+      AdminTopups.tsx
+      Profile.tsx
     components/
-      Navbar.jsx
-      Protected.jsx
+      Navbar.tsx
+      Protected.tsx
   index.html
   vite.config.js
 ```
 
 ### 4. Routing (пример)
-```jsx
-// app.jsx
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Protected from "./components/Protected";
-import AuthLogin from "./pages/AuthLogin";
-import CoursesList from "./pages/CoursesList";
+```tsx
+// app.tsx
+import { BrowserRouter, Routes, Route, useNavigate, Navigate } from 'react-router-dom'
+import Protected from './components/Protected'
 export default function App(){
-  return (<BrowserRouter>
-    <Routes>
-      <Route path="/login" element={<AuthLogin/>}/>
-      <Route path="/" element={<Protected><CoursesList/></Protected>}/>
-    </Routes>
-  </BrowserRouter>);
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/login" element={<Login />} />
+        <Route path="/" element={<Protected> <Hello /></Protected>}/>
+        <Route path="*" element={<Navigate to="/login" replace />} />
+      </Routes>
+    </BrowserRouter>
+  );
 }
 ```
 
 ### 5. API-обёртка (минимум)
-```js
-// api/client.js
+```tsx
+// api/client.tsx
 const base = import.meta.env.VITE_API_BASE ?? "/api";
 let token = null;
 export const setToken = t => token = t;
@@ -103,7 +101,7 @@ export async function api(path, opts={}){
 - **Guard**: `<Protected>` проверяет token, иначе перенаправляет на `/login`.
 - **401-обработка**: глобально в `api()` (перенаправление на `/login`).
 
-`Protected.jsx`: если нет token в памяти, читаем из `localStorage`; если пусто — переход на `/login`.
+`Protected.tsx`: если нет token в памяти, читаем из `localStorage`; если пусто — переход на `/login`.
 
 ### 7. Запуск  Prod
 **Prod**
@@ -121,8 +119,21 @@ npm run build   # вывод в /dist
 VITE_API_BASE=/api
 ```
 `vite.config.js`
-```js
-export default { server:{ proxy:{ "/api":"http://localhost:5000" } } }
+```tsx
+const target = process.env.API_URL || 'http://localhost:5000'
+
+export default defineConfig({
+  plugins: [react()],
+  server: {
+    proxy: {
+      '/api': {
+        target,
+        changeOrigin: true,
+        secure: false
+      }
+    }
+  }
+})
 ```
 
 ### 9. Получение данных (паттерн)
@@ -132,6 +143,7 @@ export default { server:{ proxy:{ "/api":"http://localhost:5000" } } }
 ---
 
 ## Change Log
+- v4 (2025-10-22) — замена `JSX -> TSX`
 - v3 (2025-10-06) — убран раздел "Quick Start" добавлена ссылка на WorkshopCode_ProjectRun, уточнено форматирование
 - v2 (2025-10-04) — добавлен раздел "Фронтенд Architecture & Patterns (MVP)"
 - v1 (2025-10-02) — первоначальная версия

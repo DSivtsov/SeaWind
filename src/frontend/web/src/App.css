@@ -1,0 +1,14 @@
+h1 {
+  margin-bottom: 1rem;
+}
+
+.center-page {
+  align-items: center;     /* по центру по вертикали */
+  text-align: center;      /* текст по центру только внутри этой страницы */
+}
+
+.hello-page {
+  align-items: center;     /* по центру по вертикали */
+  text-align: left;    /* текст слева */
+  margin-left: 100px; /* отступ слева */
+}
