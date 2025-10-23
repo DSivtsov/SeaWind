@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
@@ -12,7 +11,7 @@ namespace Api.Identity;
 
 public static class SetupIdentity
 {
-    public static IServiceCollection AddWorkshopIdentity(this IServiceCollection services)
+    public static IServiceCollection AddWorkshopIdentity(this IServiceCollection services, IWebHostEnvironment env)
     {
         // Регистрирует базовые сервисы ASP.NET Core Identity без UI (UserManager, SignInManager и др.)
         // Используется для управления пользователями (регистрация, вход, смена пароля и т.п.)
@@ -23,9 +22,14 @@ public static class SetupIdentity
                     opt.ClaimsIdentity.UserIdClaimType = ClaimTypes.NameIdentifier;
                     opt.ClaimsIdentity.UserNameClaimType = ClaimTypes.Email;
                     opt.ClaimsIdentity.RoleClaimType = ClaimTypes.Role;
+                    opt.SignIn.RequireConfirmedEmail = env.IsProduction();
+                    opt.Lockout.AllowedForNewUsers = true;
+                    opt.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(15);
+                    opt.Lockout.MaxFailedAccessAttempts = 5;
                 })
                 .AddRoles<IdentityRole>()
-                .AddPostgresIdentityStores();       // extension method from Infrastructure.Postgres
+                .AddPostgresIdentityStores()       // extension method from Infrastructure.Postgres
+                .AddUserValidator<EmailFormatValidator>();
 
         return services;
     }
