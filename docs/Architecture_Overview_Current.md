@@ -1,6 +1,6 @@
 # Architecture Overview — WorkshopCode (Current)
-**Version:** v6
-**Date:** 2025-10-17
+**Version:** v7
+**Date:** 2025-10-22
 
 ## 🧾 About
  Описывает решения принятые в процесс разработки проекта.
@@ -18,6 +18,8 @@
 - [Правила добавления новых контроллеров и методов действий](#правила-добавления-новых-контроллеров-и-методов-действий)
 - [Централизованная обработка исключений](#централизованная-обработка-исключений-exception-handling-middleware)
 - [Data Protection](#data-protection)
+- [Аутентификация (ASP.NET Identity + JWT)](#аутентификация-aspnet-identity--jwt)
+- [MainDbContext (основная база данных)](#maindbcontext-основная-база-данных)
 - **Описание архитектуры фронтенда**
   - [Общая информация об архитектуре фронтенда](#общая-информация-об-архитектуре-фронтенда)
   - [Ключевые экраны](#ключевые-экраны)
@@ -37,7 +39,8 @@
   * MongoDB — NoSQL для чатов и вложений
 * **Cache:** Redis (сессии, rate-limit, быстрые выборки) *[draft]*
 * **Message Broker:** RabbitMQ (асинхронные события) *[draft]*
-* **Auth:** ASP.NET Identity + JWT (аутентификация и авторизация) *[draft]*
+* **Аутентификация:** ASP.NET Identity + JWT (реализовано, см. ADR-0015)
+* **Авторизация:** ASP.NET Identity Roles & Policies (draft)
 * **CI/CD:** GitHub Actions (build + тесты + миграции)
 * **Containerization:** Docker + Docker Compose (backend, frontend, db, broker)
 
@@ -176,7 +179,6 @@ SeaWind.sln
   📘 **Подробнее см.** руководство по использованию  `CustomExceptionFilter` —  [Use_CustomExceptionFilter](./dev/Use_CustomExceptionFilter.md)
 
 ### Data Protection
-
  **Зачем использует Data Protection keys**
 
 ASP.NET Core автоматически включает систему защиты данных (Data Protection API), даже если её явно не настраивать.  
@@ -198,6 +200,33 @@ ASP.NET Core автоматически включает систему защи
 
 📎 Дополнительно см. ADR-0011 «Хранение Data Protection Keys в контейнерах» — опиасние архитектурного решение о способе хранения ключей в Docker-окружениях.
 
+### Аутентификация (ASP.NET Identity + JWT)
+Проект использует стандартное решение ASP.NET Core Identity в связке с JWT (JSON Web Token).  
+Цель — реализовать централизованную **аутентификацию пользователей** для API и фронтенда (SPA).
+
+#### Основные параметры
+- Контекст БД: `AppIdentityDbContext` (схема `identity`).  
+- Модель пользователя: `AppUser` (`IdentityUser`).  
+- Аутентификация: JWT Bearer с маппингом claim’ов ASP.NET Identity.  
+- Конфигурация хранится в `appsettings.Development.json` (секция `Jwt`).  
+- Swagger поддерживает авторизацию через токен (схема `"bearer"`).
+
+📘 Подробное описание решения — см. [ADR-0015 — Подключение аутентификации на базе ASP.NET Identity + JWT](./adr/0015-add-authentication-identity-jwt.md).  
+📎 Смотри раздел wiki: [Аутентификация и авторизация (ASP.NET Identity + JWT)](https://github.com/DSivtsov/SeaWind/wiki/Reference_Index#-%D0%B0%D1%83%D1%82%D0%B5%D0%BD%D1%82%D0%B8%D1%84%D0%B8%D0%BA%D0%B0%D1%86%D0%B8%D1%8F-%D0%B8-%D0%B0%D0%B2%D1%82%D0%BE%D1%80%D0%B8%D0%B7%D0%B0%D1%86%D0%B8%D1%8F-aspnet-identity--jwt) — обзор совместной работы Identity и JWT и принципа Bearer Authentication в ASP.NET Core.
+
+### MainDbContext (основная база данных)
+Контекст `MainDbContext` используется для хранения сущностей основного функционала приложения (курсы, пользователи, лекции, задания и т.п.).
+
+#### Основные параметры
+1. Все таблицы `MainDbContext` размещаются в схеме **`main`** через `builder.HasDefaultSchema("main")`.
+2. Для каждой сущности добавить создается описание в `MainDbContext`.
+3. Миграции `MainDbContext` хранятся в **Infrastructure.Postgres\Main\Migrations\**, история миграций — в `main.__EFMigrationsHistory`.
+4. Репозитории основного контекста размещаются в **Infrastructure.Postgres\Main\Repositories\**, и регистрируются в сервисах с жизненным циклом `Scoped`.
+
+  📘 Подробное архитектурное решение по структуре, миграциям и репозиториям `MainDbContext` описано в  
+  [ADR-0014 — Схема БД, конфигурация сущностей и миграции для MainDbContext](./adr/0014-add-main-db-conntext.md).
+
+
 ## Описание архитектуры фронтенда
 
 ### Общая информация об архитектуре фронтенда
@@ -212,23 +241,24 @@ Frontend MVP представляет собой **один React SPA** (без 
 - Profile: базовая информация о пользователе.
 
 #### Стек и ограничения
+Проект полностью переведён на TypeScript (TSX/TS), включая маршруты, API-обёртки и контексты состояния.
 - **HTTP:** нативный `fetch` (axios не используется).
 - **State:** локальное состояние + `AuthContext` (хранение token, user).
-- **Формы:** нативная HTML-валидация + минимальные JS-проверки.
+- **Формы:** нативная HTML-валидация + минимальные TypeScript-проверки.
 - **Стили:** стандартный CSS/модули, без Tailwind.
 
 #### Файловая структура фронтенда проекта
 ```
 frontend/
   src/
-    app.jsx            # маршруты
-    main.jsx           # React root
+    app.tsx            # маршруты
+    main.tsx           # React root
     api/
-      client.js        # fetch-обёртка
-      auth.js          # авторизация
+      client.ts        # fetch-обёртка
+      auth.ts          # авторизация
     pages/             # Auth, Courses, Lectures, Journal, Exercises, Profile
     components/        # Navbar, Protected
-  vite.config.js
+  vite.config.ts
   index.html
 ```
 
@@ -262,6 +292,7 @@ frontend/
 - Порядок в Program.cs (сначала Controllers, затем Fallback) гарантирует разделение `/api/*` и роутов SPA.
 
 ## Change Log
+- v7 (2025-10-22) — добавлен раздел `MainDbContext (основная база данных)` и  `Аутентификация (ASP.NET Identity + JWT)`, и адаптирован описание фронтенда под TypeScript (в связи замена JSX → TSX — исправлены ссылки и расширения файлов) (DS)
 - v6 (2025-10-17) — добавлена ссылок  (DS):
   - на ADR-0012 (Centralized Build Config)
   - на ADR 0013 (XML-комментарии для Swagger)
