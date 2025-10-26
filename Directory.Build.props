@@ -3,4 +3,7 @@
     <TargetFramework>net8.0</TargetFramework>
     <AssemblyName>SeaWind.$(MSBuildProjectName)</AssemblyName>
   </PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)'=='Release'">
+		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+	</PropertyGroup>
 </Project>
