@@ -22,7 +22,7 @@ public class Program
 
         // Настраиваем JWT аутентификацию и авторизацию
         builder.Services
-            .AddWorkshopIdentity()      // Подключение ASP.NET Identity + Identity Stores 
+            .AddWorkshopIdentity(builder.Environment)      // Подключение ASP.NET Identity + Identity Stores 
             .AddJwtAuth(cfg)            // Подключение JWT-аутентификация
             .AddSwaggerWithJWT();       // Подключение Swagger с поддержкой JWT Bearer-авторизации
 
