@@ -1,8 +1,7 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using Api.Filters;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Models;
-using System.Reflection;
 using System.Security.Claims;
 using System.Text;
 using static Infrastructure.Postgres.IdentityStores;    // for AddPostgresIdentityStores()
@@ -58,6 +57,8 @@ public static class SetupIdentity
                         IssuerSigningKey = key,
                         ValidateLifetime = true
                     };
+                    // Формируем ошибку в соответствии с единым стандартом ProblemDetails (RFC 7807)
+                    opt.TuneCustomJwtBearerException();     
                 });
 
         services.AddAuthorization();
@@ -69,46 +70,6 @@ public static class SetupIdentity
         //services.AddSingleton<SecurityKey>(key);    
         services.AddSingleton(new SigningCredentials(key, SecurityAlgorithms.HmacSha256));
         services.AddScoped<ITokenService, TokenService>();
-
-        return services;
-    }
-
-    public static IServiceCollection AddSwaggerWithJWT(this IServiceCollection services)
-    {
-        // Swagger with JWT
-        // со специальной схемой ("bearer"):
-        // - "Bearer " - вставлять в поле не надо
-        // - вставляешь ТОЛЬКО token (без "Bearer ")
-        services.AddSwaggerGen(swgOpt =>
-        {
-            swgOpt.SwaggerDoc("v1", new OpenApiInfo { Title = "API", Version = "v1" });
-
-            var jwtSecurityScheme = new OpenApiSecurityScheme
-            {
-                Scheme = "bearer",
-                BearerFormat = "JWT",
-                Name = "Authorization",
-                In = ParameterLocation.Header,
-                Type = SecuritySchemeType.Http,
-                Description = "Вставь JWT-токен. Префикс 'Bearer' добавится автоматически.",
-                Reference = new OpenApiReference
-                {
-                    Id = JwtBearerDefaults.AuthenticationScheme,
-                    Type = ReferenceType.SecurityScheme
-                }
-            };
-
-            swgOpt.AddSecurityDefinition(jwtSecurityScheme.Reference.Id, jwtSecurityScheme);
-            swgOpt.AddSecurityRequirement(new OpenApiSecurityRequirement
-                {
-                    { jwtSecurityScheme, Array.Empty<string>() }
-                });
-
-            // Подключение XML-комментариев в SwaggerGen
-            var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-            var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-            swgOpt.IncludeXmlComments(xmlPath);
-        });
 
         return services;
     }

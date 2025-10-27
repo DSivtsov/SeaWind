@@ -1,48 +1,57 @@
 ﻿using Api.Exceptions;
-using Api.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using System.Net;
-using System.Text.Json;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 
-namespace Backend.Filters;
+namespace Api.Filters;
 
 public class CustomExceptionFilter : IExceptionFilter
 {
+    private readonly ProblemDetailsFactory _problemDetailsFactory;
+    private readonly IHostEnvironment _env;
+
+    public CustomExceptionFilter(ProblemDetailsFactory pdf, IHostEnvironment env)
+    {
+        _problemDetailsFactory = pdf;
+        _env = env;
+    }
+
+    // Централизованное формирование ProblemDetails (RFC 7807)
+    // для необработанных исключений в контроллерах.
     public void OnException(ExceptionContext context)
     {
-        int statusCode;
+        var ex = context.Exception;
 
-        switch(context.Exception)
-        {
-            case BadRequestException:
-                statusCode = (int)HttpStatusCode.BadRequest; break;
+        var status = ExceptionToStatusCodeMap.StatusCodeValues.TryGetValue(ex.GetType(), out int s)
+            ? s : StatusCodes.Status500InternalServerError;
 
-            case UnauthorizedException:
-                statusCode = (int)HttpStatusCode.Unauthorized; break;
+        var problem = _problemDetailsFactory.CreateProblemDetails(
+            context.HttpContext,
+            statusCode: status,
+            title: ex.GetType().Name,
+            detail: GetSafeMessage(ex, status),
+            instance: context.HttpContext.Request.Path
+        );
 
-            case NotFoundException:
-                statusCode = (int)HttpStatusCode.NotFound; break;
-
-            case ConflictException:
-                statusCode = (int)HttpStatusCode.Conflict; break;
-
-            default:
-                statusCode = (int)HttpStatusCode.InternalServerError; break;
-        }
-
-        // Сериализуем ответ в JSON
-        var json = JsonSerializer.Serialize(new ResponseDtoBase { ErrorMessage = context.Exception.Message });
-
-        // Вернём ошибку в формате JSON
-        context.Result = new ContentResult 
-        { 
-            Content = json,
-            ContentType = "application/json",
-            StatusCode = statusCode
-        };
+        context.Result = new ObjectResult(problem) { StatusCode = status };
 
         // Пометим, что ошибка обработана
         context.ExceptionHandled = true;
+    }
+
+    private string? GetSafeMessage(Exception ex, int status)
+    {
+        if (status == StatusCodes.Status500InternalServerError)
+        {
+            // В DEV показываем полное сообщение (и stacktrace)
+            if (_env.IsDevelopment())
+                return $"{ex.Message}\n{ex.StackTrace}";
+
+            // В PRD — короткое, безопасное
+            return "An unexpected error occurred.";
+        }
+
+        // Для ожидаемых исключений — просто ex.Message
+        return ex.Message;
     }
 }
