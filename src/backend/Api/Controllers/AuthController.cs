@@ -55,7 +55,7 @@ public sealed class AuthController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseDtoBase), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ResponseDtoBase), StatusCodes.Status409Conflict)]
-    public async Task<IResult> Register(UserManager<AppUser> userManager, string email, string password)
+    public async Task<ActionResult> Register(UserManager<AppUser> userManager, string email, string password)
     {
         var user = new AppUser { UserName = email, Email = email };
         var res = await userManager.CreateAsync(user, password);
@@ -84,13 +84,8 @@ public sealed class AuthController : ControllerBase
             throw new BadRequestException("Ошибка регистрации.");
         }
 
-        return Results.Ok();
+        return Ok();
     }
-
-    public record IdentityErrorDto(string Code, string Description);
-
-    public record IdentityErrorResponse(List<IdentityErrorDto> Errors);
-
 
     /// <summary>
     /// Авторизация пользователя по email и паролю.
@@ -108,10 +103,13 @@ public sealed class AuthController : ControllerBase
     [HttpPost("login")]
     [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ResponseDtoBase), StatusCodes.Status401Unauthorized)]
-    public async Task<IResult> LoginWithAccount(UserManager<AppUser> userManager, IConfiguration cfg,
+    public async Task<ActionResult<string>> LoginWithAccount(UserManager<AppUser> userManager, IConfiguration cfg,
         string email, string password)
     {
-        var user = await userManager.FindByEmailAsync(email?.Trim());
+        if (string.IsNullOrWhiteSpace(email))
+            throw new UnauthorizedException("Неверный email или пароль.");
+
+        var user = await userManager.FindByEmailAsync(email.Trim());
 
         // Защита от user‑enumeration и тайминговых атак:
         // проверяем фейковый хэш, если пользователя нет
@@ -142,7 +140,7 @@ public sealed class AuthController : ControllerBase
             throw new UnauthorizedException("Требуется подтверждение email.");
 
         var token = _svc.Create(user);
-        return Results.Ok(new { access_token = token });
+        return Ok(new { access_token = token });
     }
 
     /// <summary>
