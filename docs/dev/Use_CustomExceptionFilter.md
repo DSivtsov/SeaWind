@@ -1,54 +1,71 @@
 # Использование CustomExceptionFilter
 
-**Date:** 2025-10-17  
-**Status:** ℹ️ Reference
+**Date:** 2025-10-28  
+**Status:** ✅ Актуализировано по [ADR-0016-unified-exception-handling.md](../adr/ADR-0016-unified-exception-handling.md)
 
-Как правильно разрабатывать и описывать методы контролеров (слой Api)  с учетом использования  `CustomExceptionFilter`
+Как правильно разрабатывать и описывать методы контроллеров (слой API) с учётом использования `CustomExceptionFilter` и единого формата ошибок **ProblemDetails (RFC 7807)**.
+
+---
 
 ## Коротко
-кидаем исключения → их перехватывает `CustomExceptionFilter` → он формирует единый JSON (`ResponseDtoBase`) и статус (в т.ч. 409) → Swagger документируем через `[ProducesResponseType]` (или глобальный фильтр).
+Бросаем исключения → их перехватывает `CustomExceptionFilter` → фильтр формирует единый JSON в формате **ProblemDetails** и соответствующий HTTP-статус → Swagger документируется через `[ProducesResponseType]` (или глобальный фильтр).
 
-## Подробно
+---
 
-### 1. Выдача ошибок из метода (НЕ возвращаем `BadRequest/Conflict` вручную)
-------------------------------------------------------------------------
+## 1. Выдача ошибок из метода (НЕ возвращаем `BadRequest/Conflict` вручную)
 
-*   Валидационные/прочие ошибки → бросаем свои исключения:
-    *   `throw new BadRequestException("...");`
-    *   `throw new ConflictException("...");` // для дубликатов (409)
-    *   `throw new NotFoundException("...");` и т.д.
-*   Логику статусов держим в фильтре (`switch` по типам исключений):
-    *   `BadRequestException` → 400
-    *   `ConflictException` → 409
-    *   `NotFoundException` → 404
-    *   default → 500
-*   Фильтр сериализует **единый контракт**:
-    ```csharp
-    new ResponseDtoBase { ErrorMessage = context.Exception.Message }
-    ```
+* Валидационные и бизнес-ошибки оформляем через собственные исключения:
+  * `throw new BadRequestException("Некорректные данные");`
+  * `throw new ConflictException("Такой объект уже существует");`
+  * `throw new NotFoundException("Элемент не найден");` и т.д.
 
-    **Примечание**.
-    - Если не хватает уже созданных создаем дополнительные по аналогии в `src\backend\Api\Exceptions\` и подключаем к  `CustomExceptionFilter` (метод `OnException`)
-    - Пример использования см. внутри методов `AuthController` и `TestersController`
+* Фильтр сам преобразует исключения в `ProblemDetails`, используя коды из `ExceptionToStatusCodeMap.cs`:
+  * `BadRequestException` → 400
+  * `ConflictException` → 409
+  * `NotFoundException` → 404
+  * прочие → 500
 
+* Пример формирования ответа фильтром:
 
-### 2. Описание ответов для Swagger (документация)
-----------------------------------------------
+```csharp
+var problem = _problemDetailsFactory.CreateProblemDetails(
+    context.HttpContext,
+    statusCode: StatusCodes.Status400BadRequest,
+    title: "Bad Request",
+    detail: ex.Message,
+    instance: context.HttpContext.Request.Path);
+```
 
-Swagger не «видит» код фильтра, поэтому ему нужно явно сказать, какие ответы возможны и какой у них **schema**.
+---
 
-### Вариант A — атрибуты на методе (просто)
+## 2. Документирование ответов для Swagger
+
+Swagger не анализирует код фильтра, поэтому нужно явно указать возможные коды ответов и их тип:
+
+### Вариант A — аннотации на методе
 
 ```csharp
 [ProducesResponseType(StatusCodes.Status200OK)]
-[ProducesResponseType(typeof(ResponseDtoBase), StatusCodes.Status400BadRequest)]
-[ProducesResponseType(typeof(ResponseDtoBase), StatusCodes.Status409Conflict)]
+[ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+[ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+[ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status409Conflict)]
+[ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
 ```
 
-> Даже если метод возвращает `IResult`, для ошибок указываем `ResponseDtoBase`, потому что **его** отдаёт фильтр.
+> Даже если метод возвращает `IResult` или `ActionResult`, для ошибок указываем `ProblemDetails`, потому что именно его возвращает фильтр.
 
+---
 
-### Что это дает
-*   Разделяем ответственность: **контроллер** бросает исключение, **фильтр** решает статус/тело ответа.
-*   Единый формат ошибок (`ResponseDtoBase`) упрощает фронт и тесты.
-*   Swagger требует явной схемы для ошибок, потому что он не анализирует код фильтра.
+## 3. Что это даёт
+
+- Контроллер **только бросает исключение**, без ручного формирования ответов.  
+- `CustomExceptionFilter` **сам определяет статус и тело ответа** в формате RFC 7807.  
+- Swagger показывает корректные схемы ошибок (`ProblemDetails`, `ValidationProblemDetails`).  
+- Тесты и фронтенд получают **предсказуемую структуру JSON** независимо от источника ошибки.  
+
+---
+
+📘 **См. также:**  
+- [ADR-0016-unified-exception-handling.md](../adr/0016-unified-exception-handling.md) — описание архитектурного решения.  
+- [ExceptionHandling.md](https://github.com/DSivtsov/SeaWind/wiki/Exception_handling) — общее руководство и структура конвейера обработки ошибок.
+
