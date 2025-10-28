@@ -1,6 +1,6 @@
 ﻿using Api.Controllers;
 using Application.Abstractions.Services;
-using Application.Dto.Course;
+using Application.DtoCourse;
 using AutoFixture;
 using AutoFixture.AutoMoq;
 using Microsoft.AspNetCore.Mvc;

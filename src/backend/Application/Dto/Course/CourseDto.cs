@@ -1,4 +1,4 @@
-﻿namespace Application.Dto.Course;
+﻿namespace Application.DtoCourse;
 
 /// <summary>
 /// CourseDto транспортный объект (data transfer)

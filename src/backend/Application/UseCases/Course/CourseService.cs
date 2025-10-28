@@ -1,18 +1,21 @@
-﻿using Application.Abstractions.Services;
-using Application.Dto.Course;
+﻿using Application.Abstractions.Repositories;
+using Application.Abstractions.Services;
+using Application.DtoCourse;
+using Application.Models;
 
-namespace Application.UseCases.Course;
+namespace Application.UseCasesCourse;
 
 public class CourseService : ICourseService
 {
-    public Task<IEnumerable<CourseDto>> GetAllAsync()
+    private readonly ICourseRepository _courseRepository;
+    public CourseService(ICourseRepository courseRepository)
     {
-        IEnumerable<CourseDto> demo = new[]
-        {
-            new CourseDto(Guid.NewGuid(), "C# Basics", "CS101", "Intro to C#"),
-            new CourseDto(Guid.NewGuid(), "Unity Intro", "UN201", "GameDev basics")
-        };
+        _courseRepository = courseRepository;
+    }
+    public async Task<IEnumerable<CourseDto>> GetAllAsync()
+    {
+        IEnumerable<Course> courses = await _courseRepository.GetAllAsync();
 
-        return Task.FromResult(demo);
+        return courses.Select(c => new CourseDto(c.Id, c.Title, c.Code, c.Description));
     }
 }

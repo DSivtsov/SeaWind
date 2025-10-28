@@ -1,6 +1,5 @@
-﻿using Api.Models;
-using Application.Abstractions.Services;
-using Application.Dto.Course;
+﻿using Application.Abstractions.Services;
+using Application.DtoCourse;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers;

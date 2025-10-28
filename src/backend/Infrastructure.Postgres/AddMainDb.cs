@@ -1,4 +1,6 @@
-﻿using Infrastructure.Postgres.Main;
+﻿using Application.Abstractions.Repositories;
+using Infrastructure.Postgres.Main;
+using Infrastructure.Postgres.Main.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -21,7 +23,7 @@ internal static class AddMainDb
             );
 
         // Репозитории MainDbContext
-        //services.AddScoped<ICourseRepository, CourseRepositoryPostgres>();
+        services.AddScoped<ICourseRepository, CourseRepositoryPostgres>();
 
         return services;
     }
