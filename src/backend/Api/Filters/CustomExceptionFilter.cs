@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
+using Microsoft.AspNetCore.WebUtilities;
 
 namespace Api.Filters;
 
@@ -28,10 +29,15 @@ public class CustomExceptionFilter : IExceptionFilter
         var problem = _problemDetailsFactory.CreateProblemDetails(
             context.HttpContext,
             statusCode: status,
-            title: ex.GetType().Name,
+            title: ReasonPhrases.GetReasonPhrase(status),
             detail: GetSafeMessage(ex, status),
             instance: context.HttpContext.Request.Path
         );
+
+        if (status == StatusCodes.Status500InternalServerError && _env.IsDevelopment())
+        {
+            ShowStack(ex, problem);
+        }
 
         context.Result = new ObjectResult(problem) { StatusCode = status };
 
@@ -41,17 +47,34 @@ public class CustomExceptionFilter : IExceptionFilter
 
     private string? GetSafeMessage(Exception ex, int status)
     {
-        if (status == StatusCodes.Status500InternalServerError)
+        // Клиентские ошибки (4xx) можно показывать пользователю
+        if (status >= 400 && status < 500)
+            return ex.Message;
+
+        // Серверные ошибки — показываем безопасно
+        if (_env.IsDevelopment())
+            return $"{ex.GetType().Name}: {ex.Message}";
+
+        return status switch
         {
-            // В DEV показываем полное сообщение (и stacktrace)
-            if (_env.IsDevelopment())
-                return $"{ex.Message}\n{ex.StackTrace}";
+            StatusCodes.Status500InternalServerError => "Internal server error.",
+            StatusCodes.Status502BadGateway => "Bad gateway.",
+            StatusCodes.Status503ServiceUnavailable => "Service temporarily unavailable.",
+            StatusCodes.Status504GatewayTimeout => "Gateway timeout.",
+            _ => "Unexpected server error."
+        };
+    }
 
-            // В PRD — короткое, безопасное
-            return "An unexpected error occurred.";
-        }
+    private void ShowStack(Exception ex, ProblemDetails problem)
+    {
+        var lines = (ex.StackTrace ?? "")
+            .Replace("\r\n", "\n")
+            .Split('\n', StringSplitOptions.RemoveEmptyEntries);
 
-        // Для ожидаемых исключений — просто ex.Message
-        return ex.Message;
+        problem.Extensions["debug"] = new
+        {
+            exception = ex.GetType().Name,
+            stack = lines
+        };
     }
 }

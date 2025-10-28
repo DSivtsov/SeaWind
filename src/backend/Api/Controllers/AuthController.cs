@@ -156,4 +156,10 @@ public sealed class AuthController : ControllerBase
 
         return Ok(new UserClaimDto(name ?? "Empty", id ?? "Error"));
     }
+
+    [HttpGet("test500")]
+    public IActionResult Test500()
+    {
+        throw new Exception("Просто тест 500.");
+    }
 }

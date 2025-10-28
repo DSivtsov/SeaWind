@@ -1,5 +1,4 @@
-﻿using Api.Models;
-using Application.Abstractions.Services;
+﻿using Application.Abstractions.Services;
 using Application.DtoCourse;
 using Microsoft.AspNetCore.Mvc;
 
