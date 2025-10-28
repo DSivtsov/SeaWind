@@ -1,8 +1,9 @@
 ﻿using Application.Abstractions.Repositories;
 using Application.Abstractions.Services;
-using Application.Dto.Course;
+using Application.DtoCourse;
+using Application.Models;
 
-namespace Application.UseCases.Course;
+namespace Application.UseCasesCourse;
 
 public class CourseService : ICourseService
 {
@@ -13,7 +14,7 @@ public class CourseService : ICourseService
     }
     public async Task<IEnumerable<CourseDto>> GetAllAsync()
     {
-        IEnumerable<Models.Course> courses = await _courseRepository.GetAllAsync();
+        IEnumerable<Course> courses = await _courseRepository.GetAllAsync();
 
         return courses.Select(c => new CourseDto(c.Id, c.Title, c.Code, c.Description));
     }

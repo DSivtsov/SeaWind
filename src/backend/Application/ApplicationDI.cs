@@ -1,5 +1,5 @@
 using Application.Abstractions.Services;
-using Application.UseCases.Course;
+using Application.UseCasesCourse;
 using Application.UseCasesTester;
 using Microsoft.Extensions.DependencyInjection;
 

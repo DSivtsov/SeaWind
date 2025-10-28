@@ -1,4 +1,4 @@
-﻿using Application.Dto.Course;
+﻿using Application.DtoCourse;
 
 namespace Application.Abstractions.Services;
 
