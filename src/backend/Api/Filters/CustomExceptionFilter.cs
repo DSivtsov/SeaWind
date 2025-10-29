@@ -1,48 +1,80 @@
 ﻿using Api.Exceptions;
-using Api.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using System.Net;
-using System.Text.Json;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
+using Microsoft.AspNetCore.WebUtilities;
 
-namespace Backend.Filters;
+namespace Api.Filters;
 
 public class CustomExceptionFilter : IExceptionFilter
 {
+    private readonly ProblemDetailsFactory _problemDetailsFactory;
+    private readonly IHostEnvironment _env;
+
+    public CustomExceptionFilter(ProblemDetailsFactory pdf, IHostEnvironment env)
+    {
+        _problemDetailsFactory = pdf;
+        _env = env;
+    }
+
+    // Централизованное формирование ProblemDetails (RFC 7807)
+    // для необработанных исключений в контроллерах.
     public void OnException(ExceptionContext context)
     {
-        int statusCode;
+        var ex = context.Exception;
 
-        switch(context.Exception)
+        var status = ExceptionToStatusCodeMap.StatusCodeValues.TryGetValue(ex.GetType(), out int s)
+            ? s : StatusCodes.Status500InternalServerError;
+
+        var problem = _problemDetailsFactory.CreateProblemDetails(
+            context.HttpContext,
+            statusCode: status,
+            title: ReasonPhrases.GetReasonPhrase(status),
+            detail: GetSafeMessage(ex, status),
+            instance: context.HttpContext.Request.Path
+        );
+
+        if (status == StatusCodes.Status500InternalServerError && _env.IsDevelopment())
         {
-            case BadRequestException:
-                statusCode = (int)HttpStatusCode.BadRequest; break;
-
-            case UnauthorizedException:
-                statusCode = (int)HttpStatusCode.Unauthorized; break;
-
-            case NotFoundException:
-                statusCode = (int)HttpStatusCode.NotFound; break;
-
-            case ConflictException:
-                statusCode = (int)HttpStatusCode.Conflict; break;
-
-            default:
-                statusCode = (int)HttpStatusCode.InternalServerError; break;
+            ShowStack(ex, problem);
         }
 
-        // Сериализуем ответ в JSON
-        var json = JsonSerializer.Serialize(new ResponseDtoBase { ErrorMessage = context.Exception.Message });
-
-        // Вернём ошибку в формате JSON
-        context.Result = new ContentResult 
-        { 
-            Content = json,
-            ContentType = "application/json",
-            StatusCode = statusCode
-        };
+        context.Result = new ObjectResult(problem) { StatusCode = status };
 
         // Пометим, что ошибка обработана
         context.ExceptionHandled = true;
+    }
+
+    private string? GetSafeMessage(Exception ex, int status)
+    {
+        // Клиентские ошибки (4xx) можно показывать пользователю
+        if (status >= 400 && status < 500)
+            return ex.Message;
+
+        // Серверные ошибки — показываем безопасно
+        if (_env.IsDevelopment())
+            return $"{ex.GetType().Name}: {ex.Message}";
+
+        return status switch
+        {
+            StatusCodes.Status500InternalServerError => "Internal server error.",
+            StatusCodes.Status502BadGateway => "Bad gateway.",
+            StatusCodes.Status503ServiceUnavailable => "Service temporarily unavailable.",
+            StatusCodes.Status504GatewayTimeout => "Gateway timeout.",
+            _ => "Unexpected server error."
+        };
+    }
+
+    private void ShowStack(Exception ex, ProblemDetails problem)
+    {
+        var lines = (ex.StackTrace ?? "")
+            .Replace("\r\n", "\n")
+            .Split('\n', StringSplitOptions.RemoveEmptyEntries);
+
+        problem.Extensions["debug"] = new
+        {
+            exception = ex.GetType().Name,
+            stack = lines
+        };
     }
 }

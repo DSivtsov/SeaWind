@@ -1,3 +1,4 @@
+using Api.Filters;
 using Api.Identity;
 using Application;
 using Infrastructure.Postgres;
@@ -28,6 +29,9 @@ public class Program
 
         // При запуске в контейнере необходимо указать явное место хранения ключей Data Protection.
         builder.AddStorageForContainers();
+
+        // Настройка централизованного формата для всех ошибок
+        builder.Services.AddCustomException();
 
         var app = builder.Build();
 

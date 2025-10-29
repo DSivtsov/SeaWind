@@ -1,6 +1,5 @@
 ﻿using Api.Exceptions;
 using Api.Identity;
-using Api.Models;
 using Infrastructure.Postgres.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -29,32 +28,20 @@ public sealed class AuthController : ControllerBase
     /// <param name="email">Email, который будет использоваться как логин.</param>
     /// <param name="password">Пароль пользователя.</param>
     /// <returns>
-    /// Возвращает <see cref="IResult"/> с кодом 200 при успешной регистрации
+    /// Возвращает <see cref="ActionResult"/> с кодом 200 при успешной регистрации
     /// или ошибку 400/409 при некорректных данных.
     /// </returns>
     /// <response code="200">Регистрация прошла успешно.</response>
     /// <response code="400">
     /// Ошибка регистрации — например, пароль не соответствует требованиям.
-    /// Возвращается объект <see cref="ResponseDtoBase"/> с деталями ошибки.
     /// </response>
     /// <response code="409">
     /// Конфликт: пользователь с таким email или именем уже существует.
-    /// Возвращается объект <see cref="ResponseDtoBase"/> с сообщением о конфликте.
     /// </response>
-    /// <remarks>
-    /// Ошибки Identity возвращаются в формате <see cref="IdentityErrorResponse"/>,
-    /// где каждая ошибка содержит <c>Code</c> и <c>Description</c>.  
-    /// Примеры возможных кодов ошибок:
-    /// <list type="bullet">
-    /// <item><description><c>DuplicateEmail</c> — указанный email уже зарегистрирован.</description></item>
-    /// <item><description><c>DuplicateUserName</c> — имя пользователя уже занято.</description></item>
-    /// <item><description><c>PasswordTooShort</c> — пароль слишком короткий.</description></item>
-    /// </list>
-    /// </remarks>
     [HttpPost("register")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ResponseDtoBase), StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(typeof(ResponseDtoBase), StatusCodes.Status409Conflict)]
+    [ProducesResponseType(typeof(ActionResult),StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status409Conflict)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
     public async Task<ActionResult> Register(UserManager<AppUser> userManager, string email, string password)
     {
         var user = new AppUser { UserName = email, Email = email };
@@ -95,14 +82,16 @@ public sealed class AuthController : ControllerBase
     /// <param name="email">Email пользователя.</param>
     /// <param name="password">Пароль пользователя.</param>
     /// <returns>
-    /// Возвращает <see cref="IResult"/> с токеном доступа при успешной авторизации
+    /// Возвращает <see cref="string"/> с токеном доступа при успешной авторизации
     /// или ошибку 401, если email или пароль неверны.
     /// </returns>
     /// <response code="200">Возвращает JWT-токен доступа.</response>
     /// <response code="401">Неверный email или пароль.</response>
+    /// <response code="400">Не указан email или пароль.</response>
     [HttpPost("login")]
-    [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ResponseDtoBase), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(ActionResult<string>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<string>> LoginWithAccount(UserManager<AppUser> userManager, IConfiguration cfg,
         string email, string password)
     {
@@ -156,8 +145,9 @@ public sealed class AuthController : ControllerBase
     /// <response code="401">Пользователь не авторизован.</response>
     [Route("/api/me")]
     [HttpGet]
-    [ProducesResponseType(typeof(UserClaimDto), StatusCodes.Status200OK)]
     [Authorize]
+    [ProducesResponseType(typeof(UserClaimDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
     public ActionResult<UserClaimDto> Get()
     {
         var id = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
@@ -167,5 +157,9 @@ public sealed class AuthController : ControllerBase
         return Ok(new UserClaimDto(name ?? "Empty", id ?? "Error"));
     }
 
-    public record UserClaimDto(string name, string id);
+    [HttpGet("test500")]
+    public IActionResult Test500()
+    {
+        throw new Exception("Просто тест 500.");
+    }
 }

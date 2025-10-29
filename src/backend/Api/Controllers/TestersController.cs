@@ -1,5 +1,4 @@
 ﻿using Api.Exceptions;
-using Api.Models;
 using Application.Abstractions.Services;
 using Application.DtoTester;
 using Microsoft.AspNetCore.Mvc;
@@ -17,7 +16,7 @@ public sealed class TestersController : ControllerBase
     /// <summary>List users</summary>
     [HttpGet]
     [ProducesResponseType(typeof(IEnumerable<TesterDto>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ResponseDtoBase), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
     public ActionResult<IEnumerable<TesterDto>> GetAll([FromQuery] int? minAge)
     {
         if (minAge is < 0)
@@ -30,7 +29,7 @@ public sealed class TestersController : ControllerBase
     /// <summary>Get user by id</summary>
     [HttpGet("{id:guid}")]
     [ProducesResponseType(typeof(TesterDto), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ResponseDtoBase), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
     public ActionResult<TesterDto> GetById([FromRoute] Guid id)
     {
         var user = _svc.Get(id);
@@ -40,8 +39,8 @@ public sealed class TestersController : ControllerBase
     /// <summary>Create user</summary>
     [HttpPost]
     [ProducesResponseType(typeof(TesterDto), StatusCodes.Status201Created)]
-    [ProducesResponseType(typeof(ResponseDtoBase), StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(typeof(ResponseDtoBase), StatusCodes.Status409Conflict)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status409Conflict)]
     public ActionResult<TesterDto> Create([FromBody] CreateTesterRequest body)
     {
         if (string.IsNullOrWhiteSpace(body.Name))
@@ -65,8 +64,8 @@ public sealed class TestersController : ControllerBase
     /// <summary>Update user</summary>
     [HttpPut("{id:guid}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(typeof(ResponseDtoBase), StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(typeof(ResponseDtoBase), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
     public IActionResult Update([FromRoute] Guid id, [FromBody] UpdateTesterRequest body)
     {
         if (string.IsNullOrWhiteSpace(body.Name))
@@ -82,7 +81,7 @@ public sealed class TestersController : ControllerBase
     /// <summary>Delete user</summary>
     [HttpDelete("{id:guid}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(typeof(ResponseDtoBase), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
     public IActionResult Delete([FromRoute] Guid id)
     {
         var ok = _svc.Delete(id);
@@ -92,7 +91,7 @@ public sealed class TestersController : ControllerBase
     /// <summary>Export user as CSV</summary>
     [HttpGet("{id:guid}/export")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(FileResult))]
-    [ProducesResponseType(typeof(ResponseDtoBase), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
     [Produces("text/csv")]
     public ActionResult<FileResult> ExportCsv([FromRoute] Guid id)
     {

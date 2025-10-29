@@ -1,4 +1,4 @@
-﻿using Backend.Filters;
+﻿using Api.Filters;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.Options;
 using System.Text.Json.Serialization;
@@ -10,9 +10,6 @@ public static class PresentationDI
     public static IServiceCollection AddPresentation(this IServiceCollection services, IConfiguration cfg,
         IWebHostEnvironment env)
     {
-        // AddSwaggerGen() делается через AddSwaggerGen(this IServiceCollection services)
-        // services.AddSwaggerGen();
-
         // Регистрация контроллеров
         // - подключение фильтров
         // - настройка поведения сериализации JSON-ответов
@@ -29,7 +26,8 @@ public static class PresentationDI
                 opt.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
 
 
-            });
+            })
+            .AddTraceIdToProblemDetails();
 
         // CORS только для DEV (Vite dev-server на 5173 только по http)
         if (env.IsDevelopment())
@@ -46,13 +44,6 @@ public static class PresentationDI
         {
             options.Limits.MaxRequestBodySize = 35 * 1024 * 1024;
         });
-
-        // Т.к. мы не используем (Views, Razor Pages, форматтеры и пр.), что не нужно в чистом API.
-        // подключение фильтров перенесено в AddControllers
-        //services.AddMvc(options =>
-        //{
-        //    options.Filters.Add<CustomExceptionFilter>();
-        //});
 
         services.AddHealthChecks();
 

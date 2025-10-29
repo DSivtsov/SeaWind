@@ -1,6 +1,6 @@
 # Architecture Overview — WorkshopCode (Current)
-**Version:** v7
-**Date:** 2025-10-22
+**Version:** v8
+**Date:** 2025-10-27
 
 ## 🧾 About
  Описывает решения принятые в процесс разработки проекта.
@@ -167,16 +167,17 @@ SeaWind.sln
   (расширенные возможности для документирования функциональности контроллеров с использованием XML-документов для Swagger/OpenAPI) 
 
 ### Централизованная обработка исключений (Exception Handling Middleware)
-Интерфейс **IExceptionFilter** в ASP.NET Core используется для обработки исключений, возникающих во время выполнения запроса на уровне MVC (контроллеров и действий).
-**Краткий принцип работы:**
-Когда в ходе выполнения контроллера или действия выбрасывается исключение, ASP.NET Core вызывает фильтры, реализующие IExceptionFilter или IAsyncExceptionFilter.
-Метод OnException(ExceptionContext context) получает объект ExceptionContext, содержащий:
-* Само исключение (context.Exception),
-* Контекст HTTP-запроса (context.HttpContext),
-* Возможность задать результат (context.Result), если вы хотите перехватить и обработать исключение.
-* Если в фильтре установить context.ExceptionHandled = true, то исключение считается обработанным, и дальше по конвейеру оно уже не пойдёт (глобальный обработчик ошибок не вызовется).
+Интерфейс **`IExceptionFilter`** в ASP.NET Core используется для обработки исключений, возникающих во время выполнения запроса на уровне MVC — в контроллерах и действиях.
 
-  📘 **Подробнее см.** руководство по использованию  `CustomExceptionFilter` —  [Use_CustomExceptionFilter](./dev/Use_CustomExceptionFilter.md)
+* Когда при выполнении контроллера или действия возникает исключение, ASP.NET Core вызывает фильтры, реализующие `IExceptionFilter` или `IAsyncExceptionFilter`.
+* Метод `OnException(ExceptionContext context)` получает объект `ExceptionContext`, содержащий информацию об исключении (`context.Exception`) и контекст HTTP-запроса (`context.HttpContext`).
+* Если в фильтре установить `context.ExceptionHandled = true`, исключение считается обработанным и больше не передаётся дальше по конвейеру (глобальный обработчик ошибок не вызывается).
+* В фильтре формируется `context.Result` — ответ в едином формате ошибок на базе стандарта **ProblemDetails (RFC 7807)**.
+
+  📘 **Подробнее см.:**
+  * руководство по использованию `CustomExceptionFilter` — [Use_CustomExceptionFilter](./dev/Use_CustomExceptionFilter.md);
+  * единый формат вывода ошибок **ProblemDetails (RFC 7807)** — [ADR-0016-unified-exception-handling.md](./adr/0016-unified-exception-handling.md).
+
 
 ### Data Protection
  **Зачем использует Data Protection keys**
@@ -292,6 +293,7 @@ frontend/
 - Порядок в Program.cs (сначала Controllers, затем Fallback) гарантирует разделение `/api/*` и роутов SPA.
 
 ## Change Log
+- v8 (2025-10-27) — актуализирован  раздел `Централизованная обработка исключений`(DS)
 - v7 (2025-10-22) — добавлен раздел `MainDbContext (основная база данных)` и  `Аутентификация (ASP.NET Identity + JWT)`, и адаптирован описание фронтенда под TypeScript (в связи замена JSX → TSX — исправлены ссылки и расширения файлов) (DS)
 - v6 (2025-10-17) — добавлена ссылок  (DS):
   - на ADR-0012 (Centralized Build Config)
