@@ -1,5 +1,6 @@
 using Api.Filters;
 using Api.Identity;
+using Api.Trace;
 using Application;
 using Infrastructure.Postgres;
 
@@ -33,7 +34,13 @@ public class Program
         // Настройка централизованного формата для всех ошибок
         builder.Services.AddCustomException();
 
+        // Добавить сервис "X-Correlation-Id"
+        builder.Services.AddTransient<CorrelationIdMiddleware>();
+
         var app = builder.Build();
+
+        // Использовать сервис "X-Correlation-Id" в pipeline HTTP request
+        app.UseMiddleware<CorrelationIdMiddleware>();
 
         app.UsePresentation();
 
