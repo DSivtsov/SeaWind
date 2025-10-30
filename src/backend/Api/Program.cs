@@ -8,7 +8,7 @@ namespace Api;
 
 public class Program
 {
-    public static void Main(string[] args)
+    public static async Task Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
 
@@ -37,7 +37,20 @@ public class Program
         // Добавить сервис "X-Correlation-Id"
         builder.Services.AddTransient<CorrelationIdMiddleware>();
 
+        // Подключения Seeder сервисов 
+        builder.Services.DbSeedersDI(cfg);
+
         var app = builder.Build();
+
+        // Запуск Seeder для закрузку демо-данных для окружения DEV
+        if (app.Environment.IsDevelopment())
+        {
+            // await using — синтаксис для асинхронного освобождения (IAsyncDisposable).
+            await using var scope = app.Services.CreateAsyncScope();
+            var seeder = scope.ServiceProvider.GetRequiredService<IRunDbSeeders>();
+
+            await seeder.Run(app.Lifetime.ApplicationStopping);
+        }
 
         // Использовать сервис "X-Correlation-Id" в pipeline HTTP request
         app.UseMiddleware<CorrelationIdMiddleware>();

@@ -1,0 +1,48 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<RootNamespace>Infrastructure.UnitTests</RootNamespace>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<IsPackable>false</IsPackable>
+		<IsTestProject>true</IsTestProject>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="AutoFixture.AutoMoq" />
+		<PackageReference Include="FluentAssertions" />
+		<PackageReference Include="FluentAssertions.Json" />
+		<PackageReference Include="Microsoft.Extensions.Diagnostics.Testing" />
+		<PackageReference Include="Microsoft.NET.Test.Sdk" />
+		<PackageReference Include="Moq" />
+		<PackageReference Include="Serilog" />
+		<PackageReference Include="Serilog.Extensions.Logging" />
+		<PackageReference Include="Serilog.Sinks.Console" />
+		<PackageReference Include="Verify.Xunit" />
+		<PackageReference Include="xunit" />
+		<PackageReference Include="xunit.extensibility.core" />
+		<PackageReference Include="xunit.extensibility.execution" />
+		<PackageReference Include="xunit.runner.visualstudio">
+			<PrivateAssets>all</PrivateAssets>
+		</PackageReference>
+		<PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" />
+	</ItemGroup>
+
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\src\backend\Api\Api.csproj" />
+		<ProjectReference Include="..\..\src\backend\Infrastructure.Postgres\Infrastructure.Postgres.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Using Include="Xunit" />
+	</ItemGroup>
+	<ItemGroup>
+		<!--Replace to CopyToOutputDirectory=PreserveNewest-->
+		<None Include="SeedingTestData\**\*" CopyToOutputDirectory="Always" />
+	</ItemGroup>
+	<Target Name="OverrideSeedAfterCopy" AfterTargets="CopyFilesToOutputDirectory">
+		<!-- убрать сиды, пришедшие из Infrastructure.Postgres -->
+		<RemoveDir Directories="$(OutDir)Main" />
+		<RemoveDir Directories="$(OutDir)Time" />
+	</Target>
+</Project>

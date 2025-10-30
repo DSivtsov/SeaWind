@@ -1,0 +1,32 @@
+[
+  {
+    "Id": "!cars.1",
+    "Model": "Toyota Corolla",
+    "Owner": "!tester.4",
+    "RegNumber": "Н 205 РУ 31"
+  },
+  {
+    "Id": "!cars.2",
+    "Model": "BMW 525",
+    "Owner": "!tester.3",
+    "RegNumber": "К 790 КУ 57"
+  },
+  {
+    "Id": "!cars.3",
+    "Model": "Pegeout 406",
+    "Owner": "!tester.4",
+    "RegNumber": "Н 357 ТУ 702"
+  },
+  {
+    "Id": "!cars.4",
+    "Model": "Hyundai Tucson",
+    "Owner": "!tester.2",
+    "RegNumber": "Н 013 КВ 57"
+  },
+  {
+    "Id": "!cars.4",
+    "Model": "Hyundai Tucson",
+    "Owner": "!tester.99",
+    "RegNumber": "Н 013 КВ 57"
+  }
+]

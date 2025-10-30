@@ -1,6 +1,6 @@
 # Architecture Overview — WorkshopCode (Current)
-**Version:** v8
-**Date:** 2025-10-27
+**Version:** v9
+**Date:** 2025-10-30
 
 ## 🧾 About
  Описывает решения принятые в процесс разработки проекта.
@@ -178,6 +178,8 @@ SeaWind.sln
   📘 **Подробнее см.:**
   * руководство по использованию `CustomExceptionFilter` — [Use_CustomExceptionFilter](./dev/Use_CustomExceptionFilter.md);
   * единый формат вывода ошибок **ProblemDetails (RFC 7807)** — [ADR-0016-unified-exception-handling.md](./adr/0016-unified-exception-handling.md).
+  
+  📘 **Подробнее см.** руководство по использованию  `CustomExceptionFilter` —  [Use_CustomExceptionFilter](./dev/Use_CustomExceptionFilter.md)
 
 ### Трассировки запросов через заголовок X-Correlation-Id  
 Реализована поддержка сквозной трассировки запросов через заголовок **`X-Correlation-Id`**.  
@@ -189,7 +191,6 @@ SeaWind.sln
 
   📘 Подробное описание и детали реализации см. в  
   [ADR-0017 — Поддержка X-Correlation-Id (сквозная трассировка запросов)](./adr/0017-add-x-correlation-id-support.md)
-
 
 ### Data Protection
  **Зачем использует Data Protection keys**
@@ -305,6 +306,7 @@ frontend/
 - Порядок в Program.cs (сначала Controllers, затем Fallback) гарантирует разделение `/api/*` и роутов SPA.
 
 ## Change Log
+- v9 (2025-10-30) — актуализирован  раздел `Трассировки запросов через заголовок X-Correlation-Id`(DS)
 - v8 (2025-10-27) — актуализирован  раздел `Централизованная обработка исключений`(DS)
 - v7 (2025-10-22) — добавлен раздел `MainDbContext (основная база данных)` и  `Аутентификация (ASP.NET Identity + JWT)`, и адаптирован описание фронтенда под TypeScript (в связи замена JSX → TSX — исправлены ссылки и расширения файлов) (DS)
 - v6 (2025-10-17) — добавлена ссылок  (DS):

@@ -1,6 +1,6 @@
 ﻿using Api.Exceptions;
-using Application.Abstractions.Services;
-using Application.DtoTester;
+using Application.AbstractionsTime.Services;
+using Application.DtoTime.Tester;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers;
