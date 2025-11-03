@@ -1,0 +1,12 @@
+[
+  {
+    "Title": "Основы C#",
+    "Code": "c#basic",
+    "Description": "Основы программирвания на языке C#"
+  },
+  {
+    "Title": "Unity Intro",
+    "Code": "UN201",
+    "Description": "GameDev basics"
+  }
+]

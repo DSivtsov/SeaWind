@@ -16,7 +16,6 @@ internal static class AddMainDb
         services.AddDbContext<MainDbContext>(opt =>
                 opt.UseNpgsql(connectionString, npg =>
                 {
-                    npg.EnableRetryOnFailure();
                     npg.MigrationsAssembly(typeof(MainDbContext).Assembly.FullName);
                     npg.MigrationsHistoryTable("__EFMigrationsHistory", schema: MainDbContext.Schema);
                 })

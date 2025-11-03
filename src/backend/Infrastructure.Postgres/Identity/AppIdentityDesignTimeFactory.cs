@@ -18,7 +18,6 @@ namespace Infrastructure.Postgres.Identity
             var opts = new DbContextOptionsBuilder<AppIdentityDbContext>()
                     .UseNpgsql(cs, npg =>
                         {
-                            npg.EnableRetryOnFailure();
                             npg.MigrationsAssembly(typeof(AppIdentityDbContext).Assembly.FullName);
                             npg.MigrationsHistoryTable("__EFMigrationsHistory", schema: "identity");
                         })
