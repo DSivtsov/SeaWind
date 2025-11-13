@@ -25,7 +25,7 @@
       "PathBase": "Time/SeedData", // Проект by "CopyToOutputDirectory" копирует файлы с данными из проекта в рабочий каталог
       "Mode": "InsertOrUpdate",
       //OPTION TURN OFF "PathVersion": "Time/SeedData/v1", 
-      "UUID": "Real", // Simple/Real/Stable
+      "UUID": "Real", // Stable/Real
       "ExistenData": "Fresh", // Fresh/NotDel
       "AutoMigrate": false // Возможно автоматической миграции в процессе сидирования
     },
@@ -34,7 +34,7 @@
       "PathBase": "Main/SeedData", // Проект by "CopyToOutputDirectory" копирует файлы с данными из проекта в рабочий каталог
       //OPTION TURN OFF "PathVersion": "Main/SeedData/v1",
       "Mode": "InsertOnly", // InsertOnly/InsertOrUpdate
-      "UUID": "Real", // Simple/Real
+      "UUID": "Real", // Stable/Real
       "ExistenData": "NotDel", // Fresh/NotDel
       "AutoMigrate": false // Возможно автоматической миграции в процессе сидирования
     }

@@ -3,14 +3,14 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
-namespace Infrastructure.Postgres.Seeding;
+namespace Infrastructure.Postgres.Seeding.ContextDB;
 
-internal sealed class ContextCleaner<TContext> where TContext : DbContext
+internal sealed class Cleaner<TContext> where TContext : DbContext
 {
     private readonly IEnumerable<ISeeder<TContext>> _cleanersInReversOrder;
     private readonly TContext _dbContext;
 
-    public ContextCleaner(IServiceProvider sp, IEnumerable<ISeeder<TContext>> seeders)
+    public Cleaner(IServiceProvider sp, IEnumerable<ISeeder<TContext>> seeders)
     {
         _cleanersInReversOrder = seeders.OrderByDescending(s => s.Order);
         _dbContext = sp.GetRequiredService<TContext>();

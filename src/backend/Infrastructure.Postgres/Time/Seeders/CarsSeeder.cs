@@ -1,6 +1,6 @@
 ﻿using Application.DtoTime.Car;
 using Application.ModelsTime;
-using Infrastructure.Postgres.Seeding;
+using Infrastructure.Postgres.Seeding.Seeders;
 using Infrastructure.Postgres.Seeding.Shared;
 using Microsoft.EntityFrameworkCore;
 

@@ -3,6 +3,7 @@ using Api.Identity;
 using Api.Trace;
 using Application;
 using Infrastructure.Postgres;
+using Infrastructure.Postgres.Seeding;
 
 namespace Api;
 
@@ -47,9 +48,9 @@ public class Program
         {
             // await using — синтаксис для асинхронного освобождения (IAsyncDisposable).
             await using var scope = app.Services.CreateAsyncScope();
-            var seeder = scope.ServiceProvider.GetRequiredService<IRunDbSeeders>();
+            var mainRunner = scope.ServiceProvider.GetRequiredService<IMainRunnerSeeding>();
 
-            await seeder.Run(app.Lifetime.ApplicationStopping);
+            await mainRunner.Run(app.Lifetime.ApplicationStopping);
         }
 
         // Использовать сервис "X-Correlation-Id" в pipeline HTTP request

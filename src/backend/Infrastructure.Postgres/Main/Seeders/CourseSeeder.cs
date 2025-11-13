@@ -1,6 +1,6 @@
 ﻿using Application.DtoCourse;
 using Application.Models;
-using Infrastructure.Postgres.Seeding;
+using Infrastructure.Postgres.Seeding.Seeders;
 using Infrastructure.Postgres.Seeding.Shared;
 
 namespace Infrastructure.Postgres.Main.Seeders

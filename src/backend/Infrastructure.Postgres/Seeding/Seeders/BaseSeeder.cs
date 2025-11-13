@@ -1,7 +1,7 @@
 ﻿using Infrastructure.Postgres.Seeding.Shared;
 using Microsoft.EntityFrameworkCore;
 
-namespace Infrastructure.Postgres.Seeding;
+namespace Infrastructure.Postgres.Seeding.Seeders;
 
 internal abstract class BaseSeeder<TContext, TEntity, TDto> : ISeeder<TContext> where TContext : DbContext
 {

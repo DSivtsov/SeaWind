@@ -3,12 +3,12 @@ using Microsoft.Extensions.Logging;
 
 namespace Infrastructure.Postgres.Seeding.ContextDB;
 
-internal class DbMigrate<TContext> where TContext : DbContext
+internal class Migrate<TContext> where TContext : DbContext
 {
     private readonly ILogger _log;
     private readonly TContext _db;
 
-    public DbMigrate(TContext db, ILogger log)
+    public Migrate(TContext db, ILogger log)
     {
         _db = db;
         _log = log;

@@ -4,12 +4,12 @@ using Microsoft.Extensions.Logging;
 
 namespace Infrastructure.Postgres.Seeding.ContextDB;
 
-internal class DbChecker<TContext> where TContext : DbContext
+internal class Checker<TContext> where TContext : DbContext
 {
     private readonly ILogger _log;
     private readonly TContext _db;
 
-    public DbChecker(TContext db, ILogger log)
+    public Checker(TContext db, ILogger log)
     {
         _db = db;
         _log = log;

@@ -1,13 +1,19 @@
-﻿using Infrastructure.Postgres.Seeding.SeedDataFiles;
+﻿using Infrastructure.Postgres.Seeding.ContextDB;
+using Infrastructure.Postgres.Seeding.SeedDataFiles;
 using Infrastructure.Postgres.Seeding.Shared;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
-namespace Infrastructure.Postgres.Seeding.ContextDB;
+namespace Infrastructure.Postgres.Seeding;
 
-internal sealed class DbRunner<TContext> where TContext : DbContext
+internal interface IDbContextRunner
+{
+    Task<bool> RunAsync(CancellationToken ct = default);
+}
+
+internal sealed class RunnerContextDB<TContext> : IDbContextRunner where TContext : DbContext
 {
     private readonly IServiceProvider _serviceProvider;
     private readonly ILogger _logSeeder;
@@ -16,7 +22,7 @@ internal sealed class DbRunner<TContext> where TContext : DbContext
 
     private bool IsEnabledDbContextSeeding() => _cfg.GetValue(_prefix + "Enabled", false);
 
-    public DbRunner(IServiceProvider serviceProvider, IConfiguration cfg, ILoggerFactory lf)
+    public RunnerContextDB(IServiceProvider serviceProvider, IConfiguration cfg, ILoggerFactory lf)
     {
         _serviceProvider = serviceProvider;
         _cfg = cfg;
@@ -25,7 +31,7 @@ internal sealed class DbRunner<TContext> where TContext : DbContext
         _logSeeder = lf.CreateLogger($"Seeding{nameDbContext}");
     }
 
-    internal async Task<bool> RunAsync(CancellationToken ct = default)
+    public async Task<bool> RunAsync(CancellationToken ct = default)
     {
         _logSeeder.LogInformation("Start Seeding [{DbContext}]...", typeof(TContext).Name);
 
@@ -51,7 +57,7 @@ internal sealed class DbRunner<TContext> where TContext : DbContext
             return false;
         }
 
-        var dbContextChecker = ActivatorUtilities.CreateInstance<DbChecker<TContext>>(_serviceProvider, _logSeeder);
+        var dbContextChecker = ActivatorUtilities.CreateInstance<Checker<TContext>>(_serviceProvider, _logSeeder);
         bool dbContextRez;
         try
         {
@@ -61,7 +67,7 @@ internal sealed class DbRunner<TContext> where TContext : DbContext
         {
             if (optRez.AutoMigrate)
             {
-                var migrator = ActivatorUtilities.CreateInstance<DbMigrate<TContext>>(_serviceProvider, _logSeeder);
+                var migrator = ActivatorUtilities.CreateInstance<Migrate<TContext>>(_serviceProvider, _logSeeder);
                 await migrator.Run(ct);
                 dbContextRez = true;
             }
@@ -78,17 +84,18 @@ internal sealed class DbRunner<TContext> where TContext : DbContext
             return false;
         }
 
-        if (optRez.ExistenData == Shared.ExistenData.Fresh)
+        if (optRez.ExistenData == ExistenData.Fresh)
         {
-            var cleaner = _serviceProvider.GetRequiredService<ContextCleaner<TContext>>();
+            var cleaner = _serviceProvider.GetRequiredService<Cleaner<TContext>>();
             await cleaner.RunCleaningAsync(_logSeeder, ct);
         }
 
-        var seeder = _serviceProvider.GetRequiredService<ContextSeeder<TContext>>();
+        var seeder = _serviceProvider.GetRequiredService<Seeder<TContext>>();
         await seeder.RunSeedingAsync(optRez, _logSeeder, ct);
         //var exec = await SeedAsync(opt.PathAbs, opt.Mode, ct);
         //if (!exec.Ok) { _log.LogError("Seeding failed: {Error}", exec.Error); return false; }
 
         return true;
     }
+
 }

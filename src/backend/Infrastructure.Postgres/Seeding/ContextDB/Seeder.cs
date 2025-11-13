@@ -3,15 +3,15 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
-namespace Infrastructure.Postgres.Seeding;
+namespace Infrastructure.Postgres.Seeding.ContextDB;
 
-internal sealed class ContextSeeder<TContext> where TContext : DbContext
+internal sealed class Seeder<TContext> where TContext : DbContext
 {
     private readonly IEnumerable<ISeeder<TContext>> _seeders;
     private readonly TContext _dbContext;
     private readonly IPathFile _getterpathDemoData;
 
-    public ContextSeeder(IServiceProvider sp, IEnumerable<ISeeder<TContext>> seeders, IPathFile getterpathDemoData)
+    public Seeder(IServiceProvider sp, IEnumerable<ISeeder<TContext>> seeders, IPathFile getterpathDemoData)
     {
         _seeders = seeders.OrderBy(s => s.Order);
         _dbContext = sp.GetRequiredService<TContext>();
