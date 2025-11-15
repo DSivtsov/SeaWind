@@ -1,5 +1,5 @@
-﻿using Application.Abstractions.Repositories;
-using Application.Models;
+﻿using Application.AbstractionsTime.Repositories;
+using Application.ModelsTime;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Postgres.Time.Repositories;

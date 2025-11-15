@@ -1,6 +1,7 @@
 using Application.Abstractions.Services;
+using Application.AbstractionsTime.Services;
 using Application.UseCasesCourse;
-using Application.UseCasesTester;
+using Application.UseCasesTime;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Application;

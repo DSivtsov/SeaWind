@@ -1,7 +1,7 @@
-using Application.Abstractions.Repositories;
-using Application.DtoTester;
-using Application.Models;
-using Application.UseCasesTester;
+using Application.AbstractionsTime.Repositories;
+using Application.DtoTime.Tester;
+using Application.ModelsTime;
+using Application.UseCasesTime;
 
 namespace Application.UnitTests.UseCasesTester
 {

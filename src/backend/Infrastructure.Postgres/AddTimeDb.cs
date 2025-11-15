@@ -1,4 +1,4 @@
-﻿using Application.Abstractions.Repositories;
+﻿using Application.AbstractionsTime.Repositories;
 using Infrastructure.Postgres.Time;
 using Infrastructure.Postgres.Time.Repositories;
 using Microsoft.EntityFrameworkCore;

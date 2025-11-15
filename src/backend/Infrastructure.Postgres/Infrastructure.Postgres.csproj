@@ -27,5 +27,16 @@
 	</ItemGroup>
 	<ItemGroup>
 	  <Folder Include="Identity\Migrations\" />
+	  <Folder Include="Main\SeedData\" />
+	</ItemGroup>
+	<ItemGroup>
+		<!--Replace to CopyToOutputDirectory=PreserveNewest-->
+		<None Include="Time\SeedData\**\*" CopyToOutputDirectory="Always" />
+		<None Include="Main\SeedData\**\*" CopyToOutputDirectory="Always" />
+	</ItemGroup>
+	<ItemGroup>
+		<AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+			<_Parameter1>SeaWind.Infrastructure.UnitTests</_Parameter1>
+		</AssemblyAttribute>
 	</ItemGroup>
 </Project>

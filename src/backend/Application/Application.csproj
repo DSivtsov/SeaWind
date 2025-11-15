@@ -12,10 +12,4 @@
 			<_Parameter1>SeaWind.Application.UnitTests</_Parameter1>
 		</AssemblyAttribute>
 	</ItemGroup>
-	<ItemGroup>
-	  <EditorConfigFiles Remove="H:\_ASP.NET\SeaWind\src\backend\Application\Dto\.editorconfig" />
-	</ItemGroup>
-	<ItemGroup>
-	  <None Include="H:\_ASP.NET\SeaWind\src\backend\Application\Dto\.editorconfig" />
-	</ItemGroup>
 </Project>
