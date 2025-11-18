@@ -3,13 +3,63 @@ using System.Text;
 
 namespace Infrastructure.Postgres.Seeding.Shared;
 
+/// <summary>
+/// Генрация GUID детерминированого на основе значений: namespace (Guid) и name (string)
+/// по стандарту UUIDv5 (RFC 4122)
+/// </summary>
 public static class Uuid5
 {
-    // ВАЖНО: зафиксируй свой namespace один раз и больше не меняй
+    // ВАЖНО: нужно зафиксировать namespace один раз и больше не менять
     public static readonly Guid SeedNamespace = new("6ba7b810-9dad-11d1-80b4-00c04fd430c8"); // пример: DNS
 
-    public static Guid Create(Guid ns, string name)
+    private static readonly ReadOnlyMemory<byte> SeedNamespaceBytes = GuidToBigEndianBytes(SeedNamespace);
+
+    private static byte[] GuidToBigEndianBytes(Guid seedNamespace)
     {
+        Span<byte> nsBig = stackalloc byte[16];
+        WriteGuidBigEndian(seedNamespace, nsBig);
+
+        return nsBig.ToArray();
+    }
+
+    /// <summary>
+    /// Создаёт детерминированный UUIDv5 (RFC 4122) на основе указанного <paramref name="name"/>,
+    /// используя заранее подготовленный namespace <see cref="SeedNamespace"/>.
+    /// Работает быстрее, чем <see cref="Create"/> за счёт отсутствия повторного преобразования namespace.
+    /// </summary>
+    /// <param name="name">Уникальная строка внутри фиксированного namespace.</param>
+    /// <returns>UUID версии 5, детерминированно рассчитанный из имени и SeedNamespace.</returns>
+    /// <exception cref="ArgumentException">Выбрасывается, если указанная строка пуста или null.</exception>
+    public static Guid CreateFast(string name)
+    {
+        if (string.IsNullOrEmpty(name))
+            throw new ArgumentException("Name cannot be null or empty.", nameof(name));
+
+        byte[] nameBytes = Encoding.UTF8.GetBytes(name);
+
+        using var sha1 = SHA1.Create();
+        sha1.TransformBlock(SeedNamespaceBytes.ToArray(), 0, 16, null, 0);
+        sha1.TransformFinalBlock(nameBytes, 0, nameBytes.Length);
+
+        return PostProcess(sha1.Hash!);
+    }
+
+
+    /// <summary>
+    /// Создаёт детерминированный UUIDv5 (RFC 4122) на основе указанного <paramref name="name"/> 
+    /// и переданного пространства имён <paramref name="ns"/>.
+    /// Результат является стабильным и идентичным на всех платформах при одинаковых входных данных.
+    /// </summary>
+    /// <param name="ns">Пространство имён UUID (namespace), определяющее домен уникальности.</param>
+    /// <param name="name">Уникальная строка внутри указанного пространства имён.</param>
+    /// <returns>UUID версии 5, детерминированно рассчитанный из сочетания <paramref name="ns"/> и <paramref name="name"/>.</returns>
+    /// <exception cref="ArgumentException">Выбрасывается, если указанная строка пуста или равна null.</exception>
+    public static Guid Create(Guid ns, string name)
+
+    {
+        if (string.IsNullOrEmpty(name))
+            throw new ArgumentException("Name cannot be null or empty.", nameof(name));
+
         Span<byte> nsBig = stackalloc byte[16];
         WriteGuidBigEndian(ns, nsBig);
 
@@ -18,8 +68,12 @@ public static class Uuid5
         using var sha1 = SHA1.Create();
         sha1.TransformBlock(nsBig.ToArray(), 0, 16, null, 0);
         sha1.TransformFinalBlock(nameBytes, 0, nameBytes.Length);
-        byte[] hash = sha1.Hash!;               // 20 байт
 
+        return PostProcess(sha1.Hash!);
+    }
+
+    private static Guid PostProcess(byte[] hash)            // 20 байт
+    {
         Span<byte> uuid = stackalloc byte[16];
         hash.AsSpan(0, 16).CopyTo(uuid);
 

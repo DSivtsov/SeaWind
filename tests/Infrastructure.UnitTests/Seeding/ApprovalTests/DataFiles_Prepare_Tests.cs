@@ -2,21 +2,30 @@
 using Infrastructure.Postgres.Seeding.Shared;
 using Microsoft.Extensions.Logging.Abstractions;
 
-namespace Infrastructure.UnitTests.Seeding;
+namespace Infrastructure.UnitTests.Seeding.ApprovalTests;
 
-public class Snapshot_Create_Tests
+[CollectionDefinition("Snapshot_DataFiles", DisableParallelization = true)]
+public class SnapshotDataFilesCollection
+{
+}
+
+[Collection("Snapshot_DataFiles")]
+public class DataFiles_Prepare_Tests
 {
     private readonly IEnumerable<string> _seedFiles;
     private readonly string _testDataDir; // папка с Demo*.seed.json 
+    private readonly IEnumerable<string> _newDatafiles;
 
-    public Snapshot_Create_Tests()
+    public DataFiles_Prepare_Tests()
     {
         _testDataDir = Path.Combine(AppContext.BaseDirectory, "SeedingTestData");
         _seedFiles = Directory.EnumerateFiles(_testDataDir, "Demo*.seed.json");
+
+        _newDatafiles = PrepareDataFiles();
     }
 
     [Fact]
-    public async Task SeedFiles_manifest_is_approved()
+    public async Task Input_Manifest_SeedFiles_is_approved()
     {
         var files = _seedFiles
             .Select(Path.GetFileName)
@@ -34,7 +43,7 @@ public class Snapshot_Create_Tests
     }
 
     [Fact]
-    public async Task SeedFiles_snapshot_is_approved()
+    public async Task Input_SeedFiles_contents_is_approved()
     {
         var missingFiles = _seedFiles.Where(path => !File.Exists(path)).ToArray();
         if (missingFiles.Length > 0)
@@ -55,22 +64,30 @@ public class Snapshot_Create_Tests
     }
 
     [Fact]
-    public async Task DataFiles_snapshot_is_approved()
+    public async Task Output_Manifest_DataFiles_is_approved()
     {
-        //Arrange
-        var logger = NullLogger.Instance;
-        var pathBase = _testDataDir;
-        DelOldDataFiles(pathBase);
-        // use UUIDMode.Stable to receive the determenistic UUID
-        var dataFilesPrepare = new DataFilesPrepare(logger, pathBase, UUIDMode.Stable);
+        var outputDataFiles = _newDatafiles
+            .Select(Path.GetFileName)
+            .OrderBy(x => x, StringComparer.Ordinal)
+            .ToArray();
 
-        //Act
-        await dataFilesPrepare.Run();
+        var manifest = new
+        {
+            Count = outputDataFiles.Length,
+            Files = outputDataFiles
+        };
 
-        //Assert
-        IEnumerable<string> newDatafiles = GetOnlyDataFiles(pathBase);
-        
-        foreach (var path in newDatafiles)
+        await Verify(manifest)
+            .UseFileName("Output_DataFiles_is_approved");
+    }
+
+
+    [Fact]
+    public async Task Output_DataFiles_contents_is_approved()
+    {
+        Assert.NotEmpty(_newDatafiles);
+
+        foreach (var path in _newDatafiles)
         {
             var content = File.ReadAllText(path);
             var settings = new VerifySettings();
@@ -89,4 +106,20 @@ public class Snapshot_Create_Tests
     private static IEnumerable<string> GetOnlyDataFiles(string pathBase)
         => Directory.EnumerateFiles(pathBase, "Demo*.json")
                     .Where(name => !name.Contains("seed.json"));
+
+    private IEnumerable<string> PrepareDataFiles()
+    {
+        var logger = NullLogger.Instance;
+        var pathBase = _testDataDir;
+
+        DelOldDataFiles(pathBase);
+
+        // use UUIDMode.Stable to receive the determenistic UUID
+        var dataFilesPrepare = new RunnerSeedDataFiles(logger);
+
+        dataFilesPrepare.Run(pathBase, UUIDMode.Stable);
+
+        IEnumerable<string> newDatafiles = GetOnlyDataFiles(pathBase);
+        return newDatafiles;
+    }
 }
