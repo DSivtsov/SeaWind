@@ -2,15 +2,12 @@
 
 internal interface IPathFile
 {
-    string GetSeedFile(string seederName, string pathBase);
-
     string GetDataFile(string seederName, string pathBase);
 }
 
 internal class PathFile : IPathFile
 {
     private readonly string _fileNameDataTemplate;
-    private readonly string _fileNameSeedTemplate;
     private readonly string _suffixSeederClassName;
 
     public PathFile(ISeedCoreOptions seedCoreOptions)
@@ -18,71 +15,48 @@ internal class PathFile : IPathFile
         var seedCoreParameters = seedCoreOptions.Get();
 
         _fileNameDataTemplate = seedCoreParameters.FileNameDataTemplate;
-        _fileNameSeedTemplate = seedCoreParameters.FileNameSeedTemplate;
         _suffixSeederClassName = seedCoreParameters.SuffixSeederClassName;
     }
 
-    private string GetSeedFileName(string entityName) => _fileNameSeedTemplate.Replace("{Entity}", entityName, StringComparison.Ordinal);
-
-    private string GetDataFileName(string entityName) => _fileNameDataTemplate.Replace("{Entity}", entityName, StringComparison.Ordinal);
-
-    private string GetNameSeedFile(string _seederName)
+    private string GetNameFile(string _seederName)
     {
         if (!_seederName.EndsWith(_suffixSeederClassName, StringComparison.Ordinal))
             throw new InvalidOperationException($"Seeder class name must end with '{_suffixSeederClassName}': {_seederName}");
 
         var entityName = _seederName[..^_suffixSeederClassName.Length];
 
-        return GetSeedFileName(entityName);
-    }
+        string nameFile = _fileNameDataTemplate.Replace("{Entity}", entityName, StringComparison.Ordinal);
 
-    private string GetNameDataFile(string _seederName)
-    {
-        if (!_seederName.EndsWith(_suffixSeederClassName, StringComparison.Ordinal))
-            throw new InvalidOperationException($"Seeder class name must end with '{_suffixSeederClassName}': {_seederName}");
-
-        var entityName = _seederName[..^_suffixSeederClassName.Length];
-
-        return GetDataFileName(entityName);
-    }
-    public string GetSeedFile(string seederName, string pathBase)
-    {
-        string nameSeedFile = GetNameSeedFile(seederName);
-
-        var fileBaseSeedFile = Path.Combine(pathBase, nameSeedFile);
-
-        if (File.Exists(fileBaseSeedFile))
-            return fileBaseSeedFile;
-
-        throw new FileNotFoundException($"Absent Files with Base SeedFile: [{fileBaseSeedFile}]");
+        return nameFile;
     }
 
     public string GetDataFile(string seederName, string pathBase)
     {
-        string nameDataFile = GetNameDataFile(seederName);
+        string nameFile = GetNameFile(seederName);
 
-        var fileBaseDataFile = Path.Combine(pathBase, nameDataFile);
+        var pathDataFile = Path.Combine(pathBase, nameFile);
 
-        if (File.Exists(fileBaseDataFile))
-            return fileBaseDataFile;
+        if (File.Exists(pathDataFile))
+            return pathDataFile;
 
-        throw new FileNotFoundException($"Absent Files with Base DataFile: [{fileBaseDataFile}]");
+        throw new FileNotFoundException($"Absent File : [{pathDataFile}]");
     }
 
-    /*    public string Get(string seederName, string pathBase, string pathVersion)
-        {
-            string nameDemoDataFile = GetNameDemoDataFile(seederName);
+    // for support the "use two paths" option - pathBase & pathVersion
+    public string GetDataFileVersion(string seederName, string pathBase, string pathVersion)
+    {
+        string nameFile = GetNameFile(seederName);
 
-            var fileVersion = Path.Combine(pathVersion, nameDemoDataFile);
+        var fileVersion = Path.Combine(pathVersion, nameFile);
 
-            if (File.Exists(fileVersion))
-                return fileVersion;
+        if (File.Exists(fileVersion))
+            return fileVersion;
 
-            var fileBase = Path.Combine(pathBase, nameDemoDataFile);
+        var fileBase = Path.Combine(pathBase, nameFile);
 
-            if (File.Exists(fileBase))
-                return fileBase;
+        if (File.Exists(fileBase))
+            return fileBase;
 
-            throw new FileNotFoundException($"Absent Files with Version and Base DemoData: [{fileVersion}] [{fileBase}]");
-        }*/
+        throw new FileNotFoundException($"Absent Files with Version and Base : [{fileVersion}] [{fileBase}]");
+    }
 }

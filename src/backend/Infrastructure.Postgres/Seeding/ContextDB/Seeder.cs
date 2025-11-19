@@ -33,7 +33,8 @@ internal sealed class Seeder<TContext> where TContext : DbContext
                 string pathDemoDataFile;
                 try
                 {
-                    //pathDemoDataFile = _getterpathDemoData.Get(seeder.Name, pathBase, pathVersion);
+                    // for support the "use two paths" option - pathBase & pathVersion
+                    //pathDemoDataFile = _getterpathDemoData.Get(seeder.Name, pathBase, pathVersion);   
                     pathDemoDataFile = _getterpathDemoData.GetDataFile(seeder.Name, pathBase);
                 }
                 catch (Exception ex)
@@ -43,7 +44,6 @@ internal sealed class Seeder<TContext> where TContext : DbContext
                 }
 
                 var result = await seeder.LoadAndValidateAsync(pathDemoDataFile, ct);
-                //var result = await seeder.LoadAndValidateAsync(pathBase, pathVersion, ct);
 
                 if (!result.ok)
                 {

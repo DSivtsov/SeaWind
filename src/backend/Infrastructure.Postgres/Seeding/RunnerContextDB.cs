@@ -49,8 +49,8 @@ internal sealed class RunnerContextDB<TContext> : IDbContextRunner where TContex
             return false;
         }
 
-        var dataFilesPrepare = ActivatorUtilities.CreateInstance<DataFilesPrepare>(_serviceProvider, _logSeeder, optRez.PathBase);
-        var rezOk = await dataFilesPrepare.Run(ct);
+        var runnerSeedDataFiles = new RunnerSeedDataFiles(_logSeeder);
+        var rezOk = runnerSeedDataFiles.Run(optRez.PathBase, UUIDMode.Real);
         if (!rezOk)
         {
             _logSeeder.LogError("Abort Seeding. Error in DataFiles.");
@@ -92,10 +92,7 @@ internal sealed class RunnerContextDB<TContext> : IDbContextRunner where TContex
 
         var seeder = _serviceProvider.GetRequiredService<Seeder<TContext>>();
         await seeder.RunSeedingAsync(optRez, _logSeeder, ct);
-        //var exec = await SeedAsync(opt.PathAbs, opt.Mode, ct);
-        //if (!exec.Ok) { _log.LogError("Seeding failed: {Error}", exec.Error); return false; }
 
         return true;
     }
-
 }
