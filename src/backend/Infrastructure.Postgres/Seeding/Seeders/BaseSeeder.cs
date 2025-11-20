@@ -80,7 +80,7 @@ internal abstract class BaseSeeder<TContext, TEntity, TDto> : ISeeder<TContext> 
         return (true, null);
     }
 
-    public async Task<(bool, string?)> SeedAsync(TContext dbContext, SeedMode mode, CancellationToken ct = default)
+    public async Task<(bool, string?)> SeedAsync(TContext dbContext, SeedInsertMode mode, CancellationToken ct = default)
     {
         if (_demoData is null)
             throw new SeederDataException("SeedAsync called without prior successful LoadAndValidateAsync.");
@@ -95,7 +95,7 @@ internal abstract class BaseSeeder<TContext, TEntity, TDto> : ISeeder<TContext> 
             }
             else
             {
-                if (mode == SeedMode.InsertOnly) continue;
+                if (mode == SeedInsertMode.InsertOnly) continue;
                 UpdateEntity(entity, recDemo);
             }
         }

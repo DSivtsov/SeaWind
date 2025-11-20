@@ -50,7 +50,7 @@ internal sealed class RunnerContextDB<TContext> : IDbContextRunner where TContex
         }
 
         var runnerSeedDataFiles = new RunnerSeedDataFiles(_logSeeder);
-        var rezOk = runnerSeedDataFiles.Run(optRez.PathBase, UUIDMode.Real);
+        var rezOk = runnerSeedDataFiles.Run(optRez.PathBase, optRez.UUIDmode);
         if (!rezOk)
         {
             _logSeeder.LogError("Abort Seeding. Error in DataFiles.");

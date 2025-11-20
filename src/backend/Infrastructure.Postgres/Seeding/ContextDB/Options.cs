@@ -9,7 +9,8 @@ internal sealed class Options<TContext> where TContext : DbContext
 {
     private const string OPTION_PATH_BASE = "PathBase";
     private const string OPTION_PATH_VERSION = "PathVersion";
-    private const string OPTION_MODE = "Mode";
+    private const string OPTION_INSERT_MODE = "InsertMode";
+    private const string OPTION_UUID = "UUID";
     private const string OPTION_EXISTEN_DATA = "ExistenData";
     private const string OPTION_AUTO_MIGRATE = "AutoMigrate";
     private readonly ILogger _log;
@@ -27,48 +28,53 @@ internal sealed class Options<TContext> where TContext : DbContext
     {
         try
         {
-            var (existenData, mode, pathBase, pathVersion, autoMigrate) = GetSeedingOption();
+            var (existenData, mode, pathBase, pathVersion, autoMigrate, UUIDmode) = GetSeedingOption();
             _log.LogInformation("Seeding options for {Ctx}: ExistenData={ExistenData}, Mode={Mode}," +
-                " Base Path=[{PathBase}] Version Path=[{PathVersion}] AutoMigrate[{AutoMigrate}]",
+                " Base Path=[{PathBase}] Version Path=[{PathVersion}] AutoMigrate[{AutoMigrate}] UUIDmode[{UUIDmode}]",
                 typeof(TContext).Name, existenData, mode, pathBase,
-                string.IsNullOrWhiteSpace(pathVersion)? "None" : pathVersion, autoMigrate);
-            return new(true, existenData, mode, pathBase, pathVersion, autoMigrate);
+                string.IsNullOrWhiteSpace(pathVersion)? "None" : pathVersion, autoMigrate, UUIDmode);
+            return new(true, existenData, mode, pathBase, pathVersion, autoMigrate, UUIDmode);
         }
         catch (DirectoryNotFoundException ex)
         {
             _log.LogError(ex, "Path not found for {Ctx}", typeof(TContext).Name);
-            return new(false, default, default, "", "", false, ex.Message);
+            return new(false, default, default, "", "", false, default, ex.Message);
         }
         catch (InvalidOperationException ex)
         {
             _log.LogError(ex, "Invalid seeding options for {Ctx}", typeof(TContext).Name);
-            return new(false, default, default, "", "", false, ex.Message);
+            return new(false, default, default, "", "", false, default, ex.Message);
         }
     }
 
-    private (ExistenData existenData, SeedMode mode, string pathBase, string pathVersion,
-        bool autoMigrate) GetSeedingOption()
+    private (ExistenData existenData, SeedInsertMode mode, string pathBase, string pathVersion,
+        bool autoMigrate, UUIDMode UUIDmode) GetSeedingOption()
     {
         var pathBaseRel = _cfg[_prefix + OPTION_PATH_BASE];
         //var pathVersionRel = _cfg[_prefix + OPTION_PATH_VERSION];
-        var modeText = _cfg[_prefix + OPTION_MODE];
+        var insertModeText = _cfg[_prefix + OPTION_INSERT_MODE];
         var existenDataText = _cfg[_prefix + OPTION_EXISTEN_DATA];
         var autoMigrateText = _cfg[_prefix + OPTION_AUTO_MIGRATE];
+        var UUIDText = _cfg[_prefix + OPTION_UUID];
 
         if (string.IsNullOrWhiteSpace(pathBaseRel))
-            throw new InvalidOperationException($"{_prefix}Path is required");
+            throw new InvalidOperationException($"[{_prefix}{OPTION_PATH_BASE}] is required");
 
-        if (!Enum.TryParse(modeText, ignoreCase: true, out SeedMode mode))
-            throw new InvalidOperationException($"{_prefix}Mode is invalid: '{modeText}'" +
+        if (!Enum.TryParse(insertModeText, ignoreCase: true, out SeedInsertMode mode))
+            throw new InvalidOperationException($"[{_prefix}{OPTION_INSERT_MODE}] value is invalid: '{insertModeText}'" +
                 $" (use InsertOnly|InsertOrUpdate)");
 
         if (!Enum.TryParse(existenDataText, ignoreCase: true, out ExistenData existenData))
-            throw new InvalidOperationException($"{_prefix}ExistenData value is invalid: '{existenDataText}'" +
+            throw new InvalidOperationException($"[{_prefix}{OPTION_EXISTEN_DATA}] value is invalid: '{existenDataText}'" +
                 $" (use Fresh|NotDel)");
 
         if (!Boolean.TryParse(autoMigrateText, out bool autoMigrate))
-            throw new InvalidOperationException($"{_prefix}AutoMigrate value is invalid: '{autoMigrateText}'" +
+            throw new InvalidOperationException($"[{_prefix}{OPTION_AUTO_MIGRATE}] value is invalid: '{autoMigrateText}'" +
                 $" (use true|false)");
+
+        if (!Enum.TryParse(UUIDText, ignoreCase: true, out UUIDMode UUIDmode))
+            throw new InvalidOperationException($"[{_prefix}{OPTION_UUID}] value is invalid: '{UUIDText}'" +
+                $" (use Stable|Real)");
 
         var baseDir = AppContext.BaseDirectory;
 
@@ -85,6 +91,6 @@ internal sealed class Options<TContext> where TContext : DbContext
         //        pathVersion = string.Empty;
         //}
 
-        return (existenData, mode, pathBase, pathVersion, autoMigrate);
+        return (existenData, mode, pathBase, pathVersion, autoMigrate, UUIDmode);
     }
 }
