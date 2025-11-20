@@ -15,6 +15,8 @@ internal class PrimaryKeyGuidGenerator
 
     internal Guid GetGuid(string key) => _finalGuid[key];
 
+    internal bool TryGetGuid(string key, out Guid guid) => _finalGuid.TryGetValue(key, out guid);
+
     internal void Generate(IReadOnlyDictionary<string, Guid> pKeysRaw)
     {
         _finalGuid = _modeUUID switch
