@@ -20,7 +20,7 @@ internal sealed class Seeder<TContext> where TContext : DbContext
 
     internal async Task RunSeedingAsync(OptionsResult optRez, ILogger logSeeder, CancellationToken ct = default)
     {
-        SeedMode mode = optRez.Mode;
+        SeedInsertMode insertMode = optRez.InsertMode;
         string pathBase = optRez.PathBase;
         string pathVersion = optRez.PathVersion;
 
@@ -68,7 +68,7 @@ internal sealed class Seeder<TContext> where TContext : DbContext
             await using var tx = await _dbContext.Database.BeginTransactionAsync(ct);
             try
             {
-                var result = await seeder.SeedAsync(_dbContext, mode, ct);
+                var result = await seeder.SeedAsync(_dbContext, insertMode, ct);
 
                 if (!result.ok)
                 {

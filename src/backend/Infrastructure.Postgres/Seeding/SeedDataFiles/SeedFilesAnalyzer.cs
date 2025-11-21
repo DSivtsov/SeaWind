@@ -26,9 +26,9 @@ namespace Infrastructure.Postgres.Seeding.SeedDataFiles
                 ParseAndScanSeedFile(path);
             }
 
-            List<string> validationWarnings = ValidateFkeys();
+            List<string> validationWarnings = DetectedWarnings();
 
-            return new TableAnalysis(_dictPKeyGuid, _hashFKeyFileName, _rootJsonElementsEntities, validationWarnings);
+            return new TableAnalysis(_dictPKeyGuid, _rootJsonElementsEntities, validationWarnings);
         }
 
         private void ParseAndScanSeedFile(string pathfile)
@@ -89,8 +89,16 @@ namespace Infrastructure.Postgres.Seeding.SeedDataFiles
             }
         }
 
-
-        private List<string> ValidateFkeys()
+        /// <summary>
+        /// Анализирует собранные данные и формирует список предупреждений (Warnings):
+        /// дублирующиеся PKey и FKey, для которых отсутствуют соответствующие PKey.
+        /// <para/>
+        /// Эти проблемы не приводят к исключению — они будут автоматически
+        /// устранены при генерации выходных файлов в
+        /// SeedFilesOutputGenerator.GenerateJsonObject().
+        /// </summary>
+        /// <returns>Список текстовых предупреждений.</returns>
+        private List<string> DetectedWarnings()
         {
             List<string> validationWarnings = new List<string>();
 
@@ -98,22 +106,17 @@ namespace Infrastructure.Postgres.Seeding.SeedDataFiles
             {
                 foreach ((string pKey, string fileName) item in _listDublicatePK)
                 {
-                    validationWarnings.Add($"Skipped record with duplicate PKey[{item.pKey}] in file [{item.fileName}]");
+                    validationWarnings.Add($"Will Skipped record with duplicate PKey[{item.pKey}] in file [{item.fileName}]");
                 }
             }
 
-            List<(string fKey, string fileName)> recToDel = new();
             foreach ((string fKey, string fileName) item in _hashFKeyFileName)
             {
                 if (!_dictPKeyGuid.ContainsKey(item.fKey))
                 {
-                    validationWarnings.Add($"Skipped record with invalid FKey[{item.fKey}] in file [{item.fileName}]");
-                    recToDel.Add(item);
+                    validationWarnings.Add($"Will Skipped record with invalid FKey[{item.fKey}] in file [{item.fileName}]");
                 }
             }
-
-            foreach (var rec in recToDel)
-                _hashFKeyFileName.Remove(rec);
 
             return validationWarnings;
         }

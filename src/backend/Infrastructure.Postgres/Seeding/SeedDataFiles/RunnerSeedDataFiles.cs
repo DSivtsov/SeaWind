@@ -48,7 +48,7 @@ namespace Infrastructure.Postgres.Seeding.SeedDataFiles
             var pKeysGuid = new PrimaryKeyGuidGenerator(modeUUID);
             pKeysGuid.Generate(tableAnalysis.PKeys);
 
-            var outputSeedDataFiles = new SeedFilesOutputGenerator(pKeysGuid, tableAnalysis.FKeys, tableAnalysis.RootJsonElementsEntities);
+            var outputSeedDataFiles = new SeedFilesOutputGenerator(pKeysGuid, tableAnalysis.RootJsonElementsEntities);
             outputSeedDataFiles.Generate();
 
             return true;

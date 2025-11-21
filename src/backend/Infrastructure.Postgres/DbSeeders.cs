@@ -26,6 +26,9 @@ public static class AddDbSeeders
         services.AddSingleton<ISeedCoreOptions, DefaultSeedCoreOptions>();
         services.AddSingleton<IPathFile, PathFile>();
 
+        // регистратор сервиса анализа престов сидирования
+        services.AddSingleton<SeedPresetAnalyzer>();
+
         // DI для интерфейса запуска сидирования 
         services.AddScoped<IMainRunnerSeeding, MainRunner>();
 

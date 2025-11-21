@@ -13,20 +13,30 @@ public interface IMainRunnerSeeding
 internal sealed class MainRunner : IMainRunnerSeeding
 {
     private readonly IEnumerable<IDbContextRunner> _runners;
-    readonly private IOptions<SeedCoreParameters> _coreOpt;
-    readonly private ILogger<MainRunner> _logger;
+    private readonly IOptions<SeedCoreParameters> _coreOpt;
+    private readonly ILogger<MainRunner> _logger;
+    private readonly SeedPresetAnalyzer _seedPresetAnalyzer;
+
 
     public MainRunner(IEnumerable<IDbContextRunner> runners,
                     IOptions<SeedCoreParameters> coreOpt,
-                    ILogger<MainRunner> logger)
+                    ILogger<MainRunner> logger,
+                    SeedPresetAnalyzer seedPresetAnalyzer)
     {
         _runners = runners;
         _coreOpt = coreOpt;
         _logger = logger;
+        _seedPresetAnalyzer = seedPresetAnalyzer;
     }
 
     public async Task Run(CancellationToken ct = default)
     {
+        if (_seedPresetAnalyzer.GetAndCheckIsSeedOff())
+        {
+            _logger.LogInformation("[SEEDING OFF]");
+            return;
+        }
+
         _logger.LogInformation("[SEEDING START]");
 
         SeedCoreParameters coreValues;
