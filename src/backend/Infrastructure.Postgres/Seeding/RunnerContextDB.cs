@@ -49,6 +49,9 @@ internal sealed class RunnerContextDB<TContext> : IDbContextRunner where TContex
             return false;
         }
 
+        var seedPresetAnalyzer = _serviceProvider.GetRequiredService<SeedPresetAnalyzer>(); ;
+        optRez = seedPresetAnalyzer.ApplySeedPreset(optRez);
+
         var runnerSeedDataFiles = new RunnerSeedDataFiles(_logSeeder);
         var rezOk = runnerSeedDataFiles.Run(optRez.PathBase, optRez.UUIDmode);
         if (!rezOk)
@@ -84,6 +87,9 @@ internal sealed class RunnerContextDB<TContext> : IDbContextRunner where TContex
             return false;
         }
 
+        var seedUUIDStateChecher = new SeedUUIDStateChecker(_logSeeder, optRez, seedPresetAnalyzer.IsOptionsUnderFullManualControl);
+        optRez = seedUUIDStateChecher.FreshExistenDataIfNeed();
+
         if (optRez.ExistenData == ExistenData.Fresh)
         {
             var cleaner = _serviceProvider.GetRequiredService<Cleaner<TContext>>();
@@ -92,6 +98,8 @@ internal sealed class RunnerContextDB<TContext> : IDbContextRunner where TContex
 
         var seeder = _serviceProvider.GetRequiredService<Seeder<TContext>>();
         await seeder.RunSeedingAsync(optRez, _logSeeder, ct);
+
+        seedUUIDStateChecher.StoreCurrentUsedSeedUUID();
 
         return true;
     }

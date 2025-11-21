@@ -9,7 +9,7 @@ internal sealed class Options<TContext> where TContext : DbContext
 {
     private const string OPTION_PATH_BASE = "PathBase";
     private const string OPTION_PATH_VERSION = "PathVersion";
-    private const string OPTION_INSERT_MODE = "InsertMode";
+    private const string OPTION_INSERT_MODE = "Mode";
     private const string OPTION_UUID = "UUID";
     private const string OPTION_EXISTEN_DATA = "ExistenData";
     private const string OPTION_AUTO_MIGRATE = "AutoMigrate";

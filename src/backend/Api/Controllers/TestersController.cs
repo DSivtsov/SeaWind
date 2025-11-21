@@ -93,7 +93,7 @@ public sealed class TestersController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(FileResult))]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
     [Produces("text/csv")]
-    public ActionResult<FileResult> ExportCsv([FromRoute] Guid id)
+    public IActionResult ExportCsv([FromRoute] Guid id)
     {
         var user = _svc.Get(id);
         if (user is null)

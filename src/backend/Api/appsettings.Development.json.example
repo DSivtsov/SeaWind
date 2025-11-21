@@ -15,6 +15,7 @@
     "Key": "DXaA1_usIbb-9txBxhqG36Hua0zXa2UWuXwafsFCfiA="
   },
   "Seed": {
+    "Preset": "SeedCustom", // "SeedOFF", "SeedCustom", "SuperFast", "Fast", "Real"
     "CoreOption": {
       "FileNameDataTemplate": "Demo{Entity}.json", // Пример для сущности Tester "DemoTester.json"
       "FileNameSeedTemplate": "Demo{Entity}.seed.json", // Пример для сущности Tester "DemoTester.seed.json"
@@ -23,7 +24,7 @@
     "TimeDbContext": {
       "Enabled": true,
       "PathBase": "Time/SeedData", // Проект by "CopyToOutputDirectory" копирует файлы с данными из проекта в рабочий каталог
-      "Mode": "InsertOrUpdate",
+      "Mode": "InsertOrUpdate", // InsertOnly/InsertOrUpdate
       //OPTION TURN OFF "PathVersion": "Time/SeedData/v1", 
       "UUID": "Real", // Stable/Real
       "ExistenData": "Fresh", // Fresh/NotDel
