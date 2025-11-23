@@ -9,6 +9,11 @@ public class SnapshotDataFilesCollection
 {
 }
 
+/// <summary>
+/// Набор интеграционных approval-тестов, проверяющий корректность подготовки demo-данных:
+/// целостность входных seed-файлов и детерминированность выходных DataFiles,
+/// генерируемых <see cref="RunnerSeedDataFiles"/>.
+/// </summary>
 [Collection("Snapshot_DataFiles")]
 public class DataFiles_Prepare_Tests
 {
