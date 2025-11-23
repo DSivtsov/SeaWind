@@ -1,7 +1,7 @@
 ﻿using Infrastructure.Postgres.Seeding.Shared;
-using Infrastructure.UnitTests.Seeding.UnitTests.Shared;
+using Infrastructure.UnitTests.Seeding.IntegrationTestsSeeders.Shared;
 
-namespace Infrastructure.UnitTests.Seeding.UnitTests.SeedersTimeDbContext;
+namespace Infrastructure.UnitTests.Seeding.IntegrationTestsSeeders;
 
 public class TestSeederCleaningTests
 {

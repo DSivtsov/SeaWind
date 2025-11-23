@@ -1,8 +1,8 @@
 ﻿using Infrastructure.Postgres.Seeding.Shared;
-using Infrastructure.UnitTests.Seeding.UnitTests.Shared;
+using Infrastructure.UnitTests.Seeding.IntegrationTestsSeeders.Shared;
 using Microsoft.EntityFrameworkCore;
 
-namespace Infrastructure.UnitTests.Seeding.UnitTests.SeedersTimeDbContext;
+namespace Infrastructure.UnitTests.Seeding.IntegrationTestsSeeders;
 
 /// <summary>
 /// Набор интеграционных тестов для <see cref="TestSeeder"/>,
@@ -103,7 +103,7 @@ public class TestSeederSeedingTests
         using var db = new TestDbContext();
         await db.SeedUpdatedDd(_pathDemoDataFile);
 
-        TestEntity removedEntity = db.TestTable.First<TestEntity>();
+        TestEntity removedEntity = db.TestTable.First();
 
         db.TestTable.Remove(removedEntity);
 

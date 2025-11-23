@@ -2,7 +2,7 @@
 using Infrastructure.Postgres.Seeding.Shared;
 using Microsoft.EntityFrameworkCore;
 
-namespace Infrastructure.UnitTests.Seeding.UnitTests.Shared;
+namespace Infrastructure.UnitTests.Seeding.IntegrationTestsSeeders.Shared;
 
 internal class TestSeeder : BaseSeeder<TestDbContext, TestEntity, TestSeederDto>
 {

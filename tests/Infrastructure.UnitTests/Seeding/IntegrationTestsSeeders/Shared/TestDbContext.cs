@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace Infrastructure.UnitTests.Seeding.UnitTests.Shared;
+namespace Infrastructure.UnitTests.Seeding.IntegrationTestsSeeders.Shared;
 
 public class TestDbContext : DbContext
 {
