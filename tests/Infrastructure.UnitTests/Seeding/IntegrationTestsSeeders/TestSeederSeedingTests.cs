@@ -1,6 +1,5 @@
 ﻿using Infrastructure.Postgres.Seeding.Shared;
 using Infrastructure.UnitTests.Seeding.IntegrationTestsSeeders.Shared;
-using Infrastructure.UnitTests.Seeding.UnitTests.Shared;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.UnitTests.Seeding.IntegrationTestsSeeders;
