@@ -1,16 +1,16 @@
-﻿using Application.DtoMain.Course;
-using Application.Models;
+﻿using Application.Models;
+using Infrastructure.Postgres.Main.SeederDto;
 using Infrastructure.Postgres.Seeding.Seeders;
 using Infrastructure.Postgres.Seeding.Shared;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Postgres.Main.Seeders
 {
-    internal class CourseSeeder : BaseSeeder<MainDbContext, Course, CourseDto>
+    internal class CourseSeeder : BaseSeeder<MainDbContext, Course, CourseSeederDto>
     {
         public override SeedOrder Order => SeedOrder.Base;
 
-        protected override void AddNewEntity(MainDbContext dbContext, CourseDto recDemo)
+        protected override void AddNewEntity(MainDbContext dbContext, CourseSeederDto recDemo)
         {
             dbContext.Courses.Add(new Course(recDemo.Id, recDemo.Title, recDemo.Code, recDemo.Description));
         }
@@ -21,12 +21,12 @@ namespace Infrastructure.Postgres.Main.Seeders
             dbSet.RemoveRange(await dbSet.ToListAsync(ct));
         }
 
-        protected override async Task<Course?> TryFindEntity(MainDbContext dbContext, CourseDto recDemo, CancellationToken ct)
+        protected override async Task<Course?> TryFindEntity(MainDbContext dbContext, CourseSeederDto recDemo, CancellationToken ct)
         {
             return await dbContext.Courses.FirstOrDefaultAsync(c => c.Id == recDemo.Id, ct);
         }
 
-        protected override void UpdateEntity(Course entity, CourseDto recDemo)
+        protected override void UpdateEntity(Course entity, CourseSeederDto recDemo)
         {
             entity.Title = recDemo.Title;
             entity.Code = recDemo.Code;

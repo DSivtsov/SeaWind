@@ -1,4 +1,4 @@
-﻿namespace Application.DtoMain.Course;
+﻿namespace Infrastructure.Postgres.Main.SeederDto;
 
 /// <summary>
 /// CourseDto транспортный объект (data transfer)
@@ -7,4 +7,4 @@
 /// <param name="Title">Название курса</param>
 /// <param name="Code">Код курса</param>
 /// <param name="Description">Описание курса</param>
-public record CourseDto(Guid Id, string Title, string? Code, string? Description);
+public record CourseSeederDto(Guid Id, string Title, string? Code, string? Description);
