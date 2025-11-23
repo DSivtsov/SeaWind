@@ -40,7 +40,7 @@ internal sealed class RunnerContextDB<TContext> : IDbContextRunner where TContex
             _logSeeder.LogInformation("Not Enabled Seeding [{DbContext}]", typeof(TContext).Name);
             return false;
         }
-        
+
         var checkerOption = new Options<TContext>(_logSeeder, _cfg, _prefix);
         var optRez = checkerOption.CheckAndGet();
         if (!optRez.Ok)
@@ -80,7 +80,7 @@ internal sealed class RunnerContextDB<TContext> : IDbContextRunner where TContex
                 dbContextRez = false;
             }
         }
-        
+
         if (!dbContextRez)
         {
             _logSeeder.LogError("Abort Seeding. DbContext not Ready.");

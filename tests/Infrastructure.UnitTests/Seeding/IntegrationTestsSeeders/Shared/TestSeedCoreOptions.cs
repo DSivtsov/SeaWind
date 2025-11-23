@@ -1,6 +1,6 @@
 ﻿using Infrastructure.Postgres.Seeding.Shared;
 
-namespace Infrastructure.UnitTests.Seeding.UnitTests.Shared;
+namespace Infrastructure.UnitTests.Seeding.IntegrationTestsSeeders.Shared;
 
 internal sealed class TestSeedCoreOptions : ISeedCoreOptions
 {

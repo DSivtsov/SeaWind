@@ -15,7 +15,6 @@ internal static class AddIdentityDb
         services.AddDbContext<AppIdentityDbContext>(opt =>
                 opt.UseNpgsql(connectionString, npg =>
                 {
-                    npg.EnableRetryOnFailure();
                     npg.MigrationsAssembly(typeof(AppIdentityDbContext).Assembly.FullName);
                     npg.MigrationsHistoryTable("__EFMigrationsHistory", schema: AppIdentityDbContext.Schema);
                 })

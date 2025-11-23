@@ -1,32 +1,36 @@
-﻿using Application.DtoCourse;
-using Application.Models;
+﻿using Application.Models;
+using Infrastructure.Postgres.Main.SeederDto;
 using Infrastructure.Postgres.Seeding.Seeders;
 using Infrastructure.Postgres.Seeding.Shared;
+using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Postgres.Main.Seeders
 {
-    internal class CourseSeeder : BaseSeeder<MainDbContext, Course, CourseDto>
+    internal class CourseSeeder : BaseSeeder<MainDbContext, Course, CourseSeederDto>
     {
-        public override SeedOrder Order => throw new NotImplementedException();
+        public override SeedOrder Order => SeedOrder.Base;
 
-        protected override void AddNewEntity(MainDbContext dbContext, CourseDto recDemo)
+        protected override void AddNewEntity(MainDbContext dbContext, CourseSeederDto recDemo)
         {
-            throw new NotImplementedException();
+            dbContext.Courses.Add(new Course(recDemo.Id, recDemo.Title, recDemo.Code, recDemo.Description));
         }
 
-        protected override Task RemoveEntities(MainDbContext dbContext, CancellationToken ct)
+        protected override async Task RemoveEntities(MainDbContext dbContext, CancellationToken ct)
         {
-            throw new NotImplementedException();
+            var dbSet = dbContext.Courses;
+            dbSet.RemoveRange(await dbSet.ToListAsync(ct));
         }
 
-        protected override Task<Course?> TryFindEntity(MainDbContext dbContext, CourseDto recDemo, CancellationToken ct)
+        protected override async Task<Course?> TryFindEntity(MainDbContext dbContext, CourseSeederDto recDemo, CancellationToken ct)
         {
-            throw new NotImplementedException();
+            return await dbContext.Courses.FirstOrDefaultAsync(c => c.Id == recDemo.Id, ct);
         }
 
-        protected override void UpdateEntity(Course entity, CourseDto recDemo)
+        protected override void UpdateEntity(Course entity, CourseSeederDto recDemo)
         {
-            throw new NotImplementedException();
+            entity.Title = recDemo.Title;
+            entity.Code = recDemo.Code;
+            entity.Description = recDemo.Description;
         }
     }
 }

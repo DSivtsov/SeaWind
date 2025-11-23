@@ -16,7 +16,7 @@ public sealed class TimeDbContextFactory : IDesignTimeDbContextFactory<TimeDbCon
         Console.WriteLine($"[TimeDbContextFactory]: ConnectionStrings=[{cs}]");
         
             var opts = new DbContextOptionsBuilder<TimeDbContext>()
-            .UseNpgsql(cs, x => x.EnableRetryOnFailure())
+            .UseNpgsql(cs)
             .Options;
 
         return new TimeDbContext(opts);

@@ -18,7 +18,6 @@ public sealed class MainDbContextFactory : IDesignTimeDbContextFactory<MainDbCon
             var opts = new DbContextOptionsBuilder<MainDbContext>()
                         .UseNpgsql(cs, npg =>
                         {
-                            npg.EnableRetryOnFailure();
                             npg.MigrationsAssembly(typeof(MainDbContext).Assembly.FullName);
                             npg.MigrationsHistoryTable("__EFMigrationsHistory",
                                 schema: MainDbContext.Schema);

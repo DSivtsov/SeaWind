@@ -1,18 +1,22 @@
 ﻿using Application.Abstractions.Repositories;
 using Application.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Postgres.Main.Repositories;
 
 public class CourseRepositoryPostgres : ICourseRepository
 {
-    public Task<IEnumerable<Course>> GetAllAsync()
-    {
-        IEnumerable<Course> demo = new[]
-        {
-            new Course(Guid.NewGuid(), "C# Basics", "CS101", "Intro to C#", null, null),
-            new Course(Guid.NewGuid(), "Unity Intro", "UN201", "GameDev basics", null, null)
-        };
+    private readonly MainDbContext _mainDbContext;
 
-        return Task.FromResult(demo);
+    public CourseRepositoryPostgres(MainDbContext mainDbContext)
+    {
+        _mainDbContext = mainDbContext;
+    }
+
+    public async Task<IEnumerable<Course>> GetAllAsync()
+    {
+        var result = await _mainDbContext.Courses.AsNoTracking().ToListAsync();
+
+        return result ?? [];
     }
 }
