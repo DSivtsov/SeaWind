@@ -26,8 +26,12 @@ public class Program
         // Настраиваем JWT аутентификацию и авторизацию
         builder.Services
             .AddWorkshopIdentity(builder.Environment)      // Подключение ASP.NET Identity + Identity Stores 
-            .AddJwtAuth(cfg)            // Подключение JWT-аутентификация
-            .AddSwaggerWithJWT();       // Подключение Swagger с поддержкой JWT Bearer-авторизации
+            .AddJwtAuth(cfg);                              // Подключение JWT-аутентификация
+
+        if (Environment.GetEnvironmentVariable("WC_USE_TEST_SETTINGS") != "true")
+        {
+            builder.Services.AddSwaggerWithJWT();       // Подключение Swagger с поддержкой JWT Bearer-авторизации
+        }
 
         // При запуске в контейнере необходимо указать явное место хранения ключей Data Protection.
         builder.AddStorageForContainers();
