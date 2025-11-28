@@ -59,7 +59,7 @@ internal sealed class Seeder<TContext> where TContext : DbContext
             // а в это уже обычная Unhandled ошибка
             catch (Exception ex)
             {
-                logSeeder.LogError(ex, "Unhandled exception during [LoadAndValidateAsync] [{Name}]", seeder.Name);
+                logSeeder.LogError(ex, "Exception during [LoadAndValidateAsync] [{Name}]", seeder.Name);
             }
 
             if (!seeder.HasDemoData)

@@ -11,8 +11,6 @@ public static class InfrastructureDI
         var cs = cfg.GetConnectionString("Default")
             ?? throw new InvalidOperationException("ConnectionStrings:Default is missing.");
 
-        Console.WriteLine($"[AddInfrastructure]: ConnectionStrings=[{cs}]");
-        
         services.AddTimeDbContext(cs);
 
         services.AddAppIdentityContext(cfg, cs);
