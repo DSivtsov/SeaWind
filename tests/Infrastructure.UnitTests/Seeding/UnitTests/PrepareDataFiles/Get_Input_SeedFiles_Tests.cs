@@ -4,11 +4,11 @@ using Infrastructure.Postgres.Seeding.SeedDataFiles;
 namespace Infrastructure.UnitTests.Seeding.UnitTests.PrepareDataFiles;
 
 /// <summary>
-/// Набор юнит-тестов для <see cref="SeedEnvironmentPreparer"/>,
+/// Набор юнит-тестов для <see cref="SeedFilesLocator"/>,
 /// проверяющий корректность подготовки окружения для сидирования:
 /// валидацию пути к каталогу и поиск входных seed-файлов.
 /// </summary>
-public class PreparerEnvAndInput_Tests
+public class Get_Input_SeedFiles_Tests
 {
     [Fact]
     public void PreparerEnvAndInput_Absent_Directory_SeedFiles_ThrowException()
@@ -16,10 +16,10 @@ public class PreparerEnvAndInput_Tests
         //Arrange
         var pathNonExistingDir = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N"));
 
-        var sut = new SeedEnvironmentPreparer(pathNonExistingDir);
+        var sut = new SeedFilesLocator(pathNonExistingDir);
 
         // Act
-        Action act = () => sut.PrepareEnvironmentAndLocateFiles();
+        Action act = () => sut.LocateFiles();
 
         // Assert
         act.Should()
@@ -33,15 +33,15 @@ public class PreparerEnvAndInput_Tests
         //Arrange
         var pathWrong = " ";
 
-        var sut = new SeedEnvironmentPreparer(pathWrong);
+        var sut = new SeedFilesLocator(pathWrong);
 
         // Act
-        Action act = () => sut.PrepareEnvironmentAndLocateFiles();
-
+        Action act = () => sut.LocateFiles();
+        ;
         // Assert
         act.Should()
            .Throw<InvalidDataException>()
-           .WithMessage("Wrong directory*");
+           .WithMessage("Directory for seed files not found*");
         // * в конце, т.к. в сообщении ещё будет [...pathBase]
     }
 
@@ -51,10 +51,10 @@ public class PreparerEnvAndInput_Tests
         //Arrange
         var pathNoSeedFile = Directory.CreateTempSubdirectory().FullName;
 
-        var sut = new SeedEnvironmentPreparer(pathNoSeedFile);
+        var sut = new SeedFilesLocator(pathNoSeedFile);
 
         // Act
-        Action act = () => sut.PrepareEnvironmentAndLocateFiles();
+        Action act = () => sut.LocateFiles();
 
         // Assert
         act.Should()
@@ -73,16 +73,15 @@ public class PreparerEnvAndInput_Tests
         File.WriteAllText(fileB, "[]");
         File.WriteAllText(fileA, "[]");
 
-        var sut = new SeedEnvironmentPreparer(tempDir.FullName);
+        var sut = new SeedFilesLocator(tempDir.FullName);
 
-        string ROOT_FOLDER = "./";
         var expected = new[] {
-                Path.Combine(ROOT_FOLDER, "b.seed.json"),
-                Path.Combine(ROOT_FOLDER, "a.seed.json")}
+                Path.Combine(tempDir.FullName, "b.seed.json"),
+                Path.Combine(tempDir.FullName, "a.seed.json")}
             .OrderBy(fileName => fileName, StringComparer.Ordinal);
 
         // Act
-        var result = sut.PrepareEnvironmentAndLocateFiles().ToArray();
+        var result = sut.LocateFiles().ToArray();
 
         // Assert
         result.Should()

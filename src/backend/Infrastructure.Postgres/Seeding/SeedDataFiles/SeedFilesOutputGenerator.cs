@@ -6,14 +6,16 @@ namespace Infrastructure.Postgres.Seeding.SeedDataFiles
     {
         private readonly PrimaryKeyGuidGenerator _finalGuid;
         private readonly IReadOnlyCollection<(string entityName, JsonElement rootElement)> _rootJsonElementsEntities;
-
+        private readonly string _pathBase;
         private readonly HashSet<string> _existPKeys = new();
 
         internal SeedFilesOutputGenerator(PrimaryKeyGuidGenerator finalGuid,
-            IReadOnlyCollection<(string entityName, JsonElement rootElement)> rootJsonElementsEntities)
+            IReadOnlyCollection<(string entityName, JsonElement rootElement)> rootJsonElementsEntities,
+                string pathBase)
         {
             _finalGuid = finalGuid ?? throw new ArgumentNullException(nameof(finalGuid));
             _rootJsonElementsEntities = rootJsonElementsEntities ?? throw new ArgumentNullException(nameof(rootJsonElementsEntities));
+            _pathBase = pathBase;
         }
 
         internal void Generate()
@@ -28,7 +30,7 @@ namespace Infrastructure.Postgres.Seeding.SeedDataFiles
         {
             var currentFileName = GetNameCurrentDataFile(entityName);
 
-            using var currentWriter = new DataFileWriter(currentFileName);
+            using var currentWriter = new DataFileWriter(Path.Combine(_pathBase, currentFileName));
 
             currentWriter.BeginWriteFile();
 
