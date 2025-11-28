@@ -1,10 +1,12 @@
 [
   {
+    "Id": "!course.1",
     "Title": "Основы C#",
     "Code": "c#basic",
     "Description": "Основы программирвания на языке C#"
   },
   {
+    "Id": "!course.2",
     "Title": "Unity Intro",
     "Code": "UN201",
     "Description": "GameDev basics"

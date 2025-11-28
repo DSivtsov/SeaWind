@@ -22,11 +22,11 @@ internal class Checker<TContext> where TContext : DbContext
         // Проверка подсоединения
         if (!await CanConnectAsync(ct)) return false;
 
-        // Проверка таблиц
-        if (!await HasUserTablesAsync(ct)) return false;
-
         // Проверка отсутствия не выполненных миграций
         if (!await NoActiveMigrations(ct)) return false;
+
+        // Проверка таблиц
+        if (!await HasUserTablesAsync(ct)) return false;
 
         return true;
     }
