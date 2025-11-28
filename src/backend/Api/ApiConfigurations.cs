@@ -18,6 +18,11 @@ public static class ApiConfigurations
                 .AddJsonFile("appsettings.IntegrationTests.json", optional: true, reloadOnChange: true);
         }
 
+/*        string cs = builder.Configuration.GetConnectionString("Default")
+            ?? throw new InvalidOperationException("ConnectionStrings:Default is missing.");
+
+        Debug.WriteLine($"ConnectionStrings[{cs}]");*/
+
         return builder;
     }
 }

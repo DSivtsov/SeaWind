@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.Hosting;
 
-public class TestMainDbWebApplicationFactory : WebApplicationFactory<Program>
+public class TestDbWebApplicationFactory : WebApplicationFactory<Program>
 {
 
     protected override IHost CreateHost(IHostBuilder builder)

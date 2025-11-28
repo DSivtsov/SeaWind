@@ -2,14 +2,14 @@
 
 namespace Api.UnitTests.Integration.Shared;
 
-public class TestMainDbFixture : IDisposable
+public class TestDbFixture : IDisposable
 {
     public readonly HttpClient Client;
     private readonly WebApplicationFactory<Program> _factory;
 
-    public TestMainDbFixture()
+    public TestDbFixture()
     {
-        _factory = new TestMainDbWebApplicationFactory();
+        _factory = new TestDbWebApplicationFactory();
         Client = _factory.CreateClient();
     }
 

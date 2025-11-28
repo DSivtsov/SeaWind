@@ -6,19 +6,24 @@ using System.Text.Json;
 
 namespace Api.UnitTests.Integration;
 
-[Collection("TestDb collection")]
-public class CoursesController_GetAll_Tests
+[Collection("ContainerDb collection")]
+public class CoursesController_GetAll_Tests_Testcontainers
 {
-    private readonly TestDbFixture _testMainDbFixture;
+    private readonly HttpClient _client;
 
     private static JsonSerializerOptions _jsonOptions = new JsonSerializerOptions
     {
         PropertyNameCaseInsensitive = true
     };
 
-    public CoursesController_GetAll_Tests(TestDbFixture testMainDbFixture)
+    public CoursesController_GetAll_Tests_Testcontainers(ContainerDbFixture testcontainerFixture)
     {
-        _testMainDbFixture = testMainDbFixture;
+        if (testcontainerFixture.Client is not null)
+        {
+            _client = testcontainerFixture.Client;
+        }
+        else
+            throw new NotImplementedException();
     }
 
     [Fact]
@@ -27,7 +32,7 @@ public class CoursesController_GetAll_Tests
         // Arrange in TestMainDbFixture
 
         // Act
-        var response = await _testMainDbFixture.Client.GetAsync("/api/courses");
+        var response = await _client.GetAsync("/api/courses");
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);

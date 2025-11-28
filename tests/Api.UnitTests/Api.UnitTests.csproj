@@ -16,6 +16,8 @@
 	<PackageReference Include="FluentAssertions" />
 	<PackageReference Include="FluentAssertions.Json" />
 	<PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+	<PackageReference Include="Testcontainers" />
+	<PackageReference Include="Testcontainers.PostgreSql" />
     <PackageReference Include="xunit" />
 	<PackageReference Include="xunit.runner.visualstudio">
 		<PrivateAssets>all</PrivateAssets>
@@ -29,4 +31,8 @@
   <ItemGroup>
     <Using Include="Xunit" />
   </ItemGroup>
+	<ItemGroup>
+		<!--Replace to CopyToOutputDirectory=PreserveNewest-->
+		<None Include="TestcontainerInitDb\**\*" CopyToOutputDirectory="Always" />
+	</ItemGroup>
 </Project>
