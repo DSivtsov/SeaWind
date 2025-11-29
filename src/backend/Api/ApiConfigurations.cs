@@ -2,7 +2,6 @@
 
 public static class ApiConfigurations
 {
-
     public static WebApplicationBuilder AddConfiguration(this WebApplicationBuilder builder)
     {
         builder.Configuration
@@ -17,11 +16,6 @@ public static class ApiConfigurations
             builder.Configuration
                 .AddJsonFile("appsettings.IntegrationTests.json", optional: true, reloadOnChange: true);
         }
-
-/*        string cs = builder.Configuration.GetConnectionString("Default")
-            ?? throw new InvalidOperationException("ConnectionStrings:Default is missing.");
-
-        Debug.WriteLine($"ConnectionStrings[{cs}]");*/
 
         return builder;
     }
