@@ -1,30 +1,21 @@
 ﻿namespace Infrastructure.Postgres.Seeding.SeedDataFiles;
 
-internal sealed class SeedEnvironmentPreparer
+internal sealed class SeedFilesLocator
 {
     private const string SEED_TEMPLATE = "*.seed.json";
-    private const string ROOT_FOLDER = "./";
-
     private readonly string _pathBase;
 
-    internal SeedEnvironmentPreparer(string pathBase)
+    internal SeedFilesLocator(string pathBase)
     {
         _pathBase = pathBase;
     }
 
-    internal IEnumerable<string> PrepareEnvironmentAndLocateFiles()
+    internal IEnumerable<string> LocateFiles()
     {
-        try { Directory.SetCurrentDirectory(_pathBase); }
-        catch (DirectoryNotFoundException)
-        {
+        if (!Directory.Exists(_pathBase))
             throw new InvalidDataException($"Directory for seed files not found [{_pathBase}]");
-        }
-        catch (Exception)
-        {
-            throw new InvalidDataException($"Wrong directory [{_pathBase}]");
-        }
 
-        IEnumerable<string> seedFilePaths = Directory.EnumerateFiles(ROOT_FOLDER, SEED_TEMPLATE)
+        IEnumerable<string> seedFilePaths = Directory.EnumerateFiles(_pathBase, SEED_TEMPLATE)
             .OrderBy(fileName => fileName, StringComparer.Ordinal)
             .Select(x => x);
 

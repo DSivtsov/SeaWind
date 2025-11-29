@@ -26,7 +26,7 @@ public class TestSeederSeedingTests
         ISeedCoreOptions seedCoreOptions = new TestSeedCoreOptions();
         _getterpathDemoData = new PathFile(seedCoreOptions);
 
-        _pathBase = Path.Combine(AppContext.BaseDirectory, "SeedingTestData");
+        _pathBase = Path.Combine(AppContext.BaseDirectory, "Seeding/TestFiles/IntegrationTestsSeeders");
 
         _pathDemoDataFile = _getterpathDemoData.GetDataFile(_iTestSeeder.Name, _pathBase);
     }

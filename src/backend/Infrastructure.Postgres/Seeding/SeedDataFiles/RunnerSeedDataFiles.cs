@@ -19,8 +19,8 @@ namespace Infrastructure.Postgres.Seeding.SeedDataFiles
             IEnumerable<string> seedFilePaths;
             try
             {
-                var preparerEnvAndInput = new SeedEnvironmentPreparer(pathBase);
-                seedFilePaths = preparerEnvAndInput.PrepareEnvironmentAndLocateFiles();
+                var filesLocator = new SeedFilesLocator(pathBase);
+                seedFilePaths = filesLocator.LocateFiles();
             }
             catch (Exception ex)
             {
@@ -48,7 +48,8 @@ namespace Infrastructure.Postgres.Seeding.SeedDataFiles
             var pKeysGuid = new PrimaryKeyGuidGenerator(modeUUID);
             pKeysGuid.Generate(tableAnalysis.PKeys);
 
-            var outputSeedDataFiles = new SeedFilesOutputGenerator(pKeysGuid, tableAnalysis.RootJsonElementsEntities);
+            var outputSeedDataFiles = new SeedFilesOutputGenerator(pKeysGuid, tableAnalysis.RootJsonElementsEntities,
+                pathBase);
             outputSeedDataFiles.Generate();
 
             return true;

@@ -23,7 +23,7 @@ public class DataFiles_Prepare_Tests
 
     public DataFiles_Prepare_Tests()
     {
-        _testDataDir = Path.Combine(AppContext.BaseDirectory, "SeedingTestData");
+        _testDataDir = Path.Combine(AppContext.BaseDirectory, "Seeding/TestFiles/SeedingTests");
         _seedFiles = Directory.EnumerateFiles(_testDataDir, "Demo*.seed.json");
 
         _newDatafiles = PrepareDataFiles();

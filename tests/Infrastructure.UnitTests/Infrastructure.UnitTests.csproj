@@ -39,7 +39,7 @@
 	</ItemGroup>
 	<ItemGroup>
 		<!--Replace to CopyToOutputDirectory=PreserveNewest-->
-		<None Include="SeedingTestData\**\*" CopyToOutputDirectory="Always" />
+		<None Include="Seeding\TestFiles\**\*" CopyToOutputDirectory="Always" />
 	</ItemGroup>
 	<Target Name="OverrideSeedAfterCopy" AfterTargets="CopyFilesToOutputDirectory">
 		<!-- убрать сиды, пришедшие из Infrastructure.Postgres -->
