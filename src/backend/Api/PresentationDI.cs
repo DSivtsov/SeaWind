@@ -1,6 +1,5 @@
 ﻿using Api.Filters;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
-using Microsoft.Extensions.Options;
 using System.Text.Json.Serialization;
 
 namespace Api;
@@ -10,6 +9,8 @@ public static class PresentationDI
     public static IServiceCollection AddPresentation(this IServiceCollection services, IConfiguration cfg,
         IWebHostEnvironment env)
     {
+        var isIntegrationTestRun = Environment.GetEnvironmentVariable("WC_USE_TEST_SETTINGS") == "true";
+
         // Регистрация контроллеров
         // - подключение фильтров
         // - настройка поведения сериализации JSON-ответов
@@ -30,7 +31,7 @@ public static class PresentationDI
             .AddTraceIdToProblemDetails();
 
         // CORS только для DEV (Vite dev-server на 5173 только по http)
-        if (env.IsDevelopment())
+        if (env.IsDevelopment() && !isIntegrationTestRun)
         {
             services.AddCors(o => o.AddPolicy("Dev", p => p
                 .WithOrigins("http://localhost:5173")
@@ -52,11 +53,13 @@ public static class PresentationDI
 
     public static WebApplication UsePresentation(this WebApplication app)
     {
+        var isIntegrationTestRun = Environment.GetEnvironmentVariable("WC_USE_TEST_SETTINGS") == "true";
+
         app.MapHealthChecks("/health");
 
         // DEV: без HTTPS, чтобы не конфликтовать с Vite
         // PROD: TLS на прокси, Kestrel — только HTTP внутри
-        if (!app.Environment.IsDevelopment())
+        if (!app.Environment.IsDevelopment() && !isIntegrationTestRun)
         {
             // Не редиректим на HTTPS — это делает прокси
             // app.UseHttpsRedirection();
@@ -66,7 +69,7 @@ public static class PresentationDI
         }
 
         // Configure the HTTP request pipeline.
-        if (app.Environment.IsDevelopment())
+        if (app.Environment.IsDevelopment() && !isIntegrationTestRun)
         {
             app.UseSwagger();
             app.UseSwaggerUI();

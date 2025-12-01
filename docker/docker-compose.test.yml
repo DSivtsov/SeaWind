@@ -1,0 +1,27 @@
+name: workshopcode
+services:
+  dbtest:
+    image: postgres:16
+    command: ["postgres", "-p", "4432"]
+    container_name: db_test
+    env_file:
+      - .env.test
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB_TEST}
+      POSTGRES_USER: ${POSTGRES_USER_TEST}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD_TEST}
+      APP_DB: ${APP_DB_TEST}
+      APP_USER: ${APP_USER_TEST}
+      APP_PASSWORD: ${APP_PASSWORD_TEST}
+    ports:
+      - "${POSTGRES_PORT_TEST_EXT}:${POSTGRES_PORT_TEST_INT}"
+    volumes:
+      - pgdata_test:/var/lib/postgresql/data
+      - ./init:/docker-entrypoint-initdb.d:ro
+    networks: [internal]
+
+volumes:
+  pgdata_test:
+
+networks:
+  internal:
