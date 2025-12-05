@@ -343,7 +343,6 @@ frontend/
 - удобную интеграцию в CI/CD pipeline.
 
   📘 Дополнительно см. [ADR-0019 — Integration Tests With Testcontainers (API → PostgreSQL](./adr/0019-integration-tests.md)
-  (расширенные возможности для документирования функциональности контроллеров с использованием XML-документов для Swagger/OpenAPI)
 
 ## Настройка хранения строковых окончаний в Git
 В проекте используется единый формат окончаний строк — **LF (Unix-style)**.

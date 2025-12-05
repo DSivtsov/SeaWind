@@ -109,17 +109,17 @@
 
 ### 3.1 Производительность
 Используются:
-- **xUnit CollectionFixture**  
-  `ContainerDbCollection : ICollectionFixture<ContainerDbFixture>`  
+- **xUnit CollectionFixture**
+  `ContainerDbCollection : ICollectionFixture<ContainerDbFixture>`
   Контейнер создаётся **один раз на коллекцию**, а не на каждый тест.
 
 ### 3.2 Соответствие основной БД
 Используются SQL-скрипты в папке `TestcontainerInitDb`:
 
-- создание схемы  
-- создание ролей  
-- выдача прав  
-- установка search_path  
+- создание схемы
+- создание ролей
+- выдача прав
+- установка search_path
 - подготовка структуры БД, идентичной PROD
 
 Контейнер запускается с монтированием каталога инициализации:
@@ -151,7 +151,7 @@ ConnectionStrings__Default=<контейнерная строка подключ
 - ждёт готовности БД через WaitStrategy
 - создаёт `ContainerDbWebApplicationFactory`
 - отдаёт `HttpClient` интеграционным тестам
-- сохраняет логи контейнера в файл (`postgres_log.txt`)
+- сохраняет лог запуска БД в рабочей директории проекта тестов — файл `tests\Api.UnitTests\bin\Debug\net8.0\postgres_log.txt` (если запускается в режиме Debug)
 - корректно завершает контейнер
 
 ### 4.2 ContainerDbWebApplicationFactory
@@ -201,8 +201,8 @@ var response = await _client.GetAsync("/api/courses");
 
 4. Проверяем результат:
 
-- статус 200  
-- десериализуем JSON  
+- статус 200
+- десериализуем JSON
 - проверяем корректность данных
 
 ## 6. Альтернативный тестовый режим (без Testcontainers)
@@ -255,7 +255,7 @@ docker compose --env-file .env.test -f docker-compose.test.yml up
 которая дополняет, но не заменяет основной подход на Testcontainers.
 
 ## 7. Out of Scope
-- тестирование фронтенда  
-- нагрузочные тесты  
-- тесты с участием внешних API  
-- long-running background tests  
+- тестирование фронтенда
+- нагрузочные тесты
+- тесты с участием внешних API
+- long-running background tests
