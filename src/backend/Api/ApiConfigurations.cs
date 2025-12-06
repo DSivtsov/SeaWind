@@ -6,7 +6,7 @@ public static class ApiConfigurations
     {
         builder.Configuration
             .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-            .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: false, reloadOnChange: true)
+            .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true)
             .AddUserSecrets<Program>(optional: true)
             .AddEnvironmentVariables();
 
