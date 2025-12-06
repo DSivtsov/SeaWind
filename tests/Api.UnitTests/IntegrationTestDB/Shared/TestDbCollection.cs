@@ -1,4 +1,4 @@
-﻿namespace Api.UnitTests.Integration.Shared;
+﻿namespace Api.UnitTests.IntegrationTestDB.Shared;
 
 [CollectionDefinition("TestDb collection")]
 public class TestDbCollection : ICollectionFixture<TestDbFixture>

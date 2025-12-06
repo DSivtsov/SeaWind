@@ -1,10 +1,10 @@
-﻿using Api.UnitTests.Integration.Shared;
+﻿using Api.UnitTests.IntegrationTestDB.Shared;
 using Application.DtoCourse;
 using FluentAssertions;
 using System.Net;
 using System.Text.Json;
 
-namespace Api.UnitTests.Integration;
+namespace Api.UnitTests.IntegrationTestDB;
 
 [Collection("TestDb collection")]
 public class CoursesController_GetAll_Tests
@@ -38,4 +38,5 @@ public class CoursesController_GetAll_Tests
 
         dto.Should().HaveCount(2);
     }
+
 }

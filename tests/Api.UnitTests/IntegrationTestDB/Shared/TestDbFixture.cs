@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc.Testing;
 
-namespace Api.UnitTests.Integration.Shared;
+namespace Api.UnitTests.IntegrationTestDB.Shared;
 
 public class TestDbFixture : IDisposable
 {
