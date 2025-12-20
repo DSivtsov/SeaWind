@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import type { UiState } from "@/shared/UiState";
-import { PageShell } from "@/shared/PageShell";
+import { TestPageShell } from "@/pages/demo/shared/TestPageShell";
 import { Select } from "@/shared/ui/Select";
 import { useDebouncedValue } from "@/shared/hooks/useDebouncedValue";
 import { Box, Button, Stack, Text, TextInput } from "@mantine/core";
@@ -17,7 +17,7 @@ const ALL_COURSES: Course[] = [
     { id: "aspnet-mvp", title: "ASP.NET MVP" },
 ];
 
-function ManTineTest() {
+function TestManTine() {
     // union type for UI state
     const [state, setState] = useState<UiState>("loading");
 
@@ -72,7 +72,7 @@ function ManTineTest() {
     const isNoResults = state === "default" && courses.length > 0 && filtered.length === 0;
 
     return (
-        <PageShell title="React + TypeScript — practical minimum" state={state} errorText="Failed to load courses." onRetry={onRetry}>
+        <TestPageShell title="React + TypeScript — practical minimum" state={state} errorText="Failed to load courses." onRetry={onRetry}>
             <Stack gap="sm" w={520} >
                 <TextInput
                     value={query}
@@ -118,8 +118,8 @@ function ManTineTest() {
                     <Text>{selected ? `${selected.title} (${selected.id})` : "—"}</Text>
                 </Stack>
             </Stack>
-        </PageShell>
+        </TestPageShell>
     );
 }
 
-export default ManTineTest;
+export default TestManTine;

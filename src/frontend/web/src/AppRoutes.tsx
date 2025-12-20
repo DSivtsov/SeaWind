@@ -2,8 +2,8 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 
 // Demo pages (keep)
-import ManTineTest from '@/pages/ManTineTest';
-import DemoPage from "@/pages/DemoPage";
+import TestManTine from '@/pages/demo/TestManTine';
+import TestCourseListPage from "@/pages/demo/TestCourseListPage";
 
 /**
  * MVP routing (real structure), with a single reusable placeholder.
@@ -12,19 +12,33 @@ import DemoPage from "@/pages/DemoPage";
  * Replace <PagePlaceholder /> with real pages as you implement them.
  */
 import { PagePlaceholder } from "@/shared/PagePlaceholder";
+import { TestCoursesLayout } from "@/pages/demo/TestCoursesLayout";
+import { CoursesLayout } from "@/pages/courses/list/CoursesLayout";
+import { CoursesLayoutStub } from "@/pages/courses/list/CoursesLayout.stub";
+import TestPage from "@/pages/demo/TestPage";
 
 export function AppRoutes() {
   return (
     <Routes>
-      {/* Keep demo routes */}
-      <Route path="/mantinetest" element={<ManTineTest />} />
-      <Route path="/test" element={<DemoPage />} />
+      {/* Begin section demo routes */}
+      <Route path="/testmantine" element={<TestManTine />} />
+
+      <Route path="/test" element={<TestCoursesLayout />}>
+        <Route index element={<Navigate to="courses" replace />} />
+        <Route path="courses" element={<TestCourseListPage />} />
+      </Route>
+
+      <Route path="/test-page" element={<TestPage />} />
+
+      <Route path="/courses-stub" element={<CoursesLayoutStub />} />
+
+      {/* End section demo routes */}
 
       {/* Landing */}
       <Route path="/" element={<PagePlaceholder title="Landing" />} />
 
       {/* Main Page Public */}
-      <Route path="/courses" element={<PagePlaceholder title="CourseList" />} />
+      <Route path="/courses" element={<CoursesLayout />} />
 
       {/* Course area (tabs layout in MVP) */}
       <Route path="/courses/:courseId" element={<PagePlaceholder title="CourseLayout (Tabs wrapper)" />}>

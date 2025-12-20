@@ -1,8 +1,9 @@
 import type { UiState } from "@/shared/UiState";
-import { Stack, Button, Text } from '@mantine/core';
+import { Stack, Button, Text, Title } from '@mantine/core';
 import { IconReload } from '@tabler/icons-react';
 
 type PageShellProps = {
+    title: string;
     state: UiState;
     errorText?: string;
     onRetry?: () => void;
@@ -38,9 +39,12 @@ const renderContent = (state: UiState, errorText?: string, onRetry?: () => void,
     }
 };
 
-export function PageShell(props: PageShellProps) {
-    const { state, errorText, onRetry, children } = props;
+export function TestPageShell(props: PageShellProps) {
+    const { title, state, errorText, onRetry, children } = props;
     return (
-        renderContent(state, errorText, onRetry, children)
+        <Stack gap="sm" p="md">
+            <Title order={2}>{title}</Title>
+            {renderContent(state, errorText, onRetry, children)}
+        </Stack>
     );
 }

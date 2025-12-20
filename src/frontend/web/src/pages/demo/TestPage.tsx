@@ -130,7 +130,7 @@ const ALL_COURSES: Course[] = [
   { id: "aspnet-mvp", title: "ASP.NET MVP" },
 ];
 
-function DemoPage() {
+function TestPage() {
   // union type for UI state
   const [state, setState] = useState<UiState>("loading");
 
@@ -148,7 +148,7 @@ function DemoPage() {
 
     const id = window.setTimeout(() => {
       // simulate "error" sometimes just to show the pattern
-      const shouldFail = false;
+      const shouldFail = true;
 
       if (shouldFail) {
         setState("error");
@@ -248,4 +248,4 @@ function DemoPage() {
   );
 }
 
-export default DemoPage;
+export default TestPage;
