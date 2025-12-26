@@ -43,7 +43,7 @@ public static class AddDbSeeders
 
         // Нужно указать сидеры которые будут загружать данные
         services.AddScoped<ISeeder<TimeDbContext>, TesterSeeder>();
-        services.AddScoped<ISeeder<TimeDbContext>, CarsSeeder>();
+        services.AddScoped<ISeeder<TimeDbContext>, CarSeeder>();
         services.AddScoped<ISeeder<MainDbContext>, CourseSeeder>();
 
         return services;

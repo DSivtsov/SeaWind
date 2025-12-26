@@ -25,14 +25,9 @@ namespace Infrastructure.Postgres.Main.Migrations
 
             modelBuilder.Entity("Application.Models.Course", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Code")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("character varying(255)");
+                    b.Property<string>("Id")
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)");
 
                     b.Property<DateTime?>("CreatedAt")
                         .IsRequired()
@@ -41,19 +36,23 @@ namespace Infrastructure.Postgres.Main.Migrations
                         .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
                     b.Property<string>("Description")
-                        .HasColumnType("text");
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)");
 
                     b.Property<string>("Title")
                         .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("character varying(255)");
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Courses", "main");
+                    b.ToTable("courses", "main", t =>
+                        {
+                            t.HasCheckConstraint("CK_courses_Id_format", "\"Id\" ~ '^[a-z0-9]+(-[a-z0-9]+)*$'");
+                        });
                 });
 #pragma warning restore 612, 618
         }

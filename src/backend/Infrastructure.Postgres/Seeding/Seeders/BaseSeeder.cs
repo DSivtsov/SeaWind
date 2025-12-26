@@ -65,7 +65,7 @@ internal abstract class BaseSeeder<TContext, TEntity, TDto> : ISeeder<TContext> 
         if (string.IsNullOrWhiteSpace(payload))
             return (false, $"File [{pathDemoDataFile}] is empty.");
 
-        var parseResult = ParseJsonHelper.TryParseTesters<List<TDto>>(payload);
+        var parseResult = ParseJsonHelper.TryParse<List<TDto>>(payload);
 
         if (!parseResult.Ok)
         {

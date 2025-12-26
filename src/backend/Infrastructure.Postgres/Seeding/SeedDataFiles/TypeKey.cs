@@ -4,6 +4,7 @@
     {
         NotKey,
         PK,
-        FK
+        FK,
+        FixPK
     }
 }

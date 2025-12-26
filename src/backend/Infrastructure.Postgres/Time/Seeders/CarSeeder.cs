@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Postgres.Time.Seeders;
 
-internal sealed class CarsSeeder : BaseSeeder<TimeDbContext, Car, CarSeederDto>
+internal sealed class CarSeeder : BaseSeeder<TimeDbContext, Car, CarSeederDto>
 {
     public override SeedOrder Order => SeedOrder.Core;
 

@@ -15,20 +15,20 @@ namespace Infrastructure.Postgres.Main.Migrations
                 name: "main");
 
             migrationBuilder.CreateTable(
-                name: "Courses",
+                name: "courses",
                 schema: "main",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    Title = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
-                    Code = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
-                    Description = table.Column<string>(type: "text", nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValue: new DateTime(2025, 11, 17, 19, 51, 10, 198, DateTimeKind.Utc).AddTicks(5145)),
-                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
+                    Id = table.Column<string>(type: "character varying(32)", maxLength: 32, nullable: false),
+                    Title = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
+                    Description = table.Column<string>(type: "character varying(2000)", maxLength: 2000, nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Courses", x => x.Id);
+                    table.PrimaryKey("PK_courses", x => x.Id);
+                    table.CheckConstraint("CK_courses_Id_format", "\"Id\" ~ '^[a-z0-9]+(-[a-z0-9]+)*$'");
                 });
         }
 
@@ -36,7 +36,7 @@ namespace Infrastructure.Postgres.Main.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Courses",
+                name: "courses",
                 schema: "main");
         }
     }

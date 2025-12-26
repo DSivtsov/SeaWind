@@ -44,7 +44,6 @@ public class CourseServiceTests
         {
             Assert.Equal(expectedCourses[i].Id, resultList[i].Id);
             Assert.Equal(expectedCourses[i].Title, resultList[i].Title);
-            Assert.Equal(expectedCourses[i].Code, resultList[i].Code);
             Assert.Equal(expectedCourses[i].Description, resultList[i].Description);
         }
         _courseRepositoryMock.Verify(repo => repo.GetAllAsync(), Times.Once);

@@ -23,7 +23,7 @@ internal class ParseJsonHelper
         public static ParseResult<TValue> Success(TValue value) => new(true, value, null);
     }
 
-    public static ParseResult<T> TryParseTesters<T>(string payload)
+    public static ParseResult<T> TryParse<T>(string payload)
     {
         try
         {

@@ -12,7 +12,7 @@ namespace Infrastructure.Postgres.Main.Seeders
 
         protected override void AddNewEntity(MainDbContext dbContext, CourseSeederDto recDemo)
         {
-            dbContext.Courses.Add(new Course(recDemo.Id, recDemo.Title, recDemo.Code, recDemo.Description));
+            dbContext.Courses.Add(new Course(recDemo.Id, recDemo.Title, recDemo.Description));
         }
 
         protected override async Task RemoveEntities(MainDbContext dbContext, CancellationToken ct)
@@ -29,7 +29,6 @@ namespace Infrastructure.Postgres.Main.Seeders
         protected override void UpdateEntity(Course entity, CourseSeederDto recDemo)
         {
             entity.Title = recDemo.Title;
-            entity.Code = recDemo.Code;
             entity.Description = recDemo.Description;
         }
     }

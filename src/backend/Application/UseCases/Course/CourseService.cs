@@ -16,6 +16,6 @@ public class CourseService : ICourseService
     {
         IEnumerable<Course> courses = await _courseRepository.GetAllAsync();
 
-        return courses.Select(c => new CourseDto(c.Id, c.Title, c.Code, c.Description));
+        return courses.Select(c => new CourseDto(c.Id, c.Title,  c.Description));
     }
 }

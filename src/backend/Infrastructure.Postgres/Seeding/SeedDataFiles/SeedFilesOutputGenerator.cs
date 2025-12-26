@@ -1,19 +1,20 @@
-﻿using System.Text.Json;
+﻿using Infrastructure.Postgres.Seeding.Shared;
+using System.Text.Json;
 
 namespace Infrastructure.Postgres.Seeding.SeedDataFiles
 {
     internal class SeedFilesOutputGenerator
     {
-        private readonly PrimaryKeyGuidGenerator _finalGuid;
+        private readonly PrimaryKeyValuesUpdater _pKeysUpdater;
         private readonly IReadOnlyCollection<(string entityName, JsonElement rootElement)> _rootJsonElementsEntities;
         private readonly string _pathBase;
-        private readonly HashSet<string> _existPKeys = new();
+        private readonly HashSet<string> _existPKeyRef = new();
 
-        internal SeedFilesOutputGenerator(PrimaryKeyGuidGenerator finalGuid,
+        internal SeedFilesOutputGenerator(PrimaryKeyValuesUpdater pKeysUpdater,
             IReadOnlyCollection<(string entityName, JsonElement rootElement)> rootJsonElementsEntities,
                 string pathBase)
         {
-            _finalGuid = finalGuid ?? throw new ArgumentNullException(nameof(finalGuid));
+            _pKeysUpdater = pKeysUpdater ?? throw new ArgumentNullException(nameof(pKeysUpdater));
             _rootJsonElementsEntities = rootJsonElementsEntities ?? throw new ArgumentNullException(nameof(rootJsonElementsEntities));
             _pathBase = pathBase;
         }
@@ -28,7 +29,7 @@ namespace Infrastructure.Postgres.Seeding.SeedDataFiles
 
         private void CreateDataFileForEntity(string entityName, JsonElement rootElement)
         {
-            var currentFileName = GetNameCurrentDataFile(entityName);
+            var currentFileName = SeedFilesConvention.GenerateDataFileName(entityName);
 
             using var currentWriter = new DataFileWriter(Path.Combine(_pathBase, currentFileName));
 
@@ -42,13 +43,13 @@ namespace Infrastructure.Postgres.Seeding.SeedDataFiles
         private void WriteJsonElement(string entityName, DataFileWriter currentWriter, JsonElement rootElement)
         {
             if (rootElement.ValueKind != JsonValueKind.Array)
-                throw new InvalidDataException("[ParseJsonArray]: [First element] not is JsonValueKind.Array");
+                throw new InvalidDataException("[WriteJsonElement]: [First element] not is JsonValueKind.Array");
 
             // цикл по объектам 
             foreach (JsonElement jsonObject in rootElement.EnumerateArray())
             {
                 if (jsonObject.ValueKind != JsonValueKind.Object)
-                    throw new InvalidDataException("[ParseJsonArray]: In JsonArray not only JsonValueKind.Object");
+                    throw new InvalidDataException("[WriteJsonElement]: In JsonArray not only JsonValueKind.Object");
 
                 (bool isCorrectRec, List<(string Name, JsonElement Value)>? buffer) rez = GenerateJsonObject(entityName, jsonObject);
 
@@ -60,7 +61,7 @@ namespace Infrastructure.Postgres.Seeding.SeedDataFiles
         private (bool isCorrectRec, List<(string Name, JsonElement Value)>? buffer) GenerateJsonObject(string entityName,
             JsonElement jsonObject)
         {
-            var seedFilesChecker = new HelperSeedFilesChecker(entityName);
+            var seedFilesChecker = new SeedFilesConvention(entityName);
             List<(string Name, JsonElement Value)> buffer = new();
 
             // цикл по полям объекта
@@ -74,8 +75,11 @@ namespace Infrastructure.Postgres.Seeding.SeedDataFiles
                     continue;
                 }
 
-                string value = jsonValue.ToString();
-                var typeKey = seedFilesChecker?.GetKeyType(value);
+                //skip temporary column with IDValue from final file
+                if (property.NameEquals(SeedConst.ColumnIdValue)) continue;
+
+                string refPKeyLowered = jsonValue.ToString().ToLowerInvariant();
+                var typeKey = seedFilesChecker?.GetKeyType(refPKeyLowered);
 
                 switch (typeKey)
                 {
@@ -84,47 +88,26 @@ namespace Infrastructure.Postgres.Seeding.SeedDataFiles
                         continue;
 
                     case TypeKey.PK:
-                        if (_existPKeys.Contains(value))
-                        {
-                            // skip rec with dublicate PKeys
-                            return (false, null);
-                        }
-                        else
-                        {
-                            _existPKeys.Add(value);
-                            buffer.Add((property.Name, NewJsonElement(_finalGuid.GetGuid(value))));
-                            continue;
-                        }
+                    case TypeKey.FixPK:
+                        // skip rec with dublicate PKeys
+                        if (_existPKeyRef.Contains(refPKeyLowered)) return (false, null);
+
+                        // skip rec with invalid PKey Value
+                        if (!_pKeysUpdater.TryGetPKeyRelValue(refPKeyLowered, out string? PKeyRealValue)) return (false, null);
+
+                        _existPKeyRef.Add(refPKeyLowered);
+                        buffer.Add((property.Name, JsonSerializer.SerializeToElement(PKeyRealValue)));
+                        continue;
 
                     case TypeKey.FK:
-                        if (_finalGuid.TryGetGuid(value, out Guid guid))
-                        {
-                            buffer.Add((property.Name, NewJsonElement(guid)));
-                            continue;
-                        }
-                        else
-                        {
-                            // skip rec with FK which not exist in dict PKeys
-                            return (false, null);
-                        }
+                        // skip rec with FK which not exist in dict PKeys
+                        if (!_pKeysUpdater.TryGetPKeyRelValue(refPKeyLowered, out string? fkRealValue)) return (false, null);
+
+                        buffer.Add((property.Name, JsonSerializer.SerializeToElement(fkRealValue)));
+                        continue;
                 }
             }
-
             return (true, buffer);
         }
-
-        private string GetNameCurrentDataFile(ReadOnlySpan<char> name)
-        {
-            if (name.Length == 0)
-                throw new InvalidOperationException("Entity name cannot be empty.");
-
-            string Name = name.Length == 1
-                ? char.ToUpperInvariant(name[0]).ToString()
-                : string.Concat(char.ToUpperInvariant(name[0]), name[1..].ToString());
-
-            return $"Demo{Name}.json";
-        }
-
-        private static JsonElement NewJsonElement(Guid value) => JsonSerializer.SerializeToElement(value.ToString("D"));
     }
 }

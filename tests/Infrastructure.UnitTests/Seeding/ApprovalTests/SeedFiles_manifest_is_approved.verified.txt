@@ -1,7 +1,7 @@
 ﻿{
   Count: 2,
   Files: [
-    DemoCars.seed.json,
+    DemoCar.seed.json,
     DemoTester.seed.json
   ]
 }

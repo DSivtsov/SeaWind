@@ -5,6 +5,5 @@
 /// </summary>
 /// <param name="Id">Id курса</param>
 /// <param name="Title">Название курса</param>
-/// <param name="Code">Код курса</param>
 /// <param name="Description">Описание курса</param>
-public record CourseSeederDto(Guid Id, string Title, string? Code, string? Description);
+public record CourseSeederDto(string Id, string Title, string? Description);
