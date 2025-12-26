@@ -1,15 +1,20 @@
-import { buildUrl } from "@/shared/api/httpWrappers";
-import { readErrorMessage } from "@/shared/api/readErrorMessage";
+import { singleAttempt } from "@/shared/api/singleAttempt";
 
 const RETRY_DELAYS = [200, 500, 1000]; // ms
+
+export function buildUrl(path: string): string {
+  return path;
+}
 
 function shouldRetry(method: string, attempt: number, e: unknown, signal?: AbortSignal): boolean {
   if (signal?.aborted) return false;
   if (method !== "GET") return false;
   if (attempt >= RETRY_DELAYS.length) return false;
 
-  if (isApiError(e) && e.kind === "network") return true;
-  if (isApiError(e) && e.kind === "http" && e.status && [502, 503, 504].includes(e.status)) return true;
+  if (!isApiError(e)) return false;
+
+  if (e.kind === "network") return true;
+  if (e.kind === "http" && e.status && [502, 503, 504].includes(e.status)) return true;
 
   return false;
 }
@@ -26,11 +31,11 @@ export type ApiError = {
   status?: number;
 };
 
-function httpError(kind: ApiErrorKind, message: string, status?: number): ApiError {
+export function httpError(kind: ApiErrorKind, message: string, status?: number): ApiError {
   return { kind, message, status };
 }
 
-function isAbortError(e: unknown): boolean {
+export function isAbortError(e: unknown): boolean {
   return e instanceof DOMException && e.name === "AbortError";
 }
 
@@ -46,13 +51,27 @@ export function isAbort(e: unknown): boolean {
   return isApiError(e) && e.kind === "abort";
 }
 
-type RequestOptions = {
+type JsonBody = Record<string, unknown> | unknown[] | null;
+
+type JsonRequestOptions = {
   method: "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
-  body?: unknown;
+  parse?: "json" | "jsonOrEmpty" | "empty";
+  body?: JsonBody;        // string запрещён
   signal?: AbortSignal;
   token?: string | null;
 };
 
+type TextRequestOptions = {
+  method: "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
+  parse: "text";
+  body?: string;          // string разрешён
+  signal?: AbortSignal;
+  token?: string | null;
+};
+
+export type RequestOptions = JsonRequestOptions | TextRequestOptions;
+
+// Делает Retry только для Get см. shouldRetry()
 export async function apiRequest<T>(path: string, opts: RequestOptions): Promise<T> {
   let attempt = 0;
 
@@ -66,46 +85,5 @@ export async function apiRequest<T>(path: string, opts: RequestOptions): Promise
       }
       throw e;
     }
-  }
-}
-
-export async function singleAttempt<T>(path: string, opts: RequestOptions): Promise<T> {
-  const headers: Record<string, string> = {
-    Accept: "application/json",
-  };
-
-  const hasBody = opts.body !== undefined;
-  if (hasBody) headers["Content-Type"] = "application/json";
-
-  if (opts.token) headers["Authorization"] = `Bearer ${opts.token}`;
-
-  try {
-    const res = await fetch(buildUrl(path), {
-      method: opts.method,
-      headers,
-      body: hasBody ? JSON.stringify(opts.body) : undefined,
-      signal: opts.signal,
-    });
-
-    if (!res.ok) {
-      //const msg = await safeReadText(res);
-      const msg = await readErrorMessage(res);
-      throw httpError("http", msg, res.status);
-    }
-
-    // For 204 No Content etc.
-    if (res.status === 204) return undefined as T;
-
-    try {
-      return (await res.json()) as T;
-    } catch {
-      throw httpError("parse", "Failed to parse JSON", res.status);
-    }
-  } catch (e: unknown) {
-    if (isAbortError(e)) throw httpError("abort", "Aborted");
-    if (isApiError(e)) throw e;
-
-    const msg = e instanceof Error ? e.message : "Network error";
-    throw httpError("network", msg);
   }
 }

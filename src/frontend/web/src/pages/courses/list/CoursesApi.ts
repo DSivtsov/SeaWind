@@ -1,5 +1,4 @@
-import { apiGet } from "@/shared/api/httpWrappers";
-import { getToken } from "@/shared/auth/auth";
+import { apiRequest } from "@/shared/api/apiRequests";
 
 export type CourseDto = {
   id: string;
@@ -8,5 +7,5 @@ export type CourseDto = {
 };
 
 export function getCourses(signal?: AbortSignal): Promise<CourseDto[]> {
-  return apiGet<CourseDto[]>("/api/courses", signal, getToken());
+  return apiRequest<CourseDto[]>("/api/courses", { method: "GET", signal });
 }
