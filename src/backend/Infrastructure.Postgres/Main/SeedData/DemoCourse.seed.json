@@ -3,12 +3,120 @@
     "Id": "!course.1",
     "Title": "Основы C#",
     "Code": "c#basic",
-    "Description": "Основы программирвания на языке C#"
+    "Description": "Основы программирования на языке C#"
   },
   {
     "Id": "!course.2",
     "Title": "Unity Intro",
     "Code": "UN201",
-    "Description": "GameDev basics"
+    "Description": "Введение в GameDev и Unity"
+  },
+  {
+    "Id": "!course.3",
+    "Title": "C# OOP",
+    "Code": "c#oop",
+    "Description": "Объектно-ориентированное программирование в C#"
+  },
+  {
+    "Id": "!course.4",
+    "Title": "C# Collections",
+    "Code": "c#collections",
+    "Description": "Списки, словари и коллекции в C#"
+  },
+  {
+    "Id": "!course.5",
+    "Title": "C# LINQ",
+    "Code": "c#linq",
+    "Description": "Работа с данными с помощью LINQ"
+  },
+  {
+    "Id": "!course.6",
+    "Title": "C# Async",
+    "Code": "c#async",
+    "Description": "Асинхронность, async и await"
+  },
+  {
+    "Id": "!course.7",
+    "Title": "Unity 2D Basics",
+    "Code": "UN2D",
+    "Description": "Создание 2D-игр в Unity"
+  },
+  {
+    "Id": "!course.8",
+    "Title": "Unity 3D Basics",
+    "Code": "UN3D",
+    "Description": "Основы 3D-разработки в Unity"
+  },
+  {
+    "Id": "!course.9",
+    "Title": "Unity Physics",
+    "Code": "UNPHY",
+    "Description": "Физика и коллизии в Unity"
+  },
+  {
+    "Id": "!course.10",
+    "Title": "Unity UI",
+    "Code": "UNUI",
+    "Description": "Пользовательский интерфейс в Unity"
+  },
+  {
+    "Id": "!course.11",
+    "Title": "Game Design Basics",
+    "Code": "GD101",
+    "Description": "Основы геймдизайна"
+  },
+  {
+    "Id": "!course.12",
+    "Title": "Algorithms Intro",
+    "Code": "ALG101",
+    "Description": "Базовые алгоритмы и мышление программиста"
+  },
+  {
+    "Id": "!course.13",
+    "Title": "Data Structures",
+    "Code": "DS101",
+    "Description": "Основные структуры данных"
+  },
+  {
+    "Id": "!course.14",
+    "Title": "Debugging",
+    "Code": "DBG101",
+    "Description": "Поиск и устранение ошибок в коде"
+  },
+  {
+    "Id": "!course.15",
+    "Title": "Clean Code",
+    "Code": "CLN101",
+    "Description": "Принципы чистого и читаемого кода"
+  },
+  {
+    "Id": "!course.16",
+    "Title": "Git Basics",
+    "Code": "GIT101",
+    "Description": "Основы работы с Git"
+  },
+  {
+    "Id": "!course.17",
+    "Title": "Unity Animation",
+    "Code": "UNANIM",
+    "Description": "Анимации и Animator в Unity"
+  },
+  {
+    "Id": "!course.18",
+    "Title": "Unity Audio",
+    "Code": "UNAUD",
+    "Description": "Звук и музыка в Unity"
+  },
+  {
+    "Id": "!course.19",
+    "Title": "Game Architecture",
+    "Code": "GA101",
+    "Description": "Архитектура игровых проектов"
+  },
+  {
+    "Id": "!course.20",
+    "Title": "Project Practice",
+    "Code": "PRJ101",
+    "Description": "Практика и сборка учебного проекта"
   }
 ]
