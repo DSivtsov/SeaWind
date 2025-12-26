@@ -265,12 +265,15 @@ ASP.NET Core автоматически включает систему защи
 
 ### Общая информация об архитектуре фронтенда
 
-Frontend MVP представляет собой **один React SPA** (без SSR, без UI-kit, без React Query на день 1), покрывающий все MVP-сценарии.
+Frontend MVP представляет собой **один React SPA** (без SSR, с Mantine UI Library, без React Query на день 1), покрывающий все MVP-сценарии.
 Основан на **React 18**, **Vite** и **React Router**.
+
+Подход к разработке страниц и базовому layout Frontend зафиксирован в
+[ADR 0026: Подход к разработке страниц Frontend](./adr/0026-frontend-pages-approach.md).
 
 #### Ключевые экраны
 - Auth: Вход / Регистрация.
-- Courses, Lectures, Journal, Exercises.
+- Courses, Lectures, Exercises (и другие экраны по SiteMap).
 - Mentor/Admin: простые таблицы (чтение / базовые действия).
 - Profile: базовая информация о пользователе.
 
@@ -279,21 +282,55 @@ Frontend MVP представляет собой **один React SPA** (без 
 - **HTTP:** нативный `fetch` (axios не используется).
 - **State:** локальное состояние + `AuthContext` (хранение token, user).
 - **Формы:** нативная HTML-валидация + минимальные TypeScript-проверки.
-- **Стили:** стандартный CSS/модули, без Tailwind.
+- **Стили:** Mantine + минимальный app.css (фон/layout), без Tailwind.
 
 #### Файловая структура фронтенда проекта
 ```
-frontend/
-  src/
-    app.tsx            # маршруты
-    main.tsx           # React root
+src/
+  App.tsx            # корневой компонент приложения (providers, AppShell)
+  AppRoutes.tsx      # описание маршрутов
+  main.tsx           # точка входа
+
+  common/
+    constants.ts     # общие константы
+    app.css          # глобальный CSS (фон, layout, overlay)
+
+  shared/
+    PageShell.tsx
+    UiState.ts
+    hooks/
+    ui/
     api/
-      client.ts        # fetch-обёртка
-      auth.ts          # авторизация
-    pages/             # Auth, Courses, Lectures, Journal, Exercises, Profile
-    components/        # Navbar, Protected
-  vite.config.ts
-  index.html
+
+  pages/
+    landing/
+      LandingPage.tsx
+      landing.css    # background / overlay Landing (исключение)
+
+    courses/
+      list/
+        CoursesLayout.tsx
+        CoursesListPage.tsx
+        CourseCard.tsx
+        CoursesApi.ts
+      lectures/
+        LecturesPage.tsx        # список лекций (заготовка)
+      exercises/
+        ExercisesPage.tsx       # список упражнений (заготовка)
+
+    mentor/
+      tables/
+        MentorTablesPage.tsx    # таблицы Mentor (заготовка)
+
+    admin/
+      tables/
+        AdminTablesPage.tsx     # таблицы Admin (заготовка)
+
+    chat/
+      CourseExerciseChatPage.tsx   # чат по упражнению (full-screen)
+
+    support/
+      SupportChatModal.tsx         # support chat (non-routing modal)
 ```
 
 ### Совместная работа фроненда и бекенда
@@ -380,6 +417,7 @@ CI/CD реализован с использованием GitHub Actions (**wor
 📘 Детальное описание см. [ADR-0021 — Create CI & CD for develop & TST](./adr/0021-create-ci-cd-develop-tst.md)
 
 ## Change Log
+- v13 (2025-12-29) — актуализация  разделов из секции **Описание архитектуры фронтенда**
 - v12 (2025-12-06) — добавлен раздел `CI/CD Pipeline` и `Анализ покрытия тестами кода проекта`
 - v11 (2025-11-30) — добавлен раздел `Настройка хранения строковых окончаний в Git`
 - v10 (2025-11-29) — добавлен  раздел `Интеграционное тестирование бекенда`(DS)
