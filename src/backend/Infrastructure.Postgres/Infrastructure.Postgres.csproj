@@ -27,6 +27,7 @@
 	</ItemGroup>
 	<ItemGroup>
 	  <Folder Include="Identity\Migrations\" />
+	  <Folder Include="Main\Migrations\" />
 	</ItemGroup>
 	<ItemGroup>
 		<!--Replace to CopyToOutputDirectory=PreserveNewest-->

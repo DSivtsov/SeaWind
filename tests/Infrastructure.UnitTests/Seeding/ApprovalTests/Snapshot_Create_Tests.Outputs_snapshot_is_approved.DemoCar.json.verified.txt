@@ -1,0 +1,26 @@
+﻿[
+  {
+    "Id": "1c401b69-d215-555b-b558-15b7c15a5a7a",
+    "Model": "Toyota Corolla",
+    "Owner": "159889ac-1018-5f99-8517-b516031b5f9b",
+    "RegNumber": "Н 205 РУ 31"
+  },
+  {
+    "Id": "4cb2eb82-fdbf-5704-b234-d77ea7b671d1",
+    "Model": "BMW 525",
+    "Owner": "6434b54a-5e08-5d92-853d-3966fd325473",
+    "RegNumber": "К 790 КУ 57"
+  },
+  {
+    "Id": "36ad83bf-5512-5ab0-9422-5a425cb3727a",
+    "Model": "Pegeout 406",
+    "Owner": "159889ac-1018-5f99-8517-b516031b5f9b",
+    "RegNumber": "Н 357 ТУ 702"
+  },
+  {
+    "Id": "19aed9da-da25-57d1-94f3-37b12cc60d69",
+    "Model": "Hyundai Tucson",
+    "Owner": "a7af87d1-6944-5626-b507-d044eba69a54",
+    "RegNumber": "Н 013 КВ 57"
+  }
+]

@@ -48,6 +48,7 @@ psql -U "$POSTGRES_USER" -d "$POSTGRES_DB" -v APP_DB="$APP_DB" -v APP_USER="$APP
 GRANT CONNECT ON DATABASE :"APP_DB" TO :"APP_USER";
 SQL
 
+# Это можно убрать т.к. в реальности пользователь сам создает схему и поэтому получает все права на нее
 echo "GRANTED USAGE ON SCHEMA AND ON OPERATIONS?"
 
 psql -U "$POSTGRES_USER" -d "$POSTGRES_DB" -v APP_DB="$APP_DB" -v APP_USER="$APP_USER" <<'SQL'
@@ -56,6 +57,7 @@ GRANT USAGE ON SCHEMA public TO :"APP_USER";
 GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO :"APP_USER";
 SQL
 
+# Это можно убрать т.к. в реальности пользователь сам создает схему и поэтому получает все права на нее
 echo "ALTERED DEFAULT PRIVILEGES IN SCHEMA?"
 
 psql -U "$POSTGRES_USER" -d "$POSTGRES_DB" -v APP_DB="$APP_DB" -v APP_USER="$APP_USER" <<'SQL'

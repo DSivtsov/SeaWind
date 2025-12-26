@@ -52,7 +52,7 @@ public class CoursesControllerTests
 
         foreach (var course in coursesResult)
         {
-            Assert.NotEqual(Guid.Empty, course.Id);
+            Assert.NotEmpty(course.Id);
             Assert.False(string.IsNullOrWhiteSpace(course.Title));
             Assert.False(string.IsNullOrWhiteSpace(course.Description));
         }

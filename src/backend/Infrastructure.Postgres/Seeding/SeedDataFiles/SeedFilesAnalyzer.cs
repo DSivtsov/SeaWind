@@ -1,34 +1,39 @@
-﻿using System.Text.Json;
+﻿using Infrastructure.Postgres.Seeding.Shared;
+using System.Text.Json;
 
 namespace Infrastructure.Postgres.Seeding.SeedDataFiles
 {
     internal class SeedFilesAnalyzer
     {
-        private Dictionary<string, Guid> _dictPKeyGuid = new();
+        private Dictionary<string, string> _dictPKey = new();
         private HashSet<(string fKey, string fileName)> _hashFKeyFileName = new();
         private List<(string pKey, string fileName)> _listDublicatePK = new();
+        private List<(string pKey, string fileName)> _listSkippedFixedPK = new();
 
-        private string? _currentEntityName;
-        private HelperSeedFilesChecker? _seedFilesChecker;
+        /// <summary>
+        /// All entity names in this class are stored in lower case (invariant).
+        /// </summary>
+        private string? _currentEntityNameNormalized;
+        private SeedFilesConvention? _seedFilesChecker;
         private List<(string entityName, JsonElement rootElement)> _rootJsonElementsEntities = new ();
 
         internal TableAnalysis AnalyzeSeedFiles(IEnumerable<string> seedFilePaths)
         {
             foreach (var path in seedFilePaths)
             {
-                _currentEntityName = HelperSeedFilesChecker.GetEntityName(path);
+                _currentEntityNameNormalized = SeedFilesConvention.GetEntityNameLowered(path);
 
-                if (_currentEntityName is null)
+                if (_currentEntityNameNormalized is null)
                     throw new InvalidDataException($"Invalid demo seed file name: {path}");
 
-                _seedFilesChecker = new HelperSeedFilesChecker(_currentEntityName);
+                _seedFilesChecker = new SeedFilesConvention(_currentEntityNameNormalized);
 
                 ParseAndScanSeedFile(path);
             }
 
             List<string> validationWarnings = DetectedWarnings();
 
-            return new TableAnalysis(_dictPKeyGuid, _rootJsonElementsEntities, validationWarnings);
+            return new TableAnalysis(_dictPKey, _rootJsonElementsEntities, validationWarnings);
         }
 
         private void ParseAndScanSeedFile(string pathfile)
@@ -40,7 +45,7 @@ namespace Infrastructure.Postgres.Seeding.SeedDataFiles
 
             ParseJsonArray(rootElement);
 
-            _rootJsonElementsEntities.Add((_currentEntityName!, rootElement.Clone()));
+            _rootJsonElementsEntities.Add((_currentEntityNameNormalized!, rootElement.Clone()));
         }
 
         private void ParseJsonArray(JsonElement rootElement)
@@ -60,6 +65,9 @@ namespace Infrastructure.Postgres.Seeding.SeedDataFiles
 
         private void ParseAndCheckObjects(JsonElement jsonObject)
         {
+            bool isFixPKeyRealValueDetected = false;
+            string PKeyRef = string.Empty;
+
             foreach (JsonProperty property in jsonObject.EnumerateObject())
             {
                 JsonElement jsonValue = property.Value;
@@ -67,25 +75,54 @@ namespace Infrastructure.Postgres.Seeding.SeedDataFiles
                 if (jsonValue.ValueKind == JsonValueKind.Object || jsonValue.ValueKind == JsonValueKind.Array)
                     continue;
 
-                string value = jsonValue.ToString();
+                string valueOriginal = jsonValue.ToString();
+                string valueLowered = valueOriginal.ToLowerInvariant();
 
-                var typeKey = _seedFilesChecker?.GetKeyType(value);
+                if (isFixPKeyRealValueDetected && property.NameEquals(SeedConst.ColumnIdValue))
+                {
+                    if (SeedFilesConvention.IsValidPKeyValue(valueLowered))
+                        _dictPKey.Add(PKeyRef, valueLowered);
+                    else
+                        _listSkippedFixedPK.Add((valueOriginal, _currentEntityNameNormalized!));
 
-                switch (typeKey)
+                    isFixPKeyRealValueDetected = false;
+                    PKeyRef = string.Empty;
+                    continue;
+                }
+
+                var typePKeyRef = _seedFilesChecker?.GetKeyType(valueLowered);
+
+                switch (typePKeyRef)
                 {
                     case TypeKey.NotKey:
                         continue;
+                    
+                    case TypeKey.FixPK:
+                        if (_dictPKey.ContainsKey(valueLowered))
+                        {
+                            _listDublicatePK.Add((valueOriginal, _currentEntityNameNormalized!));
+                            continue;
+                        }
+                        isFixPKeyRealValueDetected = true;
+                        PKeyRef = valueLowered;
+                        continue;
 
                     case TypeKey.PK:
-                        if (_dictPKeyGuid.TryAdd(value, Guid.Empty)) continue;
+                        if (_dictPKey.TryAdd(valueLowered, string.Empty)) continue;
 
-                        _listDublicatePK.Add((value, _currentEntityName!));
+                        _listDublicatePK.Add((valueOriginal, _currentEntityNameNormalized!));
                         continue;
 
                     case TypeKey.FK:
-                        _hashFKeyFileName.Add((value, _currentEntityName!));
+                        _hashFKeyFileName.Add((valueOriginal, _currentEntityNameNormalized!));
                         continue;
                 }
+            }
+            if (isFixPKeyRealValueDetected)
+            {
+                throw new InvalidDataException($"[ParseAndCheckObjects]: Required column '{SeedConst.ColumnIdValue}' for fixed PK " +
+                    $"is not present in the data file. Entity=[{_currentEntityNameNormalized}]");
+
             }
         }
 
@@ -102,19 +139,21 @@ namespace Infrastructure.Postgres.Seeding.SeedDataFiles
         {
             List<string> validationWarnings = new List<string>();
 
-            if (_listDublicatePK.Count != 0)
+            foreach ((string pKey, string fileName) item in _listSkippedFixedPK)
             {
-                foreach ((string pKey, string fileName) item in _listDublicatePK)
-                {
-                    validationWarnings.Add($"Will Skipped record with duplicate PKey[{item.pKey}] in file [{item.fileName}]");
-                }
+                validationWarnings.Add($"Will skip record with invalid value [{item.pKey}] for PK/FK use. Entity=[{item.fileName}].");
+            }
+
+            foreach ((string pKey, string fileName) item in _listDublicatePK)
+            {
+                validationWarnings.Add($"Will skip record with duplicate PKey[{item.pKey}]. Entity=[{item.fileName}]");
             }
 
             foreach ((string fKey, string fileName) item in _hashFKeyFileName)
             {
-                if (!_dictPKeyGuid.ContainsKey(item.fKey))
+                if (!_dictPKey.ContainsKey(item.fKey.ToLowerInvariant()))
                 {
-                    validationWarnings.Add($"Will Skipped record with invalid FKey[{item.fKey}] in file [{item.fileName}]");
+                    validationWarnings.Add($"Will skip record with invalid FKey[{item.fKey}]. Entity=[{item.fileName}]");
                 }
             }
 

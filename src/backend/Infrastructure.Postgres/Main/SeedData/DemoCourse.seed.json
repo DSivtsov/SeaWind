@@ -1,122 +1,122 @@
 [
   {
-    "Id": "!course.1",
+    "Id": "!course.ID1",
     "Title": "Основы C#",
-    "Code": "c#basic",
+    "@IDValue": "csharp-basic",
     "Description": "Основы программирования на языке C#"
   },
   {
-    "Id": "!course.2",
+    "Id": "!course.ID2",
     "Title": "Unity Intro",
-    "Code": "UN201",
+    "@IDValue": "un201",
     "Description": "Введение в GameDev и Unity"
   },
   {
-    "Id": "!course.3",
+    "Id": "!course.ID3",
     "Title": "C# OOP",
-    "Code": "c#oop",
+    "@IDValue": "csharp-oop",
     "Description": "Объектно-ориентированное программирование в C#"
   },
   {
-    "Id": "!course.4",
+    "Id": "!course.ID4",
     "Title": "C# Collections",
-    "Code": "c#collections",
+    "@IDValue": "csharp-collections",
     "Description": "Списки, словари и коллекции в C#"
   },
   {
-    "Id": "!course.5",
+    "Id": "!course.ID5",
     "Title": "C# LINQ",
-    "Code": "c#linq",
+    "@IDValue": "_test",
     "Description": "Работа с данными с помощью LINQ"
   },
   {
-    "Id": "!course.6",
+    "Id": "!course.ID6",
     "Title": "C# Async",
-    "Code": "c#async",
+    "@IDValue": "csharp-async",
     "Description": "Асинхронность, async и await"
   },
   {
-    "Id": "!course.7",
+    "Id": "!course.ID7",
     "Title": "Unity 2D Basics",
-    "Code": "UN2D",
+    "@IDValue": "end-",
     "Description": "Создание 2D-игр в Unity"
   },
   {
-    "Id": "!course.8",
+    "Id": "!course.ID8",
     "Title": "Unity 3D Basics",
-    "Code": "UN3D",
+    "@IDValue": "un3d",
     "Description": "Основы 3D-разработки в Unity"
   },
   {
-    "Id": "!course.9",
+    "Id": "!course.ID9",
     "Title": "Unity Physics",
-    "Code": "UNPHY",
+    "@IDValue": "unphy",
     "Description": "Физика и коллизии в Unity"
   },
   {
-    "Id": "!course.10",
+    "Id": "!course.ID10",
     "Title": "Unity UI",
-    "Code": "UNUI",
+    "@IDValue": "unui",
     "Description": "Пользовательский интерфейс в Unity"
   },
   {
-    "Id": "!course.11",
+    "Id": "!course.ID11",
     "Title": "Game Design Basics",
-    "Code": "GD101",
+    "@IDValue": "gd101",
     "Description": "Основы геймдизайна"
   },
   {
-    "Id": "!course.12",
+    "Id": "!course.ID12",
     "Title": "Algorithms Intro",
-    "Code": "ALG101",
+    "@IDValue": "alg101",
     "Description": "Базовые алгоритмы и мышление программиста"
   },
   {
-    "Id": "!course.13",
+    "Id": "!course.ID13",
     "Title": "Data Structures",
-    "Code": "DS101",
+    "@IDValue": "ds101",
     "Description": "Основные структуры данных"
   },
   {
-    "Id": "!course.14",
+    "Id": "!course.ID14",
     "Title": "Debugging",
-    "Code": "DBG101",
+    "@IDValue": "dbg101",
     "Description": "Поиск и устранение ошибок в коде"
   },
   {
-    "Id": "!course.15",
+    "Id": "!course.ID15",
     "Title": "Clean Code",
-    "Code": "CLN101",
+    "@IDValue": "cln101",
     "Description": "Принципы чистого и читаемого кода"
   },
   {
-    "Id": "!course.16",
+    "Id": "!course.ID16",
     "Title": "Git Basics",
-    "Code": "GIT101",
+    "@IDValue": "git101",
     "Description": "Основы работы с Git"
   },
   {
-    "Id": "!course.17",
+    "Id": "!course.ID17",
     "Title": "Unity Animation",
-    "Code": "UNANIM",
+    "@IDValue": "unanim",
     "Description": "Анимации и Animator в Unity"
   },
   {
-    "Id": "!course.18",
+    "Id": "!course.ID18",
     "Title": "Unity Audio",
-    "Code": "UNAUD",
+    "@IDValue": "unaud",
     "Description": "Звук и музыка в Unity"
   },
   {
-    "Id": "!course.19",
+    "Id": "!course.ID19",
     "Title": "Game Architecture",
-    "Code": "GA101",
+    "@IDValue": "ga101",
     "Description": "Архитектура игровых проектов"
   },
   {
-    "Id": "!course.20",
+    "Id": "!course.ID20",
     "Title": "Project Practice",
-    "Code": "PRJ101",
+    "@IDValue": "prj101",
     "Description": "Практика и сборка учебного проекта"
   }
 ]

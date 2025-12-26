@@ -1,9 +1,10 @@
 import { Card, Text, Group, ActionIcon, Tooltip } from "@mantine/core";
 import { IconMovie, IconTools } from "@tabler/icons-react";
+import { useNavigate } from "react-router-dom";
 
 export type Course = {
+    id: string;
     title: string;
-    code: string;
     description: string;
 };
 
@@ -12,19 +13,23 @@ type CourseCardProps = {
 };
 
 export function CourseCard({ course }: CourseCardProps) {
-    const { title, code, description } = course;
+    const { id, title, description } = course;
+    const navigate = useNavigate();
+
     return (
         <Card shadow="sm" padding="lg" radius="md" withBorder>
             <Group justify="space-between" mb="xs">
-                <Text fw={700}>{code}</Text>
+                <Text fw={700}>{id}</Text>
                 <Group gap={"md"}>
                     <Tooltip label="Open video lectures">
-                        <ActionIcon variant="filled" size="xl" radius="md" aria-label="Open video lectures">
+                        <ActionIcon variant="filled" size="xl" radius="md" aria-label="Open video lectures"
+                            onClick={() => navigate(`/courses/${id}/lectures`)} >
                             <IconMovie />
                         </ActionIcon>
                     </Tooltip>
                     <Tooltip label="Open exercises">
-                        <ActionIcon variant="filled" size="xl" radius="md" aria-label="Open exercises">
+                        <ActionIcon variant="filled" size="xl" radius="md" aria-label="Open exercises"
+                            onClick={() => navigate(`/courses/${id}/exercises`)} >
                             <IconTools />
                         </ActionIcon>
                     </Tooltip>

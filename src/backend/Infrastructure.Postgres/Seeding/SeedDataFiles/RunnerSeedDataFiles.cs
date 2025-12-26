@@ -45,12 +45,19 @@ namespace Infrastructure.Postgres.Seeding.SeedDataFiles
                 LogValidationWarnings(tableAnalysis.ValidationWarnings);
             }
 
-            var pKeysGuid = new PrimaryKeyGuidGenerator(modeUUID);
-            pKeysGuid.Generate(tableAnalysis.PKeys);
+            try
+            {
+                var pKeysUpdater = new PrimaryKeyValuesUpdater(modeUUID);
+                pKeysUpdater.UpdatePKeyValues(tableAnalysis.PKeys);
 
-            var outputSeedDataFiles = new SeedFilesOutputGenerator(pKeysGuid, tableAnalysis.RootJsonElementsEntities,
-                pathBase);
-            outputSeedDataFiles.Generate();
+                var outputSeedDataFiles = new SeedFilesOutputGenerator(pKeysUpdater, tableAnalysis.RootJsonElementsEntities, pathBase);
+                outputSeedDataFiles.Generate();
+            }
+            catch (Exception ex)
+            {
+                _logSeeder.LogError("DataFile preparing is stopped :{errMsg}", ex.Message);
+                return false;
+            }
 
             return true;
         }

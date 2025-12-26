@@ -1,4 +1,5 @@
 ﻿using Application.Models;
+using Infrastructure.Postgres.Main.TableConfig;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Postgres.Main;
@@ -12,9 +13,13 @@ public class MainDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
-        builder.HasDefaultSchema(Schema);
         // Таблицы будут создаваться в схеме main
-        builder.Entity<Course>(action =>
+        builder.HasDefaultSchema(Schema);
+
+        builder.ApplyConfigurationsFromAssembly(typeof(CourseTableConfig).Assembly);
+
+
+/*        builder.Entity<Course>(action =>
         {
             action.HasKey(c => c.Id);
             action.Property(c => c.Title).IsRequired().HasMaxLength(255);
@@ -24,6 +29,6 @@ public class MainDbContext : DbContext
                 .HasColumnType("timestamp") // без time zone
                 .HasDefaultValueSql("CURRENT_TIMESTAMP");
             action.Property(c => c.UpdatedAt).HasColumnType("timestamp"); // без time zone
-        });
+        });*/
     }
 }

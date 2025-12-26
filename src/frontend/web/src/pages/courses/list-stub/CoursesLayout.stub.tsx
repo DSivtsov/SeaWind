@@ -1,5 +1,5 @@
 import { FOOTER_HEIGHT, HEADER_HEIGHT } from "@/common/constants";
-import { CoursesListPageStub } from "@/pages/courses/list/CoursesListPage.stub";
+import { CoursesListPageStub } from "@/pages/courses/list-stub/CoursesListPage.stub";
 import { ActionIcon, AppShell, Avatar, Text, Button, Flex, Stack, Anchor } from "@mantine/core";
 
 
