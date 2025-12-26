@@ -5,18 +5,18 @@ import { ScrollArea, SimpleGrid } from "@mantine/core";
 import { useState, useEffect } from "react";
 
 const DEMO_COURSES: Course[] = [
-    { code: "csharp-base-1", title: "C# Base", description: "Basics of C# for game/web development." },
-    { code: "unity-base-1", title: "Unity Base", description: "Unity fundamentals: scenes, prefabs, components." },
-    { code: "aspnet-mvp-1", title: "ASP.NET MVP", description: "Build Workshoptitle MVP backend with .NET 8." },
-    { code: "csharp-base-2", title: "C# Base", description: "Basics of C# for game/web development." },
-    { code: "unity-base-2", title: "Unity Base", description: "Unity fundamentals: scenes, prefabs, components." },
-    { code: "aspnet-mvp-2", title: "ASP.NET MVP", description: "Build Workshoptitle MVP backend with .NET 8." },
-    { code: "csharp-base-3", title: "C# Base", description: "Basics of C# for game/web development." },
-    { code: "unity-base-3", title: "Unity Base", description: "Unity fundamentals: scenes, prefabs, components." },
-    { code: "aspnet-mvp-3", title: "ASP.NET MVP", description: "Build Workshoptitle MVP backend with .NET 8." },
-    { code: "csharp-base-4", title: "C# Base", description: "Basics of C# for game/web development." },
-    { code: "unity-base-4", title: "Unity Base", description: "Unity fundamentals: scenes, prefabs, components." },
-    { code: "aspnet-mvp-4", title: "ASP.NET MVP", description: "Build Workshoptitle MVP backend with .NET 8." },
+    { id: "csharp-base-1", title: "C# Base", description: "Basics of C# for game/web development." },
+    { id: "unity-base-1", title: "Unity Base", description: "Unity fundamentals: scenes, prefabs, components." },
+    { id: "aspnet-mvp-1", title: "ASP.NET MVP", description: "Build Workshoptitle MVP backend with .NET 8." },
+    { id: "csharp-base-2", title: "C# Base", description: "Basics of C# for game/web development." },
+    { id: "unity-base-2", title: "Unity Base", description: "Unity fundamentals: scenes, prefabs, components." },
+    { id: "aspnet-mvp-2", title: "ASP.NET MVP", description: "Build Workshoptitle MVP backend with .NET 8." },
+    { id: "csharp-base-3", title: "C# Base", description: "Basics of C# for game/web development." },
+    { id: "unity-base-3", title: "Unity Base", description: "Unity fundamentals: scenes, prefabs, components." },
+    { id: "aspnet-mvp-3", title: "ASP.NET MVP", description: "Build Workshoptitle MVP backend with .NET 8." },
+    { id: "csharp-base-4", title: "C# Base", description: "Basics of C# for game/web development." },
+    { id: "unity-base-4", title: "Unity Base", description: "Unity fundamentals: scenes, prefabs, components." },
+    { id: "aspnet-mvp-4", title: "ASP.NET MVP", description: "Build Workshoptitle MVP backend with .NET 8." },
 ];
 
 export function CoursesListPageStub() {
@@ -66,7 +66,7 @@ export function CoursesListPageStub() {
             <ScrollArea h="100%">
                 <SimpleGrid cols={2}>
                     {courses.map((item) => (
-                        <CourseCard key={item.code} course={item} />
+                        <CourseCard key={item.id} course={item} />
                     ))}
                 </SimpleGrid>
             </ScrollArea>

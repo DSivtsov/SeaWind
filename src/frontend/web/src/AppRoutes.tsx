@@ -14,7 +14,7 @@ import TestCourseListPage from "@/pages/demo/TestCourseListPage";
 import { PagePlaceholder } from "@/shared/PagePlaceholder";
 import { TestCoursesLayout } from "@/pages/demo/TestCoursesLayout";
 import { CoursesLayout } from "@/pages/courses/list/CoursesLayout";
-import { CoursesLayoutStub } from "@/pages/courses/list/CoursesLayout.stub";
+import { CoursesLayoutStub } from "@/pages/courses/list-stub/CoursesLayout.stub";
 import TestPage from "@/pages/demo/TestPage";
 
 export function AppRoutes() {

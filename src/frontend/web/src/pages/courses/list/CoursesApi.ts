@@ -4,7 +4,6 @@ import { getToken } from "@/shared/auth/auth";
 export type CourseDto = {
   id: string;
   title: string;
-  code: string;
   description: string;
 };
 
