@@ -1,0 +1,31 @@
+/* Full page background with Image*/
+.layout-LandingBg {
+  position: relative;
+  min-height: 100vh;
+  color: #EAF0FF;
+
+  background-image: url("/images/LandingBackground.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+/* затемняющий слой */
+.layout-LandingBg::before {
+  content: "";
+  position: absolute;
+  pointer-events: none;
+  inset: 0;
+
+  background:
+    radial-gradient(1200px 800px at 70% 15%, rgba(122, 167, 255, 0.18), transparent 55%),
+    radial-gradient(900px 600px at 20% 80%, rgba(53, 196, 106, 0.12), transparent 60%),
+    linear-gradient(180deg,
+      rgba(7, 10, 18, 0.75),
+      rgba(11, 18, 32, 0.85) 45%,
+      rgba(16, 27, 46, 0.90));
+}
+
+.layout-LandingBg>* {
+  position: relative;
+}

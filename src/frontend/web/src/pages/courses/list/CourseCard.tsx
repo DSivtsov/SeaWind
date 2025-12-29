@@ -17,32 +17,36 @@ export function CourseCard({ course }: CourseCardProps) {
     const navigate = useNavigate();
 
     return (
-        <Card shadow="sm" padding="lg" radius="md" withBorder>
+        <Card padding="lg" radius="md" bg="dark.8">
             <Group justify="space-between" mb="xs">
-                <Text fw={700}>{id}</Text>
-                <Group gap={"md"}>
+                <Text fw={700} size="xs" c="gray.7">
+                    {id}
+                </Text>
+
+                <Group gap="sm">
                     <Tooltip label="Open video lectures">
-                        <ActionIcon variant="filled" size="xl" radius="md" aria-label="Open video lectures"
+                        <ActionIcon variant="subtle" color="green" size="lg" aria-label="Open video lectures"
                             onClick={() => navigate(`/courses/${id}/lectures`)} >
                             <IconMovie />
                         </ActionIcon>
                     </Tooltip>
                     <Tooltip label="Open exercises">
-                        <ActionIcon variant="filled" size="xl" radius="md" aria-label="Open exercises"
-                            onClick={() => navigate(`/courses/${id}/exercises`)} >
+                        <ActionIcon variant="subtle" color="green" size="lg" aria-label="Open video lectures"
+                            onClick={() => navigate(`/courses/${id}/lectures`)} >
                             <IconTools />
                         </ActionIcon>
                     </Tooltip>
                 </Group>
             </Group>
 
-            <Text fw={500}>
+            <Text fw={600} c="gray.4">
                 {title}
             </Text>
 
-            <Text>
+            <Text c="gray.6">
                 {description}
             </Text>
         </Card>
+
     );
 }

@@ -2,7 +2,7 @@ import { getCourses, type CourseDto } from "@/pages/courses/list/CoursesApi";
 import { PageShell } from "@/shared/PageShell";
 import { CourseCard } from "@/pages/courses/list/CourseCard";
 import type { UiState } from "@/shared/UiState";
-import { ScrollArea, SimpleGrid } from "@mantine/core";
+import { Box, SimpleGrid } from "@mantine/core";
 import { useState, useEffect, useRef } from "react";
 import { loadPageData } from "@/shared/api/loadPageData";
 
@@ -45,13 +45,13 @@ export function CoursesListPage() {
 
     return (
         <PageShell state={uiState} errorText={errorText} onRetry={onRetry}>
-            <ScrollArea h="100%">
+            <Box p="md" >
                 <SimpleGrid cols={2}>
                     {courses.map((item) => (
                         <CourseCard key={item.id} course={item} />
                     ))}
                 </SimpleGrid>
-            </ScrollArea>
+            </Box>
         </PageShell>
     );
 }

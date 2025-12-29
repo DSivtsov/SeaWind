@@ -1,5 +1,52 @@
-.layout-appMain {
-    height: 100%;
-    overflow: hidden;
-    /* background: red; */
+/* app.css — Public Theme v0 (dark tech) */
+:root {
+  /* Background */
+  /* page base */
+  --pub-bg-0: #070A12;
+  /* gradient mid */
+  --pub-bg-1: #0B1220;
+  /* gradient bottom */
+  --pub-bg-2: #101B2E;
+
+  --pub-surface-0: rgba(16, 27, 46, 0.85);
+  --pub-border: rgba(255, 255, 255, 0.08);
+}
+
+.layout-publicBg {
+  min-height: 100vh;
+  background:
+    radial-gradient(1200px 800px at 70% 15%, rgba(122, 167, 255, 0.10), transparent 55%),
+    radial-gradient(900px 600px at 20% 80%, rgba(53, 196, 106, 0.08), transparent 60%),
+    linear-gradient(180deg, var(--pub-bg-0), var(--pub-bg-1) 45%, var(--pub-bg-2));
+}
+
+.layout-publicBg>* {
+  position: relative;
+  /* Основной контент */
+}
+
+/* Centered content container для старниц у которых нет специального дизайна scroll etc.*/
+.layout-publicContainer {
+  margin: 0 auto;
+  padding: 24px;
+}
+
+@media (max-width: 1024px) {
+  .layout-publicContainer {
+    padding: 16px;
+  }
+}
+
+.layout-publicHeader,
+.layout-publicFooter {
+  background: var(--pub-surface-0);
+  backdrop-filter: blur(10px);
+}
+
+.layout-publicHeader {
+  border-bottom: 1px solid var(--pub-border);
+}
+
+.layout-publicFooter {
+  border-top: 1px solid var(--pub-border);
 }

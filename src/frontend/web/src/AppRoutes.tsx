@@ -5,17 +5,14 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import TestManTine from '@/pages/demo/TestManTine';
 import TestCourseListPage from "@/pages/demo/TestCourseListPage";
 
-/**
- * MVP routing (real structure), with a single reusable placeholder.
- * Auth screens are modals (non-routing), so no /login here.
- *
- * Replace <PagePlaceholder /> with real pages as you implement them.
- */
 import { PagePlaceholder } from "@/shared/PagePlaceholder";
 import { TestCoursesLayout } from "@/pages/demo/TestCoursesLayout";
 import { CoursesLayout } from "@/pages/courses/list/CoursesLayout";
 import { CoursesLayoutStub } from "@/pages/courses/list-stub/CoursesLayout.stub";
 import TestPage from "@/pages/demo/TestPage";
+
+import { LandingPage } from "@/pages/landing/LandingPage";
+import { Test } from "@/pages/demo/Test";
 
 export function AppRoutes() {
   return (
@@ -28,6 +25,7 @@ export function AppRoutes() {
         <Route path="courses" element={<TestCourseListPage />} />
       </Route>
 
+      <Route path="/test-test" element={<Test />} />
       <Route path="/test-page" element={<TestPage />} />
 
       <Route path="/courses-stub" element={<CoursesLayoutStub />} />
@@ -35,7 +33,7 @@ export function AppRoutes() {
       {/* End section demo routes */}
 
       {/* Landing */}
-      <Route path="/" element={<PagePlaceholder title="Landing" />} />
+      <Route path="/" element={<LandingPage />} />
 
       {/* Main Page Public */}
       <Route path="/courses" element={<CoursesLayout />} />
@@ -75,6 +73,9 @@ export function AppRoutes() {
         <Route path="support/inbox" element={<PagePlaceholder title="Admin · SupportInbox" />} />
         <Route path="users-roles" element={<PagePlaceholder title="Admin · ManageUsers" />} />
       </Route>
+
+      {/* Guard */}
+      <Route path="/403" element={<PagePlaceholder title="Access denied" />} />
 
       {/* Fallback */}
       <Route path="*" element={<Navigate to="/courses" replace />} />
