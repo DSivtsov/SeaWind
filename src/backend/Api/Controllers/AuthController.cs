@@ -1,4 +1,5 @@
-﻿using Api.Exceptions;
+﻿using Api.Dtos;
+using Api.Exceptions;
 using Api.Identity;
 using Infrastructure.Postgres.Identity;
 using Microsoft.AspNetCore.Authorization;
@@ -8,25 +9,39 @@ using System.Security.Claims;
 
 namespace Api.Controllers;
 
-[Route("api/[controller]")]
-[Produces("application/json")]
 [ApiController]
+[Produces("application/json")]
+[Route("api/[controller]")]
 public sealed class AuthController : ControllerBase
 {
     private readonly ITokenService _svc;
 
+    /// <summary>
+    /// Конфигурация приложения (используется для параметров токена).
+    /// </summary>
+    private readonly IConfiguration _cfg;
+
+    /// <summary>
+    /// Менеджер пользователей ASP.NET Identity.
+    /// </summary>
+    private readonly UserManager<AppUser> _userManager;
+
     // static hasher + предсгенерированный фейковый хэш для защиты от тайминговых атак
     private static readonly PasswordHasher<AppUser> passwordHasher = new();
-    private static readonly string fakeHashedPassword = passwordHasher.HashPassword(new AppUser(), "FakePasswordWorkshopCode#2025");
+    private static readonly string fakeHashedPassword = passwordHasher.HashPassword(new AppUser(),
+        "FakePasswordWorkshopCode#2025");
 
-    public AuthController(ITokenService svc) => _svc = svc;
+    public AuthController(ITokenService svc, UserManager<AppUser> userManager, IConfiguration cfg)
+    {
+        _svc = svc;
+        _userManager = userManager;
+        _cfg = cfg;
+    }
 
     /// <summary>
     /// Регистрирует нового пользователя в системе.
     /// </summary>
-    /// <param name="userManager">Менеджер пользователей ASP.NET Identity.</param>
-    /// <param name="email">Email, который будет использоваться как логин.</param>
-    /// <param name="password">Пароль пользователя.</param>
+    /// <param name="req">Registration data (email and password).</param>
     /// <returns>
     /// Возвращает <see cref="ActionResult"/> с кодом 200 при успешной регистрации
     /// или ошибку 400/409 при некорректных данных.
@@ -42,10 +57,10 @@ public sealed class AuthController : ControllerBase
     [ProducesResponseType(typeof(ActionResult),StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status409Conflict)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult> Register(UserManager<AppUser> userManager, string email, string password)
+    public async Task<ActionResult> Register(AuthCredentialsDto req)
     {
-        var user = new AppUser { UserName = email, Email = email };
-        var res = await userManager.CreateAsync(user, password);
+        var user = new AppUser { UserName = req.Email, Email = req.Email };
+        var res = await _userManager.CreateAsync(user, req.Password);
 
         if (!res.Succeeded)
         {
@@ -63,10 +78,13 @@ public sealed class AuthController : ControllerBase
                 throw new BadRequestException("Пароль должен быть не менее 6 символов.");
 
             if (res.Errors.Any(e => e.Code == nameof(IdentityErrorDescriber.PasswordRequiresLower)))
-                throw new BadRequestException("Пароль должен иметь хотя бы одну строчную букву (a-z)");
+                throw new BadRequestException("Пароль должен содержать хотя бы одну строчную букву (a-z)");
+
+            if (res.Errors.Any(e => e.Code == nameof(IdentityErrorDescriber.PasswordRequiresUpper)))
+                throw new BadRequestException("Пароль должен содержать хотя бы одну заглавную букву (A-Z)");
 
             if (res.Errors.Any(e => e.Code == nameof(IdentityErrorDescriber.PasswordRequiresDigit)))
-                throw new BadRequestException("Пароль должен иметь хотя бы одну цифру");
+                throw new BadRequestException("Пароль должен содержать хотя бы одну цифру");
 
             throw new BadRequestException("Ошибка регистрации.");
         }
@@ -77,28 +95,28 @@ public sealed class AuthController : ControllerBase
     /// <summary>
     /// Авторизация пользователя по email и паролю.
     /// </summary>
-    /// <param name="userManager">Менеджер пользователей ASP.NET Identity.</param>
-    /// <param name="cfg">Конфигурация приложения (используется для параметров токена).</param>
-    /// <param name="email">Email пользователя.</param>
-    /// <param name="password">Пароль пользователя.</param>
+    /// <param name="req">Registration data (email and password).</param>
     /// <returns>
-    /// Возвращает <see cref="string"/> с токеном доступа при успешной авторизации
+    /// Возвращает <see cref="AuthTokenResponseDto"/> с токеном доступа при успешной авторизации
     /// или ошибку 401, если email или пароль неверны.
     /// </returns>
     /// <response code="200">Возвращает JWT-токен доступа.</response>
     /// <response code="401">Неверный email или пароль.</response>
     /// <response code="400">Не указан email или пароль.</response>
     [HttpPost("login")]
-    [ProducesResponseType(typeof(ActionResult<string>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(AuthTokenResponseDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<string>> LoginWithAccount(UserManager<AppUser> userManager, IConfiguration cfg,
-        string email, string password)
+    public async Task<ActionResult<AuthTokenResponseDto>> LoginWithAccount(AuthCredentialsDto req)
     {
+        var email = req.Email;
+        var password = req.Password;
+
+        // Не информировать об отсутствии такого email
         if (string.IsNullOrWhiteSpace(email))
             throw new UnauthorizedException("Неверный email или пароль.");
 
-        var user = await userManager.FindByEmailAsync(email.Trim());
+        var user = await _userManager.FindByEmailAsync(email.Trim());
 
         // Защита от user‑enumeration и тайминговых атак:
         // проверяем фейковый хэш, если пользователя нет
@@ -109,27 +127,27 @@ public sealed class AuthController : ControllerBase
         }
 
         // Проверка блокировки аккаунта
-        if (userManager.SupportsUserLockout &&  await userManager.IsLockedOutAsync(user))
+        if (_userManager.SupportsUserLockout &&  await _userManager.IsLockedOutAsync(user))
             throw new UnauthorizedException("Аккаунт временно заблокирован.");
 
         // Проверка пароля
-        if (!await userManager.CheckPasswordAsync(user, password))
+        if (!await _userManager.CheckPasswordAsync(user, password))
         {
-            if (userManager.SupportsUserLockout)
-                await userManager.AccessFailedAsync(user).ConfigureAwait(false);
+            if (_userManager.SupportsUserLockout)
+                await _userManager.AccessFailedAsync(user).ConfigureAwait(false);
             throw new UnauthorizedException("Неверный email или пароль.");
         }
 
         // Успешный вход — сбрасываем счётчик неудач
-        if (userManager.SupportsUserLockout)
-            await userManager.ResetAccessFailedCountAsync(user).ConfigureAwait(false);
+        if (_userManager.SupportsUserLockout)
+            await _userManager.ResetAccessFailedCountAsync(user).ConfigureAwait(false);
 
         // Опционально: требовать подтверждённый email (если включено в опциях)
-        if (userManager.Options.SignIn.RequireConfirmedEmail && !await userManager.IsEmailConfirmedAsync(user))
+        if (_userManager.Options.SignIn.RequireConfirmedEmail && !await _userManager.IsEmailConfirmedAsync(user))
             throw new UnauthorizedException("Требуется подтверждение email.");
 
         var token = _svc.Create(user);
-        return Ok(new { access_token = token });
+        return Ok(new AuthTokenResponseDto(token));
     }
 
     /// <summary>

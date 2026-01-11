@@ -1,8 +1,23 @@
 import { FOOTER_HEIGHT, HEADER_HEIGHT } from "@/common/constants";
+import { RegistrationModal } from "@/pages/auth/RegistrationModal";
 import { CoursesListPage } from "@/pages/courses/list/CoursesListPage";
+import { showSuccessWithTitle } from "@/shared/ui/toast";
 import { ActionIcon, AppShell, Avatar, Text, Button, Flex, Stack, Anchor } from "@mantine/core";
+import { useDisclosure } from "@mantine/hooks";
+import { useEffect } from "react";
+import { useLocation } from "react-router-dom";
+
+function openLogin() {
+    console.log("openLogin");
+}
 
 export function CoursesLayout() {
+    const [opened, { open, close }] = useDisclosure(false);
+    const location = useLocation();
+
+    useEffect(() => {
+        close();
+    }, [location.pathname, close]);
 
     return (
         <div className="layout-publicBg">
@@ -37,7 +52,7 @@ export function CoursesLayout() {
                         <Flex h="100%" justify="flex-end" align="center" gap="md" pr="xl">
                             <Button variant="filled" color="green"
                                 onClick={() => {
-                                    console.log("OnClick Registration");
+                                    open();
                                 }}>Registration</Button>
 
                             <Button variant="default"
@@ -73,6 +88,15 @@ export function CoursesLayout() {
                     </Flex>
                 </AppShell.Footer>
             </AppShell>
+            {opened && <RegistrationModal
+                opened={opened}
+                onClose={() => close()}
+                onRegistered={() => {
+                    showSuccessWithTitle("Регистрация пользователя", 'Регистрация прошла успешно');
+                    openLogin();
+                }}
+            />
+            }
         </div>
     );
 }

@@ -17,7 +17,6 @@ public static class SetupIdentity
         services.AddIdentityCore<Infrastructure.Postgres.Identity.AppUser>(opt =>
                 {
                     opt.Password.RequireNonAlphanumeric = false;
-                    opt.Password.RequireUppercase = false;
                     opt.ClaimsIdentity.UserIdClaimType = ClaimTypes.NameIdentifier;
                     opt.ClaimsIdentity.UserNameClaimType = ClaimTypes.Email;
                     opt.ClaimsIdentity.RoleClaimType = ClaimTypes.Role;

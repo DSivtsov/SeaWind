@@ -14,7 +14,7 @@ export function CoursesListPage() {
 
     const controllerRef = useRef<AbortController | null>(null);
 
-    const load = (signal?: AbortSignal) => {
+    const load = () => {
         controllerRef.current?.abort();
 
         const abortController = new AbortController();
@@ -23,7 +23,7 @@ export function CoursesListPage() {
         setUiState("loading");
 
         void loadPageData(
-            () => getCourses(signal),
+            () => getCourses(abortController.signal),
             (data) => {
                 setCourses(data);
                 setUiState(data.length === 0 ? "empty" : "default");
