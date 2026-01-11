@@ -4,13 +4,20 @@ import { CoursesListPage } from "@/pages/courses/list/CoursesListPage";
 import { showSuccessWithTitle } from "@/shared/ui/toast";
 import { ActionIcon, AppShell, Avatar, Text, Button, Flex, Stack, Anchor } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
+import { useEffect } from "react";
+import { useLocation } from "react-router-dom";
+
+function openLogin() {
+    console.log("openLogin");
+}
 
 export function CoursesLayout() {
     const [opened, { open, close }] = useDisclosure(false);
+    const location = useLocation();
 
-    function openLogin() {
-        console.log("openLogin");
-    }
+    useEffect(() => {
+        close();
+    }, [location.pathname, close]);
 
     return (
         <div className="layout-publicBg">
