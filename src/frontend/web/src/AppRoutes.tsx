@@ -13,6 +13,7 @@ import TestPage from "@/pages/demo/TestPage";
 
 import { LandingPage } from "@/pages/landing/LandingPage";
 import { Test } from "@/pages/demo/Test";
+import { TestMePage } from "@/pages/auth/TestMePage";
 
 export function AppRoutes() {
   return (
@@ -29,6 +30,8 @@ export function AppRoutes() {
       <Route path="/test-page" element={<TestPage />} />
 
       <Route path="/courses-stub" element={<CoursesLayoutStub />} />
+
+      <Route path="/test-me" element={<TestMePage />} />
 
       {/* End section demo routes */}
 

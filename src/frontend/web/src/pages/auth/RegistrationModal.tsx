@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { Modal, TextInput, PasswordInput, Button, Stack, Text, Box, Group } from "@mantine/core";
 import { IconCheck, IconX } from "@tabler/icons-react";
 import { isApiError } from "@/shared/api/apiRequests";
-import { registerRequest } from "@/pages/auth/RegistrationApi";
+import { registerRequest } from "@/pages/auth/AuthApi";
 import { buildPasswordRules, isValidEmail, type RuleCheck } from "@/pages/auth/RegistrationRules";
 
 type RegisterResult = {
@@ -77,7 +77,6 @@ export function RegistrationModal({ opened, onClose, onRegistered }: Registratio
       onRegistered?.({});
       onClose();
     } catch (e: unknown) {
-      console.log(e);
       if (isApiError(e) && e.kind === "abort") return; // не показываем ошибку
 
       if (isApiError(e) && e.kind === "http" && e.status === 409) {
