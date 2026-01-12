@@ -175,6 +175,15 @@ public sealed class AuthController : ControllerBase
         return Ok(new UserClaimDto(name ?? "Empty", id ?? "Error"));
     }
 
+    [Route("/api/noAccess")]
+    [HttpGet]
+    [Authorize]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status403Forbidden)]
+    public ActionResult<UserClaimDto> GetNoAccess()
+    {
+        throw new ForbiddenAccessException("Доступ не разрешен");
+    }
+
     [HttpGet("test500")]
     public IActionResult Test500()
     {

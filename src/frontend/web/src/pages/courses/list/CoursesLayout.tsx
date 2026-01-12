@@ -1,23 +1,38 @@
 import { FOOTER_HEIGHT, HEADER_HEIGHT } from "@/common/constants";
+import { LoginModal } from "@/pages/auth/LoginModal";
 import { RegistrationModal } from "@/pages/auth/RegistrationModal";
+import { CoursesAccessDeniedModal } from "@/pages/courses/list/CoursesAccessDeniedModal";
 import { CoursesListPage } from "@/pages/courses/list/CoursesListPage";
+import type { LoginReason } from "@/shared/auth/authStorage";
 import { showSuccessWithTitle } from "@/shared/ui/toast";
 import { ActionIcon, AppShell, Avatar, Text, Button, Flex, Stack, Anchor } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { useEffect } from "react";
-import { useLocation } from "react-router-dom";
-
-function openLogin() {
-    console.log("openLogin");
-}
+import { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 
 export function CoursesLayout() {
-    const [opened, { open, close }] = useDisclosure(false);
+    const [regOpened, reg] = useDisclosure(false);
+    const [loginOpened, login] = useDisclosure(false);
     const location = useLocation();
+    const navigate = useNavigate();
+    const [accessDeniedReason, setAccessDeniedReason] = useState<LoginReason | null>(null);
+
+    const { close: closeReg } = reg;
+    const { close: closeLogin } = login;
 
     useEffect(() => {
-        close();
-    }, [location.pathname, close]);
+        closeReg();
+        closeLogin();
+    }, [location.pathname, closeReg, closeLogin]);
+
+    useEffect(() => {
+        const state = (location.state as { accessDenied?: LoginReason } | null) ?? null;
+        const reason = state?.accessDenied;
+        if (!reason) return;
+        setAccessDeniedReason(reason);
+        // "съедаем" state, чтобы сообщение не повторялось при back/forward
+        navigate("/courses", { replace: true });
+    }, [location.state, navigate]);
 
     return (
         <div className="layout-publicBg">
@@ -52,12 +67,12 @@ export function CoursesLayout() {
                         <Flex h="100%" justify="flex-end" align="center" gap="md" pr="xl">
                             <Button variant="filled" color="green"
                                 onClick={() => {
-                                    open();
+                                    reg.open();
                                 }}>Registration</Button>
 
-                            <Button variant="default"
+                            <Button variant="filled" color="green"
                                 onClick={() => {
-                                    console.log("OnClick Login");
+                                    login.open();
                                 }}> Login</Button>
 
                             <ActionIcon variant="transparent" size="xl" radius="xl" disabled={true}
@@ -88,15 +103,29 @@ export function CoursesLayout() {
                     </Flex>
                 </AppShell.Footer>
             </AppShell>
-            {opened && <RegistrationModal
-                opened={opened}
-                onClose={() => close()}
+            {regOpened && <RegistrationModal
+                opened={regOpened}
+                onClose={() => reg.close()}
                 onRegistered={() => {
                     showSuccessWithTitle("Регистрация пользователя", 'Регистрация прошла успешно');
-                    openLogin();
-                }}
-            />
+                    login.open();
+                }} />
             }
+            {loginOpened && <LoginModal
+                opened={loginOpened}
+                onClose={() => login.close()}
+                onLogon={() => {
+                    showSuccessWithTitle("Подключение пользователя", 'Подключение прошло успешно');
+                }} />
+            }
+            {accessDeniedReason != null && (
+                <CoursesAccessDeniedModal
+                    reason={accessDeniedReason}
+                    onClose={() => {
+                        setAccessDeniedReason(null);
+                    }}
+                />
+            )}
         </div>
     );
 }

@@ -4,7 +4,7 @@ import { CourseCard } from "@/pages/courses/list/CourseCard";
 import type { UiState } from "@/shared/UiState";
 import { Box, SimpleGrid } from "@mantine/core";
 import { useState, useEffect, useRef } from "react";
-import { loadPageData } from "@/shared/api/loadPageData";
+import { isAbort, type ApiError } from "@/shared/api/apiRequests";
 
 export function CoursesListPage() {
     // union type for UI state
@@ -14,25 +14,26 @@ export function CoursesListPage() {
 
     const controllerRef = useRef<AbortController | null>(null);
 
-    const load = () => {
+    const load = async () => {
         controllerRef.current?.abort();
 
         const abortController = new AbortController();
         controllerRef.current = abortController;
 
         setUiState("loading");
+        try {
+            const data = await getCourses(abortController.signal);
 
-        void loadPageData(
-            () => getCourses(abortController.signal),
-            (data) => {
-                setCourses(data);
-                setUiState(data.length === 0 ? "empty" : "default");
-            },
-            (msg) => {
-                setErrorText(msg);
-                setUiState("error");
-            }
-        );
+            setCourses(data);
+            setUiState(data.length === 0 ? "empty" : "default");
+        } catch (e: unknown) {
+            if (isAbort(e)) return;
+
+            const msg = (e as ApiError).message ?? "Request failed";
+
+            setErrorText(msg);
+            setUiState("error");
+        }
     };
 
     useEffect(() => {

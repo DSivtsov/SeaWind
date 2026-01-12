@@ -55,7 +55,7 @@ type JsonBody = Record<string, unknown> | unknown[] | null;
 
 type JsonRequestOptions = {
   method: "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
-  parse?: "json" | "jsonOrEmpty" | "empty";
+  parse?: "json" | "empty";
   body?: JsonBody;        // string запрещён
   signal?: AbortSignal;
   token?: string | null;
