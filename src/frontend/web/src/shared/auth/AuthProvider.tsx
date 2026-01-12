@@ -1,71 +1,126 @@
-import { useEffect, useMemo, useState } from "react";
-import { clearAccessToken, getAccessToken, onUnauthorized, setAccessToken, TOKEN_KEY } from "./authStorage";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { clearAccessPack, getAccessPack, onAccessDenied, setAccessPack, ACCESS_PACK_KEY, type StoredAuth } from "./authStorage";
 import { AuthContext } from "@/shared/auth/useAuth";
 import { useNavigate } from "react-router-dom";
+import { fetchMe, type Me } from "@/shared/auth/meApi";
 
 export type AuthState = {
-  isAuthenticated: boolean;
+  initials: string;
   accessToken: string | null;
 };
 
 export type AuthApi = {
   state: AuthState;
-  login: (accessToken: string) => void;
+  isAuthenticated: boolean;
+
+  me: Me;
+
+  login: (accessToken: string, email: string) => void;
   logout: () => void;
 };
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [accessToken, setToken] = useState<string | null>(() => getAccessToken());
   const navigate = useNavigate();
+
+  const handleLogoutRedirect = useCallback((reason?: string) => {
+    navigate("/courses", {
+      replace: true,
+      state: reason ? { accessDenied: reason } : undefined,
+    });
+  }, [navigate]);
+
+  const [state, setState] = useState<AuthState>(() => {
+    const accessPack = getAccessPack();
+    return {
+      initials: accessPack?.initials ?? "",
+      accessToken: accessPack?.accessToken ?? null,
+    };
+  });
+
+  const [me, setMe] = useState<Me>({ kind: "empty" });
 
   useEffect(() => {
     // MVP: on unauthorized/forbidden -> logout (if needed) and redirect to /courses with reason.
-    const unsub = onUnauthorized((reason) => {
-      clearAccessToken();
-      setToken(null);
-      navigate("/courses", {
-        replace: true,
-        state: { accessDenied: reason },
-      });
+    const unsub = onAccessDenied((reason) => {
+      if (reason === "unauthorized") {
+        clearAccessPack();
+        setMe({ kind: "empty" });
+        setState({ initials: "", accessToken: null });
+      }
+
+      handleLogoutRedirect(reason);
     });
     return unsub;
-  }, [navigate]);
+  }, [handleLogoutRedirect]);
 
   useEffect(() => {
     const onStorage = (e: StorageEvent) => {
       // реагируем только на изменения ключа токена в localStorage
-      if (e.storageArea !== localStorage || e.key !== TOKEN_KEY) return;
+      if (e.storageArea !== localStorage || e.key !== ACCESS_PACK_KEY) return;
 
       // если в другой вкладке токен удалили -> разлогиниваемся здесь
       if (e.newValue == null) {
-        setToken(null);
-        navigate("/courses", { replace: true });
+        setMe({ kind: "empty" });
+        setState({ initials: "", accessToken: null });
+        handleLogoutRedirect();
       }
     };
 
     window.addEventListener("storage", onStorage);
     return () => window.removeEventListener("storage", onStorage);
-  }, [navigate]);
+  }, [handleLogoutRedirect]);
 
+  useEffect(() => {
+    const accessToken = state.accessToken;
+
+    if (!accessToken) {
+      setMe({ kind: "empty" });
+      return;
+    }
+
+    const ctrl = new AbortController();
+
+    const loadMe = async () => {
+      setMe({ kind: "loading" });
+
+      try {
+        const user = await fetchMe(accessToken, ctrl.signal);
+        setMe({ kind: "ready", user });
+      } catch {
+        // сюда попадают network/5xx и также 401/403 (которые уже обработаны через emit+redirect)
+        if (ctrl.signal.aborted) return;   // ← выход при “нормальном” прерывании
+        setMe({ kind: "error" });    // ← только реальная ошибка
+      }
+    };
+
+    loadMe();
+
+    return () => ctrl.abort();
+  }, [state.accessToken]);
 
   const api = useMemo<AuthApi>(() => {
     return {
-      state: {
-        isAuthenticated: Boolean(accessToken),
-        accessToken,
-      },
-      login: (token) => {
-        setAccessToken(token);
-        setToken(token);
+      state,
+      isAuthenticated: Boolean(state.accessToken),
+
+      me,
+
+      login: (token: string, email: string) => {
+        const namePart = email.split("@")[0];
+        const initials = namePart.slice(0, 2).toUpperCase();
+
+        setState({ initials, accessToken: token });
+
+        const accessPack: StoredAuth = { accessToken: token, initials };
+        setAccessPack(accessPack);
       },
       logout: () => {
-        clearAccessToken();
-        setToken(null);
+        clearAccessPack();
+        setMe({ kind: "empty" });
+        setState({ initials: "", accessToken: null });
       },
     };
-  }, [accessToken]);
+  }, [state, me]);
 
   return <AuthContext.Provider value={api}>{children}</AuthContext.Provider>;
 }
-
-

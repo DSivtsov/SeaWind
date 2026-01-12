@@ -1,15 +1,19 @@
 import { useState } from "react";
 import { Box, Button, Code, Stack, Text } from "@mantine/core";
 import { apiRequest } from "@/shared/api/apiRequests";
+import { useAuth } from "@/shared/auth/useAuth";
 
 export function TestMePage() {
+    const auth = useAuth();
+    const token = auth.state.accessToken;
+
     const [resultApiMe, setResultApiMe] = useState<string>("");
     const [resultNoAccess, setResultNoAccess] = useState<string>("");
 
     const onCallApiMe = async () => {
         setResultApiMe("Loading...");
         try {
-            const data = await apiRequest("/api/me", { method: "GET" });
+            const data = await apiRequest("/api/me", { method: "GET" }, token);
             setResultApiMe(JSON.stringify(data, null, 2));
         } catch {
             // 401/403 уже обрабатываются глобально (redirect -> /courses)
@@ -20,7 +24,7 @@ export function TestMePage() {
     const onCallApiNoAccess = async () => {
         setResultNoAccess("Loading...");
         try {
-            const data = await apiRequest("/api/noAccess", { method: "GET" });
+            const data = await apiRequest("/api/noAccess", { method: "GET" }, token);
             setResultNoAccess(JSON.stringify(data, null, 2));
         } catch {
             // 401/403 уже обрабатываются глобально (redirect -> /courses)

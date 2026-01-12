@@ -6,10 +6,10 @@ export type AuthTokenResponseDto = {
 
 export async function registerRequest(email: string, password: string, signal?: AbortSignal): Promise<void> {
     const body = { email, password };
-    return apiRequest<void>("/api/auth/register", { method: "POST", parse: "empty", body, signal });
+    return apiRequest<void>("/api/auth/register", { method: "POST", parse: "empty", body, signal }, null);
 }
 
 export async function loginRequest(email: string, password: string, signal?: AbortSignal): Promise<AuthTokenResponseDto> {
     const body = { email, password };
-    return apiRequest<AuthTokenResponseDto>("/api/auth/login", { method: "POST", parse: "json", body, signal });
+    return apiRequest<AuthTokenResponseDto>("/api/auth/login", { method: "POST", parse: "json", body, signal }, null);
 }

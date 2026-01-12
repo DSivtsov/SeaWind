@@ -1,16 +1,16 @@
 import { type RequestOptions, buildUrl, httpError, isAbortError, isApiError } from "@/shared/api/apiRequests";
 import { readErrorMessage } from "@/shared/api/readErrorMessage";
-import { emitUnauthorized, getAccessToken } from "@/shared/auth/authStorage";
+import { emitAccessDenied } from "@/shared/auth/authStorage";
 
 
-export async function singleAttempt<T>(path: string, opts: RequestOptions): Promise<T> {
+export async function singleAttempt<T>(path: string, opts: RequestOptions, token: string | null): Promise<T> {
     const parse = opts.parse ?? "json";
 
     const headers: Record<string, string> = {
         Accept: parse === "text" ? "text/plain, */*" : "application/json",
     };
 
-    const token = getAccessToken();
+    //const token = getAccessPack();
     if (token) headers.Authorization = `Bearer ${token}`;
 
     let body: string | undefined;
@@ -37,13 +37,13 @@ export async function singleAttempt<T>(path: string, opts: RequestOptions): Prom
 
         if (res.status === 401) {
             // MVP contract: 401 -> redirect to /courses and show info ("unauthorized")
-            emitUnauthorized("unauthorized");
+            emitAccessDenied("unauthorized");
             throw httpError("http", "Unauthorized", 401);
         }
 
         if (res.status === 403) {
             // MVP contract: 403 -> redirect to /courses and show info ("forbidden")
-            emitUnauthorized("forbidden");
+            emitAccessDenied("forbidden");
             throw httpError("http", "Forbidden", 403);
         }
 

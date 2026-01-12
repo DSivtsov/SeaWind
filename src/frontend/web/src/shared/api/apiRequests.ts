@@ -58,7 +58,6 @@ type JsonRequestOptions = {
   parse?: "json" | "empty";
   body?: JsonBody;        // string запрещён
   signal?: AbortSignal;
-  token?: string | null;
 };
 
 type TextRequestOptions = {
@@ -66,18 +65,17 @@ type TextRequestOptions = {
   parse: "text";
   body?: string;          // string разрешён
   signal?: AbortSignal;
-  token?: string | null;
 };
 
 export type RequestOptions = JsonRequestOptions | TextRequestOptions;
 
 // Делает Retry только для Get см. shouldRetry()
-export async function apiRequest<T>(path: string, opts: RequestOptions): Promise<T> {
+export async function apiRequest<T>(path: string, opts: RequestOptions, token: string | null): Promise<T> {
   let attempt = 0;
 
   while (true) {
     try {
-      return await singleAttempt<T>(path, opts);
+      return await singleAttempt<T>(path, opts, token);
     } catch (e: unknown) {
       if (shouldRetry(opts.method, attempt, e, opts.signal)) {
         await sleep(RETRY_DELAYS[attempt++]);

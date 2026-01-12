@@ -64,8 +64,8 @@
   - `setAccessToken`
   - `clearAccessToken`
 - pub/sub для событий потери доступа:
-  - `emitUnauthorized(reason)`
-  - `onUnauthorized(cb)`
+  - `emitAccessDenied(reason: LoginReason)`
+  - `onAccessDenied(cb)`
 - тип причины:
   ```ts
   type LoginReason = "unauthorized" | "forbidden";
@@ -81,10 +81,11 @@
 ### `apiRequests.ts` (fetch wrapper)
 
 Ответственность:
-- автоматическое добавление `Authorization: Bearer <token>`;
+- добавление Authorization: Bearer <token> только если token передан явно
+- apiRequests не читает token из storage или context
 - обработка HTTP-статусов:
-  - `401` → `emitUnauthorized("unauthorized")`
-  - `403` → `emitUnauthorized("forbidden")`
+  - `401` → `emitAccessDenied("unauthorized")`
+  - `403` → `emitAccessDenied("forbidden")`
 - выброс ошибки для вызывающей стороны.
 
 `apiRequests` **не выполняет**:
@@ -100,8 +101,8 @@
 - единственная точка принятия решения при `401 / 403`.
 
 Поведение:
-1. Подписывается **один раз** на `onUnauthorized`.
-2. При событии:
+1. Подписывается **один раз** на `onAccessDenied`.
+2. При событии `401`:
    - очищает токен;
    - сбрасывает auth‑state;
    - выполняет:
@@ -111,6 +112,15 @@
        state: { accessDenied: reason }
      });
      ```
+3. При событии `403`:
+- “auth-state не сбрасывает” = и setToken(null) не вызывает, и localStorage не трогает.;
+- выполняет только:
+```ts
+navigate("/courses", {
+  replace: true,
+  state: { accessDenied: reason }
+});
+```
 
 Зависимости эффекта:
 - только `navigate`;
@@ -127,3 +137,57 @@
 - State «съедается» через `replace`, сообщение показывается **один раз**.
 - Login остаётся **добровольным действием пользователя**.
 
+---
+
+## `me` в `AuthProvider`
+`AuthProvider` хранит единый state `me` как **снимок required data пользователя** для UI и permissions.
+
+### Модель `Me` (одно состояние, без дублей)
+
+```ts
+export type Me =
+  | { kind: "empty" }           // токена нет
+  | { kind: "loading" }         // выполняется запрос /api/users/me
+  | { kind: "error" }           // network / 5xx (auth уже обработан через accessDenied + redirect)
+  | { kind: "ready"; user: { email: string; role: Role } };
+```
+
+**Инвариант:** `me.kind === "empty"` допускается **только** при `accessToken === null`.
+
+### Кто и когда загружает `/api/users/me`
+
+`AuthProvider` загружает `/api/users/me` в `useEffect([accessToken])`:
+
+- если токена нет → `me = empty`
+- если токен есть → `me = loading` → `ready` или `error`
+- запрос обязан быть отменяемым (`AbortController`)
+- при `abort` состояние `me=error` **не выставляется**
+
+### Контракт 401 / 403 (финальный)
+
+`apiRequest` эмитит событие `accessDenied: "unauthorized" | "forbidden"` и выбрасывает исключение.
+`AuthProvider` является **единственной точкой принятия решения** при этих событиях:
+
+- **401**
+  - очистка storage
+  - сброс auth‑state
+  - `me = empty`
+  - redirect `/courses` + информационное сообщение
+
+- **403**
+  - токен и auth‑state **не сбрасываются**
+  - `me` **не изменяется**
+  - redirect `/courses` + информационное сообщение
+
+403‑loop считается допустимым осознанным UX‑ограничением в рамках MVP.
+
+### Серверное правило (обязательное для согласованности)
+
+`GET /api/users/me` **никогда не возвращает 403** при валидном токене:
+
+- эндпоинт защищён только `[Authorize]`
+- role / policy **не используются** для ограничения доступа
+- роль возвращается **в payload**, а не участвует в решении “пускать / не пускать”
+
+**Следствие:** `me.kind === "error"` на фронте означает реальную проблему сервера или сети
+(network / 5xx), а не ошибку авторизации.
