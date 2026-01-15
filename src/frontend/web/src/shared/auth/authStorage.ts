@@ -1,6 +1,3 @@
-export const TOKEN_KEY = "wc_access_token";
-const STORAGE = localStorage;
-
 export type LoginReason = "unauthorized" | "forbidden";
 
 type Listener = (reason: LoginReason) => void;
@@ -9,25 +6,50 @@ type Listener = (reason: LoginReason) => void;
 // но в будущем могут появиться: логирование, метрики
 let unauthorizedListeners: Listener[] = [];
 
-export function getAccessToken(): string | null {
+export const ACCESS_PACK_KEY = "wc_access_pack";
+export type StoredAuth = { accessToken: string | null; initials: string };
+//const STORAGE = localStorage;
+
+export const STORAGE = {
+  getItem<T>(key: string): T | null {
+    const raw = localStorage.getItem(key);
+    if (!raw) return null;
+
+    try {
+      return JSON.parse(raw) as T;
+    } catch {
+      return null;
+    }
+  },
+
+  setItem<T>(key: string, value: T) {
+    localStorage.setItem(key, JSON.stringify(value));
+  },
+
+  removeItem(key: string) {
+    localStorage.removeItem(key);
+  },
+};
+
+export function getAccessPack(): StoredAuth | null {
   try {
-    return STORAGE.getItem(TOKEN_KEY);
+    return STORAGE.getItem<StoredAuth>(ACCESS_PACK_KEY);
   } catch {
     return null;
   }
 }
 
-export function setAccessToken(token: string): void {
+export function setAccessPack(accessPack: StoredAuth): void {
   try {
-    STORAGE.setItem(TOKEN_KEY, token);
+    STORAGE.setItem<StoredAuth>(ACCESS_PACK_KEY, accessPack);
   } catch {
     // ignore (private mode etc.)
   }
 }
 
-export function clearAccessToken(): void {
+export function clearAccessPack(): void {
   try {
-    STORAGE.removeItem(TOKEN_KEY);
+    STORAGE.removeItem(ACCESS_PACK_KEY);
   } catch {
     // ignore
   }
@@ -37,7 +59,7 @@ export function clearAccessToken(): void {
  * Subscribe to a global "unauthorized" signal (when API detects unauthorized/forbidden (401/403) ).
  * Returns function to auto unsubscribe.
  */
-export function onUnauthorized(listener: Listener): () => void {
+export function onAccessDenied(listener: Listener): () => void {
   unauthorizedListeners = [...unauthorizedListeners, listener];
   return () => {
     unauthorizedListeners = unauthorizedListeners.filter((currentListener) => currentListener !== listener);
@@ -53,7 +75,7 @@ export function onUnauthorized(listener: Listener): () => void {
  *
  * MVP: fan-out notification only, no direct UI logic here.
  */
-export function emitUnauthorized(reason: LoginReason): void {
+export function emitAccessDenied(reason: LoginReason): void {
   for (const listener of unauthorizedListeners) {
     listener(reason);
   }

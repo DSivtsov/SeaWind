@@ -7,5 +7,5 @@ export type CourseDto = {
 };
 
 export function getCourses(signal?: AbortSignal): Promise<CourseDto[]> {
-  return apiRequest<CourseDto[]>("/api/courses", { method: "GET", signal });
+  return apiRequest<CourseDto[]>("/api/courses", { method: "GET", signal }, null);
 }

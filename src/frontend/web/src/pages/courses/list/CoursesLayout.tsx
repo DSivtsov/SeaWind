@@ -1,11 +1,12 @@
 import { FOOTER_HEIGHT, HEADER_HEIGHT } from "@/common/constants";
 import { LoginModal } from "@/pages/auth/LoginModal";
 import { RegistrationModal } from "@/pages/auth/RegistrationModal";
+import { AvatarMenu } from "@/pages/avatar/AvatarMenu";
 import { CoursesAccessDeniedModal } from "@/pages/courses/list/CoursesAccessDeniedModal";
 import { CoursesListPage } from "@/pages/courses/list/CoursesListPage";
 import type { LoginReason } from "@/shared/auth/authStorage";
 import { showSuccessWithTitle } from "@/shared/ui/toast";
-import { ActionIcon, AppShell, Avatar, Text, Button, Flex, Stack, Anchor } from "@mantine/core";
+import { AppShell, Text, Button, Flex, Stack, Anchor } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -75,11 +76,7 @@ export function CoursesLayout() {
                                     login.open();
                                 }}> Login</Button>
 
-                            <ActionIcon variant="transparent" size="xl" radius="xl" disabled={true}
-                                onClick={() => console.log("OnClick Avatar")}
-                            >
-                                <Avatar variant="outline" size="lg" radius="xl" />
-                            </ActionIcon>
+                            <AvatarMenu />
                         </Flex>
                     </Flex>
                 </AppShell.Header>
@@ -103,29 +100,31 @@ export function CoursesLayout() {
                     </Flex>
                 </AppShell.Footer>
             </AppShell>
-            {regOpened && <RegistrationModal
-                opened={regOpened}
-                onClose={() => reg.close()}
-                onRegistered={() => {
-                    showSuccessWithTitle("Регистрация пользователя", 'Регистрация прошла успешно');
-                    login.open();
-                }} />
+            {
+                regOpened && <RegistrationModal
+                    opened={regOpened}
+                    onClose={() => reg.close()}
+                    onRegistered={() => {
+                        showSuccessWithTitle("Регистрация пользователя", 'Регистрация прошла успешно');
+                        login.open();
+                    }} />
             }
-            {loginOpened && <LoginModal
-                opened={loginOpened}
-                onClose={() => login.close()}
-                onLogon={() => {
-                    showSuccessWithTitle("Подключение пользователя", 'Подключение прошло успешно');
-                }} />
+            {
+                loginOpened && <LoginModal
+                    opened={loginOpened}
+                    onClose={() => login.close()}
+                    onLogon={() => {
+                        showSuccessWithTitle("Подключение пользователя", 'Подключение прошло успешно');
+                    }} />
             }
-            {accessDeniedReason != null && (
-                <CoursesAccessDeniedModal
+            {
+                accessDeniedReason != null && <CoursesAccessDeniedModal
                     reason={accessDeniedReason}
                     onClose={() => {
                         setAccessDeniedReason(null);
                     }}
                 />
-            )}
-        </div>
+            }
+        </div >
     );
 }

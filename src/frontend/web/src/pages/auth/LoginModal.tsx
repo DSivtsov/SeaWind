@@ -39,16 +39,13 @@ export function LoginModal({ opened, onClose, onLogon }: LoginModalProps) {
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>): Promise<void> {
     event.preventDefault();
-    console.log("Login: onSubmit");
 
     setSubmitting(true);
     setErrorText("");
 
     try {
       const rez = await loginRequest(email.trim(), password);
-      console.log(`rez[${rez}]`);
-      console.log(`accessToken[${rez.accessToken}]`);
-      auth.login(rez.accessToken);
+      auth.login(rez.accessToken, email);
       onLogon?.();
       onClose();
     } catch (e: unknown) {
@@ -67,7 +64,7 @@ export function LoginModal({ opened, onClose, onLogon }: LoginModalProps) {
   }
 
   return (
-    <Modal opened={opened} onClose={onClose} centered size="sm"
+    <Modal opened={opened} onClose={onClose} centered size="xs"
       title={<Text fw={700} c="gray.2">Login</Text>}
       overlayProps={{
         backgroundOpacity: 0.55,
