@@ -1,6 +1,8 @@
 ﻿using Api.Exceptions;
+using Api.Identity;
 using Application.AbstractionsTime.Services;
 using Application.DtoTime.Tester;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers;
@@ -103,5 +105,21 @@ public sealed class TestersController : ControllerBase
         var bytes = System.Text.Encoding.UTF8.GetBytes(csv);
 
         return File(bytes, "text/csv", $"user-{id}.csv");
+    }
+
+    /// <summary>Get StatusCodes.Status403Forbidden</summary>
+    [Route("/api/noAccess")]
+    [HttpGet]
+    [Authorize]
+    public IActionResult GetNoAccess()
+    {
+        throw new ForbiddenAccessException("Доступ не разрешен");
+    }
+
+    /// <summary>Get StatusCodes.Status500InternalServerError</summary>
+    [HttpGet("/api/test500")]
+    public IActionResult Test500()
+    {
+        throw new Exception("Просто тест 500.");
     }
 }

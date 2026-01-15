@@ -13,7 +13,7 @@ export function TestMePage() {
     const onCallApiMe = async () => {
         setResultApiMe("Loading...");
         try {
-            const data = await apiRequest("/api/me", { method: "GET" }, token);
+            const data = await apiRequest("/api/users/me", { method: "GET" }, token);
             setResultApiMe(JSON.stringify(data, null, 2));
         } catch {
             // 401/403 уже обрабатываются глобально (redirect -> /courses)
@@ -35,8 +35,8 @@ export function TestMePage() {
     return (
         <Stack p="xl">
             <Box>
-                <Text fw={700}>Test: GET /api/me (Authorize)</Text>
-                <Button onClick={onCallApiMe} color="green">Call /api/me</Button>
+                <Text fw={700}>Test: GET /api/users/me (Authorize)</Text>
+                <Button onClick={onCallApiMe} color="green">Call /api/users/me</Button>
                 <Code block>{resultApiMe}</Code>
             </Box>
             <Box>

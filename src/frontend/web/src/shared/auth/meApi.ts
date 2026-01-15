@@ -15,6 +15,5 @@ export type Me =
 
 
 export async function fetchMe(token: string, signal?: AbortSignal): Promise<User> {
-    return { role: "FreeStudent", email: "ds@mail.ru" };
     return apiRequest<User>("/api/users/me", { method: "GET", parse: "json", signal }, token);
 }
