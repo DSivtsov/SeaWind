@@ -1,15 +1,20 @@
 import type { LoginReason } from "@/shared/auth/authStorage";
-import { Group, Modal, Text, ThemeIcon } from "@mantine/core";
+import { Code, Group, Modal, Text, ThemeIcon } from "@mantine/core";
 import { IconAlertTriangle, IconInfoCircle } from "@tabler/icons-react";
 
-type CoursesAccessDeniedModalProps = {
+export type AccessDeniedInfo = {
   reason: LoginReason;
+  fromLocation?: string
+};
+
+type AccessDeniedModalProps = {
+  info: AccessDeniedInfo;
   onClose: () => void;
 };
 
-export function CoursesAccessDeniedModal({ reason, onClose }: CoursesAccessDeniedModalProps) {
+export function CoursesAccessDeniedModal({ info, onClose }: AccessDeniedModalProps) {
+  const { reason, fromLocation } = info;
   const isForbidden = reason === "forbidden";
-
   const titleText = isForbidden ? "Доступ запрещён" : "Требуется вход";
   const message = isForbidden
     ? "У вас нет доступа к этому разделу"
@@ -33,6 +38,12 @@ export function CoursesAccessDeniedModal({ reason, onClose }: CoursesAccessDenie
       <Text size="sm" pt="xs">
         {message}
       </Text>
+
+      {fromLocation ? (
+        <Text size="xs" c="dimmed" mt="sm">
+          Запрошенный адрес: <Code>{fromLocation}</Code>
+        </Text>
+      ) : null}
     </Modal>
   );
 }

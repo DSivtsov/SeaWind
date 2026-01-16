@@ -15,6 +15,8 @@ import { LandingPage } from "@/pages/landing/LandingPage";
 import { Test } from "@/pages/demo/Test";
 import { TestMePage } from "@/pages/auth/TestMePage";
 
+import { RouteGuard } from "@/shared/RouteGuard";
+
 export function AppRoutes() {
   return (
     <Routes>
@@ -35,53 +37,60 @@ export function AppRoutes() {
 
       {/* End section demo routes */}
 
-      {/* Landing */}
+      {/* Public */}
       <Route path="/" element={<LandingPage />} />
-
-      {/* Main Page Public */}
       <Route path="/courses" element={<CoursesLayout />} />
 
-      {/* Course area (tabs layout in MVP) */}
-      <Route path="/courses/:courseId" element={<PagePlaceholder title="CourseLayout (Tabs wrapper)" />}>
-        <Route index element={<Navigate to="lectures" replace />} />
-        <Route path="lectures" element={<PagePlaceholder title="CourseLectures (Tab)" />} />
-        <Route path="exercises" element={<PagePlaceholder title="CourseExercises (Tab)" />} />
-        <Route path="workshop-sessions" element={<PagePlaceholder title="CourseWorkshopSessions (Tab)" />} />
-      </Route>
-
-      {/* Student&Mentor: full-screen chat (outside tabs, no direct navigation) */}
-      <Route
-        path="/courses/:courseId/exercises/:exerciseId/chat"
-        element={<PagePlaceholder title="Student&Mentor · CourseExerciseChat (Full-screen)" />}
-      />
-
-      {/* Mentor area */}
-      <Route path="/mentor" element={<PagePlaceholder title="MentorLayout (wrapper)" />}>
-        <Route index element={<Navigate to="exercises/inbox" replace />} />
-        <Route path="exercises/inbox" element={<PagePlaceholder title="Mentor · CourseExerciseChat Inbox" />} />
-        <Route path="workshop-manage" element={<PagePlaceholder title="Mentor · ManageWorkshop" />} />
-        <Route path="hours-spent" element={<PagePlaceholder title="Mentor · EditHoursSpent" />} />
-      </Route>
-
-      {/* Mentor: full-screen (outside tabs, no direct navigation) */}
-      <Route path="/mentor/courses/:courseId" element={<PagePlaceholder title="CourseLayout (Tabs wrapper)" />}>
-        <Route path="workshops/:sessionId" element={<PagePlaceholder title="Course Workshop Session (Full-screen)" />} />
-      </Route>
-
-
-      {/* Admin area */}
-      <Route path="/admin" element={<PagePlaceholder title="AdminLayout (wrapper)" />}>
-        <Route index element={<Navigate to="hours-added" replace />} />
-        <Route path="hours-added" element={<PagePlaceholder title="Admin · EditHoursAdded" />} />
-        <Route path="support/inbox" element={<PagePlaceholder title="Admin · SupportInbox" />} />
-        <Route path="users-roles" element={<PagePlaceholder title="Admin · ManageUsers" />} />
-      </Route>
-
+      {/* Public system pages */}
       {/* Guard */}
       <Route path="/403" element={<PagePlaceholder title="Access denied" />} />
 
+      {/* Protected: everything that is not public */}
+      <Route element={<RouteGuard />}>
+        {/* Course area (tabs layout in MVP) */}
+
+        <Route path="/courses/:courseId" element={<PagePlaceholder title="CourseLayout (Tabs wrapper)" />}>
+          <Route index element={<Navigate to="lectures" replace />} />
+          <Route path="lectures" element={<PagePlaceholder title="CourseLectures (Tab)" />} />
+          <Route path="exercises" element={<PagePlaceholder title="CourseExercises (Tab)" />} />
+          <Route path="workshop-sessions" element={<PagePlaceholder title="CourseWorkshopSessions (Tab)" />} />
+        </Route>
+
+        {/* Student&Mentor: full-screen chat (outside tabs, no direct navigation) */}
+        <Route
+          path="/courses/:courseId/exercises/:exerciseId/chat"
+          element={<PagePlaceholder title="Student&Mentor · CourseExerciseChat (Full-screen)" />}
+        />
+
+        {/* Mentor area */}
+        <Route path="/mentor" element={<PagePlaceholder title="MentorLayout (wrapper)" />}>
+          <Route index element={<Navigate to="exercises/inbox" replace />} />
+          <Route path="exercises/inbox" element={<PagePlaceholder title="Mentor · CourseExerciseChat Inbox" />} />
+          <Route path="workshop-manage" element={<PagePlaceholder title="Mentor · ManageWorkshop" />} />
+          <Route path="hours-spent" element={<PagePlaceholder title="Mentor · EditHoursSpent" />} />
+        </Route>
+
+        {/* Mentor: full-screen (outside tabs, no direct navigation) */}
+        <Route path="/mentor/courses/:courseId" element={<PagePlaceholder title="CourseLayout (Tabs wrapper)" />}>
+          <Route path="workshops/:sessionId" element={<PagePlaceholder title="Course Workshop Session (Full-screen)" />} />
+        </Route>
+
+
+        {/* Admin area */}
+        <Route path="/admin" element={<PagePlaceholder title="AdminLayout (wrapper)" />}>
+          <Route index element={<Navigate to="hours-added" replace />} />
+          <Route path="hours-added" element={<PagePlaceholder title="Admin · EditHoursAdded" />} />
+          <Route path="support/inbox" element={<PagePlaceholder title="Admin · SupportInbox" />} />
+          <Route path="users-roles" element={<PagePlaceholder title="Admin · ManageUsers" />} />
+        </Route>
+
+
+
+      </Route>
+
       {/* Fallback */}
       <Route path="*" element={<Navigate to="/courses" replace />} />
+
     </Routes>
   );
 }

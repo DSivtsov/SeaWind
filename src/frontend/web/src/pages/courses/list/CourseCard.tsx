@@ -31,8 +31,8 @@ export function CourseCard({ course }: CourseCardProps) {
                         </ActionIcon>
                     </Tooltip>
                     <Tooltip label="Open exercises">
-                        <ActionIcon variant="subtle" color="green" size="lg" aria-label="Open video lectures"
-                            onClick={() => navigate(`/courses/${id}/lectures`)} >
+                        <ActionIcon variant="subtle" color="green" size="lg" aria-label="Open video exercises"
+                            onClick={() => navigate(`/courses/${id}/exercises`)} >
                             <IconTools />
                         </ActionIcon>
                     </Tooltip>
