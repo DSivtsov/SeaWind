@@ -1,5 +1,5 @@
 # Architecture Overview — WorkshopCode (Current)
-**Version:** v14
+**Version:** v15
 
 ## 🧾 About
  Описывает решения принятые в процесс разработки проекта.
@@ -232,8 +232,12 @@ ASP.NET Core автоматически включает систему защи
 - Конфигурация хранится в `appsettings.Development.json` (секция `Jwt`).
 - Swagger поддерживает авторизацию через токен (схема `"bearer"`).
 
-📘 Подробное описание решения — см. [ADR-0015 — Подключение аутентификации на базе ASP.NET Identity + JWT](./adr/0015-add-authentication-identity-jwt.md).
-📎 Смотри раздел wiki: [Аутентификация и авторизация (ASP.NET Identity + JWT)](https://github.com/DSivtsov/SeaWind/wiki/Reference_Index#-%D0%B0%D1%83%D1%82%D0%B5%D0%BD%D1%82%D0%B8%D1%84%D0%B8%D0%BA%D0%B0%D1%86%D0%B8%D1%8F-%D0%B8-%D0%B0%D0%B2%D1%82%D0%BE%D1%80%D0%B8%D0%B7%D0%B0%D1%86%D0%B8%D1%8F-aspnet-identity--jwt) — обзор совместной работы Identity и JWT и принципа Bearer Authentication в ASP.NET Core.
+Дополнительно:
+- Подробное описание решения — см. [ADR-0015 — Подключение аутентификации на базе ASP.NET Identity + JWT](./adr/0015-add-authentication-identity-jwt.md).
+- Смотри раздел wiki: [Аутентификация и авторизация (ASP.NET Identity + JWT)](https://github.com/DSivtsov/SeaWind/wiki/Reference_Index#-%D0%B0%D1%83%D1%82%D0%B5%D0%BD%D1%82%D0%B8%D1%84%D0%B8%D0%BA%D0%B0%D1%86%D0%B8%D1%8F-%D0%B8-%D0%B0%D0%B2%D1%82%D0%BE%D1%80%D0%B8%D0%B7%D0%B0%D1%86%D0%B8%D1%8F-aspnet-identity--jwt) — обзор совместной работы Identity и JWT и принципа Bearer Authentication в ASP.NET Core.
+-  Управление ролями и авторизацией через JWT claims — см. [ADR-0030 — Roles in JWT](./adr/0030-roles-in-jwt.md).
+
+---
 
 ### MainDbContext (основная база данных)
 Контекст `MainDbContext` используется для хранения сущностей основного функционала приложения (курсы, пользователи, лекции, задания и т.п.).
@@ -277,11 +281,20 @@ Frontend MVP представляет собой **один React SPA** (без 
 на стороне фронтенда описан в отдельных документах и не дублируется
 в данном обзоре архитектуры.
 
-- Справочный документ:
-  [Frontend Auth v0 — описание подхода](./frontend/Frontend%20Auth%20v0.md)
-- Архитектурное решение:
-  [ADR 0029 — Frontend Authentication & Token Storage](./adr/0029-frontend-auth-token.md)
+Инварианты авторизации:
+- Роль пользователя включается в JWT как ClaimTypes.Role в момент логина.
+- В системе используется одна активная роль пользователя.
+- Endpoint `/api/users/me` возвращает данные пользователя (email, role) и используется как единый источник пользовательского контекста на фронтенде.
+- Изменение роли пользователя вступает в силу после перевыпуска JWT.
 
+Справочный документ:
+ - [Frontend Auth v0 — описание подхода](./frontend/Frontend%20Auth%20v0.md)
+
+Архитектурное решение:
+ - [ADR 0029 — Frontend Authentication & Token Storage](./adr/0029-frontend-auth-token.md)
+ - [ADR-0030 — Roles in JWT](./adr/0030-roles-in-jwt.md).
+
+---
 
 #### Ключевые экраны
 - Auth: Вход / Регистрация.
@@ -429,6 +442,7 @@ CI/CD реализован с использованием GitHub Actions (**wor
 📘 Детальное описание см. [ADR-0021 — Create CI & CD for develop & TST](./adr/0021-create-ci-cd-develop-tst.md)
 
 ## Change Log
+- v15 (2026-01-16) — актуализация  разделов `Аутентификация и управление доступом` и `Аутентификация (ASP.NET Identity + JWT)`
 - v14 (2026-01-12) —добавлен раздел `Аутентификация и управление доступом`
 - v13 (2025-12-29) — актуализация  разделов из секции **Описание архитектуры фронтенда**
 - v12 (2025-12-06) — добавлен раздел `CI/CD Pipeline` и `Анализ покрытия тестами кода проекта`
