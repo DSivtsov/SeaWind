@@ -2,9 +2,8 @@ import { FOOTER_HEIGHT, HEADER_HEIGHT } from "@/common/constants";
 import { LoginModal } from "@/pages/auth/LoginModal";
 import { RegistrationModal } from "@/pages/auth/RegistrationModal";
 import { AvatarMenu } from "@/pages/avatar/AvatarMenu";
-import { CoursesAccessDeniedModal } from "@/pages/courses/list/CoursesAccessDeniedModal";
+import { CoursesAccessDeniedModal, type AccessDeniedInfo } from "@/pages/courses/list/CoursesAccessDeniedModal";
 import { CoursesListPage } from "@/pages/courses/list/CoursesListPage";
-import type { LoginReason } from "@/shared/auth/authStorage";
 import { showSuccessWithTitle } from "@/shared/ui/toast";
 import { AppShell, Text, Button, Flex, Stack, Anchor } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
@@ -16,7 +15,7 @@ export function CoursesLayout() {
     const [loginOpened, login] = useDisclosure(false);
     const location = useLocation();
     const navigate = useNavigate();
-    const [accessDeniedReason, setAccessDeniedReason] = useState<LoginReason | null>(null);
+    const [accessDeniedInfo, setAccessDeniedInfo] = useState<AccessDeniedInfo | undefined>(undefined);
 
     const { close: closeReg } = reg;
     const { close: closeLogin } = login;
@@ -27,10 +26,10 @@ export function CoursesLayout() {
     }, [location.pathname, closeReg, closeLogin]);
 
     useEffect(() => {
-        const state = (location.state as { accessDenied?: LoginReason } | null) ?? null;
-        const reason = state?.accessDenied;
-        if (!reason) return;
-        setAccessDeniedReason(reason);
+        const info = location.state as AccessDeniedInfo | null;
+        if (!info) return;
+
+        setAccessDeniedInfo(info);
         // "съедаем" state, чтобы сообщение не повторялось при back/forward
         navigate("/courses", { replace: true });
     }, [location.state, navigate]);
@@ -118,10 +117,10 @@ export function CoursesLayout() {
                     }} />
             }
             {
-                accessDeniedReason != null && <CoursesAccessDeniedModal
-                    reason={accessDeniedReason}
+                accessDeniedInfo != null && <CoursesAccessDeniedModal
+                    info={accessDeniedInfo}
                     onClose={() => {
-                        setAccessDeniedReason(null);
+                        setAccessDeniedInfo(undefined);
                     }}
                 />
             }
