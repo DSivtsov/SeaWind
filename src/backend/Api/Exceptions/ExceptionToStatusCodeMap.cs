@@ -9,5 +9,6 @@ internal class ExceptionToStatusCodeMap
         { typeof(ForbiddenAccessException), StatusCodes.Status403Forbidden },
         { typeof(NotFoundException), StatusCodes.Status404NotFound },
         { typeof(ConflictException), StatusCodes.Status409Conflict },
+        { typeof(InvariantViolationException), StatusCodes.Status500InternalServerError },
     };
 }

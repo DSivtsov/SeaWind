@@ -44,7 +44,8 @@ export function AvatarMenu() {
     return { kind: "empty" as const };
   }, [me]);
 
-  const menuDisabled = ui.kind === "loading" || ui.kind === "empty";
+  const logoutDisabled = ui.kind === "loading";
+  const otherMenuItemDisabled = logoutDisabled || ui.kind === "empty" || ui.kind === "error";
 
   const onOpenProfile = () => navigate("/profile");
   const onOpenWorkspace = () => {
@@ -55,11 +56,6 @@ export function AvatarMenu() {
   const onLogout = () => {
     auth.logout();
   };
-  console.log(`{disabled}=[${!isAuthed}]`);
-  console.log(`{kind}=[${ui.kind}]`);
-  console.log(`{role}=[${ui.role}]`);
-  console.log(`{role}=[${ui.email}]`);
-  console.log(`{roleLabel}=[${ui.roleLabel}]`);
 
   const avatarVariant = isAuthed ? "filled" : "transparent";
   const avatarSize = isAuthed ? "lg" : "md";
@@ -107,7 +103,7 @@ export function AvatarMenu() {
 
         <Menu.Item
           leftSection={<IconUser size={16} />}
-          disabled={menuDisabled}
+          disabled={otherMenuItemDisabled}
           onClick={onOpenProfile}
         >
           Profile
@@ -115,7 +111,7 @@ export function AvatarMenu() {
 
         <Menu.Item
           leftSection={<IconLayoutDashboard size={16} />}
-          disabled={menuDisabled || ui.kind !== "ready" || !ui.workspaceTarget}
+          disabled={otherMenuItemDisabled || ui.kind !== "ready" || !ui.workspaceTarget}
           onClick={onOpenWorkspace}
         >
           Workspace
@@ -126,7 +122,7 @@ export function AvatarMenu() {
         <Menu.Item
           color="red"
           leftSection={<IconDoorExit size={16} />}
-          disabled={menuDisabled}
+          disabled={logoutDisabled}
           onClick={onLogout}
         >
           Logout

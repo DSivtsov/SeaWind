@@ -18,17 +18,5 @@ public class MainDbContext : DbContext
 
         builder.ApplyConfigurationsFromAssembly(typeof(CourseTableConfig).Assembly);
 
-
-/*        builder.Entity<Course>(action =>
-        {
-            action.HasKey(c => c.Id);
-            action.Property(c => c.Title).IsRequired().HasMaxLength(255);
-            action.Property(c => c.Code).IsRequired().HasMaxLength(255);
-            action.Property(c => c.CreatedAt)
-                .IsRequired()
-                .HasColumnType("timestamp") // без time zone
-                .HasDefaultValueSql("CURRENT_TIMESTAMP");
-            action.Property(c => c.UpdatedAt).HasColumnType("timestamp"); // без time zone
-        });*/
     }
 }

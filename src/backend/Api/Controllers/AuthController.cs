@@ -2,10 +2,8 @@
 using Api.Exceptions;
 using Api.Identity;
 using Infrastructure.Postgres.Identity;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 
 namespace Api.Controllers;
 
@@ -14,6 +12,7 @@ namespace Api.Controllers;
 [Route("api/[controller]")]
 public sealed class AuthController : ControllerBase
 {
+    private const string DEFAULT_ROLE = "FreeStudent";
     private readonly ITokenService _svc;
 
     /// <summary>
@@ -89,6 +88,13 @@ public sealed class AuthController : ControllerBase
             throw new BadRequestException("Ошибка регистрации.");
         }
 
+        res = await _userManager.AddToRoleAsync(user, DEFAULT_ROLE);
+
+        // В рамках MVP роли фиксированы и создаются через миграции (HasData),
+        // поэтому AddToRoleAsync здесь считается детерминированным
+        if (!res.Succeeded)
+            throw new InvariantViolationException("Ошибка регистрации.");
+
         return Ok();
     }
 
@@ -146,47 +152,8 @@ public sealed class AuthController : ControllerBase
         if (_userManager.Options.SignIn.RequireConfirmedEmail && !await _userManager.IsEmailConfirmedAsync(user))
             throw new UnauthorizedException("Требуется подтверждение email.");
 
-        var token = _svc.Create(user);
+        var token = await _svc.CreateAsync(user);
+
         return Ok(new AuthTokenResponseDto(token));
-    }
-
-    /// <summary>
-    /// Возвращает информацию о текущем авторизованном пользователе из JWT-токена.
-    /// </summary>
-    /// <remarks>
-    /// Использует данные из клеймов токена (NameIdentifier и Email).
-    /// </remarks>
-    /// <returns>
-    /// Объект <see cref="UserClaimDto"/> с именем и идентификатором пользователя.
-    /// </returns>
-    /// <response code="200">Информация о текущем пользователе успешно получена.</response>
-    /// <response code="401">Пользователь не авторизован.</response>
-    [Route("/api/me")]
-    [HttpGet]
-    [Authorize]
-    [ProducesResponseType(typeof(UserClaimDto), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
-    public ActionResult<UserClaimDto> Get()
-    {
-        var id = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        var name = User.Identity?.Name
-            ?? User.FindFirst(ClaimTypes.Email)?.Value;             // emailaddress есть всегда в текущем JWT
-
-        return Ok(new UserClaimDto(name ?? "Empty", id ?? "Error"));
-    }
-
-    [Route("/api/noAccess")]
-    [HttpGet]
-    [Authorize]
-    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status403Forbidden)]
-    public ActionResult<UserClaimDto> GetNoAccess()
-    {
-        throw new ForbiddenAccessException("Доступ не разрешен");
-    }
-
-    [HttpGet("test500")]
-    public IActionResult Test500()
-    {
-        throw new Exception("Просто тест 500.");
     }
 }

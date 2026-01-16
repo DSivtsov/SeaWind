@@ -13,5 +13,32 @@ public class AppIdentityDbContext : IdentityDbContext<AppUser, IdentityRole, str
     {
         base.OnModelCreating(builder);
         builder.HasDefaultSchema(Schema);
+
+        builder.Entity<IdentityRole>().HasData(
+            new IdentityRole
+            {
+                Id = "role-freestudent",
+                Name = "FreeStudent",
+                NormalizedName = "FREESTUDENT"
+            },
+            new IdentityRole
+            {
+                Id = "role-student",
+                Name = "Student",
+                NormalizedName = "STUDENT"
+            },
+            new IdentityRole
+            {
+                Id = "role-mentor",
+                Name = "Mentor",
+                NormalizedName = "MENTOR"
+            },
+            new IdentityRole
+            {
+                Id = "role-admin",
+                Name = "Admin",
+                NormalizedName = "ADMIN"
+            }
+        );
     }
 }
