@@ -16,6 +16,7 @@ import { Test } from "@/pages/demo/Test";
 import { TestMePage } from "@/pages/auth/TestMePage";
 
 import { RouteGuard } from "@/shared/RouteGuard";
+import { ForbiddenPage } from "@/pages/guard/ForbiddenPage";
 
 export function AppRoutes() {
   return (
@@ -43,7 +44,7 @@ export function AppRoutes() {
 
       {/* Public system pages */}
       {/* Guard */}
-      <Route path="/403" element={<PagePlaceholder title="Access denied" />} />
+      <Route path="/403" element={<ForbiddenPage />} />
 
       {/* Protected: everything that is not public */}
       <Route element={<RouteGuard />}>

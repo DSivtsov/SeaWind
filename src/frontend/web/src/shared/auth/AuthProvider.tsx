@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { clearAccessPack, getAccessPack, onAccessDenied, setAccessPack, ACCESS_PACK_KEY, type StoredAuth } from "./authStorage";
+import { clearAccessPack, getAccessPack, onAccessDenied, setAccessPack, ACCESS_PACK_KEY, type StoredAuth, type LoginReason } from "./authStorage";
 import { AuthContext } from "@/shared/auth/useAuth";
 import { useNavigate } from "react-router-dom";
 import { fetchMe, type Me } from "@/shared/auth/meApi";
+import type { AccessDeniedInfo } from "@/pages/courses/list/CoursesAccessDeniedModal";
 
 export type AuthState = {
   initials: string;
@@ -22,10 +23,11 @@ export type AuthApi = {
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const navigate = useNavigate();
 
-  const handleLogoutRedirect = useCallback((reason?: string) => {
+  const handleLogoutRedirect = useCallback((reason?: LoginReason) => {
+    const info: AccessDeniedInfo | undefined = reason ? { reason: reason } : undefined;
     navigate("/courses", {
       replace: true,
-      state: reason ? { accessDenied: reason } : undefined,
+      state: info,
     });
   }, [navigate]);
 

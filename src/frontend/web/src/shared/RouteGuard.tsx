@@ -53,7 +53,6 @@ export function RouteGuard() {
 
     const info: AccessDeniedInfo = { reason: "unauthorized", fromLocation: location.pathname };
     //console.log(`[RouteGuard] ${JSON.stringify(info, null, 2)}`);
-    //return <Navigate to="/courses" replace state={info} />;
     return <Navigate to="/courses" replace state={info} />;
   }
 
