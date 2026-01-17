@@ -26,12 +26,12 @@ export function CoursesLayout() {
     }, [location.pathname, closeReg, closeLogin]);
 
     useEffect(() => {
-        const info = location.state as AccessDeniedInfo | null;
+        const info = location.state as AccessDeniedInfo | undefined;
         if (!info) return;
 
         setAccessDeniedInfo(info);
-        // "съедаем" state, чтобы сообщение не повторялось при back/forward
-        navigate("/courses", { replace: true });
+        // "обнуляем" state, чтобы сообщение не повторялось при back/forward
+        navigate("/courses", { replace: true, state: undefined });
     }, [location.state, navigate]);
 
     return (

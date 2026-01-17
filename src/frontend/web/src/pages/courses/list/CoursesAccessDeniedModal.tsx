@@ -16,9 +16,7 @@ export function CoursesAccessDeniedModal({ info, onClose }: AccessDeniedModalPro
   const { reason, fromLocation } = info;
   const isForbidden = reason === "forbidden";
   const titleText = isForbidden ? "Доступ запрещён" : "Требуется вход";
-  const message = isForbidden
-    ? "У вас нет доступа к этому разделу"
-    : "Чтобы продолжить, войдите в систему";
+  const message = isForbidden ? "Недостаточно прав для выполнения действия" : "Чтобы продолжить, войдите в систему";
 
   const icon = isForbidden ? <IconAlertTriangle size={18} /> : <IconInfoCircle size={18} />;
   const iconColor = isForbidden ? "yellow" : "blue";
