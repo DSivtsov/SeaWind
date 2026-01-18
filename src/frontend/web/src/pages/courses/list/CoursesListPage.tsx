@@ -25,7 +25,7 @@ export function CoursesListPage() {
             const data = await getCourses(abortController.signal);
 
             setCourses(data);
-            setUiState(data.length === 0 ? "empty" : "default");
+            setUiState(data.length === 0 ? "empty" : "ready");
         } catch (e: unknown) {
             if (isAbort(e)) return;
 

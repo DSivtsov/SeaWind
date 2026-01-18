@@ -49,7 +49,7 @@ function TestManTine() {
             if (isEmpty) {
                 setState("empty");
             } else {
-                setState("default");
+                setState("ready");
             }
         }, 350);
 
@@ -67,9 +67,9 @@ function TestManTine() {
         setState("loading");
         // simplest retry: re-run the same loading logic
         setCourses(ALL_COURSES);
-        setState(ALL_COURSES.length === 0 ? "empty" : "default");
+        setState(ALL_COURSES.length === 0 ? "empty" : "ready");
     };
-    const isNoResults = state === "default" && courses.length > 0 && filtered.length === 0;
+    const isNoResults = state === "ready" && courses.length > 0 && filtered.length === 0;
 
     return (
         <TestPageShell title="React + TypeScript — practical minimum" state={state} errorText="Failed to load courses." onRetry={onRetry}>

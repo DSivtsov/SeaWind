@@ -13,7 +13,7 @@ import React, { useEffect, useMemo, useState } from "react";
  * - one custom hook (typed)
  */
 
-type UiState = "loading" | "empty" | "error" | "default";
+type UiState = "loading" | "empty" | "error" | "ready";
 
 type PageShellProps = {
   title: string;
@@ -49,7 +49,7 @@ function PageShell(props: PageShellProps) {
                 ) : null}
               </div>
             );
-          case "default":
+          case "ready":
             return <div>{children}</div>;
           default: {
             // Exhaustiveness guard: if UiState changes, TS will error here.
@@ -160,7 +160,7 @@ function TestPage() {
       if (ALL_COURSES.length === 0) {
         setState("empty");
       } else {
-        setState("default");
+        setState("ready");
       }
     }, 350);
 
@@ -178,7 +178,7 @@ function TestPage() {
     setState("loading");
     // simplest retry: re-run the same loading logic
     setCourses(ALL_COURSES);
-    setState(ALL_COURSES.length === 0 ? "empty" : "default");
+    setState(ALL_COURSES.length === 0 ? "empty" : "ready");
   };
 
   return (

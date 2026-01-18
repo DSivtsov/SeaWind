@@ -29,7 +29,7 @@ const renderContent = (state: UiState, errorText?: string, onRetry?: () => void,
                     ) : null}
                 </Stack>
             );
-        case "default":
+        case "ready":
             return children;
         default: {
             // Exhaustiveness guard: if UiState changes, TS will error here.

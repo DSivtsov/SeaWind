@@ -73,7 +73,7 @@ export function CoursesLayout() {
                             <Button variant="filled" color="green"
                                 onClick={() => {
                                     login.open();
-                                }}> Login</Button>
+                                }}>Login</Button>
 
                             <AvatarMenu />
                         </Flex>

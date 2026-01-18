@@ -39,7 +39,7 @@ export default function TestCourseListPage() {
 
       const data = DEMO_COURSES;
       setCourses(data);
-      setState(data.length === 0 ? "empty" : "default");
+      setState(data.length === 0 ? "empty" : "ready");
     }, 250);
   };
 
@@ -55,7 +55,7 @@ export default function TestCourseListPage() {
   }, [courses, query]);
 
   const contentState: UiState =
-    state === "default" && filtered.length === 0 ? "empty" : state;
+    state === "ready" && filtered.length === 0 ? "empty" : state;
 
   return (
     <TestPageShell title="Courses" state={contentState} errorText={errorText} onRetry={load}>

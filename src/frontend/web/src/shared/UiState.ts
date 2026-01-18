@@ -1,1 +1,1 @@
-export type UiState = "loading" | "empty" | "error" | "default";
+export type UiState = "loading" | "empty" | "error" | "ready";
