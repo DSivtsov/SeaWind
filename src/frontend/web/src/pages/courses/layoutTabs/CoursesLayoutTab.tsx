@@ -1,0 +1,221 @@
+import { FOOTER_HEIGHT, HEADER_HEIGHT } from "@/common/constants";
+import { AvatarMenu } from "@/pages/avatar/AvatarMenu";
+import { useAuth } from "@/shared/auth/useAuth";
+import { AppShell, Text, Button, Flex, Stack, Anchor, Box, Grid, Skeleton, TextInput, Title } from "@mantine/core";
+import { useState, useEffect } from "react";
+import { Outlet, useParams } from "react-router-dom";
+
+type CourseDto = {
+    id: string;
+    code: string;
+    title: string;
+    description?: string | null;
+};
+
+/* type CourseLectureDto = {
+    id: string;
+    title: string;
+    description?: string | null;
+    videoUrl?: string | null;
+}; */
+
+type CourseLayoutState =
+    | { kind: "loading" }
+    | { kind: "error" }
+    | { kind: "ready"; course: CourseDto };
+
+export function CoursesLayoutTab() {
+
+    // const [regOpened, reg] = useDisclosure(false);
+    // const [loginOpened, login] = useDisclosure(false);
+
+    const { courseId } = useParams<{ courseId: string }>();
+
+    const auth = useAuth();
+
+    const token = auth.state.accessToken ?? null;
+
+    const [ui, setUi] = useState<CourseLayoutState>({ kind: "loading" });
+    //const [badLinkOpened, setBadLinkOpened] = useState(false);
+
+    /*     const courseTitle = useMemo(() => {
+            if (ui.kind === "ready" ) return "Time Title"; //ui.course.title;
+            return "";
+        }, [ui]); */
+
+    // const location = useLocation();
+    // const navigate = useNavigate();
+
+    /*
+        const [accessDeniedInfo, setAccessDeniedInfo] = useState<AccessDeniedInfo | undefined>(undefined);
+        const { close: closeReg } = reg;
+        const { close: closeLogin } = login;
+
+        useEffect(() => {
+            closeReg();
+            closeLogin();
+        }, [location.pathname, closeReg, closeLogin]);
+
+    useEffect(() => {
+        const info = location.state as AccessDeniedInfo | undefined;
+        if (!info) return;
+
+        setAccessDeniedInfo(info);
+        // "обнуляем" state, чтобы сообщение не повторялось при back/forward
+        navigate("/courses", { replace: true, state: undefined });
+    }, [location.state, navigate]);
+         */
+
+    useEffect(() => {
+        if (!courseId || !token) {
+            // Defensive: RouteGuard should prevent entering here without token.
+            setUi({ kind: "error" });
+            return;
+        }
+
+        const ac = new AbortController();
+
+        (async () => {
+            try {
+                setUi({ kind: "loading" });
+
+                //const [course, lectures] = await Promise.all([
+                //apiGetJson<CourseDto>(`/api/course/${courseId}`, token, ac.signal),
+                //apiGetJson<CourseLectureDto[]>(`/api/courses/${courseId}/lectures`, token, ac.signal),
+                //]);
+
+                const course: CourseDto = demoCourse;
+
+
+
+                /*                 if (!lectures || lectures.length === 0) {
+                                    setUi({ kind: "empty", course });
+                                    return;
+                                } */
+
+                //setUi({ kind: "ready", course, lectures });
+                setUi({ kind: "ready", course });
+            } catch {
+                if (ac.signal.aborted) return;
+                setUi({ kind: "error" });
+            }
+        })();
+
+        return () => ac.abort();
+    }, [courseId, token]);
+
+    return (
+        <div className="layout-publicBg">
+            <AppShell
+                padding={0} // отключаем дефолтные padding Mantine — все отступы контролируем вручную
+                header={{ height: HEADER_HEIGHT }} // высота нужна Mantine для расчёта header offset
+                footer={{ height: FOOTER_HEIGHT }} // высота нужна Mantine для расчёта footer offset
+                styles={{
+                    root: {
+                        height: "100vh", // фиксируем layout по высоте viewport (иначе main растёт по контенту)
+                        display: "flex", // делаем корень flex-контейнером
+                        flexDirection: "column", // вертикальная колонка: header / main / footer
+                    },
+                    main: {
+                        flex: 1, // main занимает всё оставшееся место между header и footer
+                        minHeight: 0, // критично для flex: позволяет main сжиматься и включать overflow
+                        overflowY: "auto", // скролл ТОЛЬКО внутри main
+
+                        // Компенсация overlay header/footer. Offsets рассчитываются Mantine автоматически.
+                        // Контентные отступы (pt/pb/px) задаются на уровне страницы (CoursesListPage).
+                        paddingTop: "var(--app-shell-header-offset)",
+                        paddingBottom: "var(--app-shell-footer-offset)",
+                    },
+                }}
+            >
+                <AppShell.Header className="layout-publicHeader" >
+                    <Flex h="100%" align="center" justify="space-between" px="xl">
+                        <Stack gap={2}>
+                            <Text c="gray.2" size="xl" fw={700}>Лекции курса</Text>
+                            <Text c="gray.4" size="sm" fw={500}>Переходи к нужной</Text>
+                        </Stack>
+                        <Flex h="100%" justify="flex-end" align="center" gap="md" pr="xl">
+                            <Button variant="filled" color="green"
+                                onClick={() => {
+                                    console.log("[CoursesLayoutTab]: onClick [Все курсы]");
+                                }}>Все курсы</Button>
+
+                            <AvatarMenu />
+                        </Flex>
+                    </Flex>
+                </AppShell.Header>
+
+                <AppShell.Main >
+                    <Box p="md" >
+                        {ui.kind === "loading" ? (
+                            <Stack gap="xs">
+                                <Skeleton h={28} w={260} />
+                                <Skeleton h={36} />
+                                <Skeleton h={36} />
+                                <Skeleton h={52} />
+                            </Stack>
+                        ) : ui.kind === "error" ? (
+                            <Stack gap={4}>
+                                <Title order={3}>Course Lectures</Title>
+                                <Text c="dimmed">Проблема с сервером. Попробуйте позже.</Text>
+                            </Stack>
+                        ) : (
+                            <Stack gap="xs">
+                                {/*                                 <Group justify="space-between" align="center">
+                                    <Stack gap={0}>
+                                        <Title order={3}>Lectures</Title>
+                                        <Text c="dimmed" size="sm">
+                                            {courseTitle}
+                                        </Text>
+                                    </Stack>
+                                    <Badge variant="light">List Lectures</Badge>
+                                </Group> */}
+
+                                <Grid gutter="md">
+                                    <Grid.Col span={{ base: 12, md: 4 }}>
+                                        <TextInput label="Course Code" value={ui.course.code} readOnly />
+                                    </Grid.Col>
+                                    <Grid.Col span={{ base: 12, md: 8 }}>
+                                        <TextInput label="Course Title" value={ui.course.title} readOnly />
+                                    </Grid.Col>
+                                    <Grid.Col span={12}>
+                                        <TextInput
+                                            label="Course description"
+                                            value={ui.course.description ?? ""}
+                                            readOnly
+                                        />
+                                    </Grid.Col>
+                                </Grid>
+                            </Stack>
+                        )}
+                    </Box>
+                    <Outlet />
+                </AppShell.Main>
+
+                <AppShell.Footer className="layout-publicFooter" >
+                    <Flex h="100%" align="center" justify="space-between" px="xl">
+                        <Stack gap={2}>
+                            <Text c="gray.2">© WorkshopCode 2025</Text>
+                            <Text c="gray.6">
+                                Связаться с администратором:{' '}
+                                <Anchor c="green.5" href="mailto:admin@workshopcode.app">
+                                    admin@workshopcode.app
+                                </Anchor>
+                            </Text>
+                        </Stack>
+                        <Button variant="filled" color="green">Support Chat</Button>
+                    </Flex>
+                </AppShell.Footer>
+            </AppShell>
+        </div >
+    );
+}
+
+const demoCourse: CourseDto = {
+    id: "demo-course-id",
+    code: "DEMO-101",
+    title: "Demo Course",
+    description: "Демо-курс для разработки и отладки интерфейса.",
+};
+
+
