@@ -1,7 +1,7 @@
 import { FOOTER_HEIGHT, HEADER_HEIGHT } from "@/common/constants";
 import { AvatarMenu } from "@/pages/avatar/AvatarMenu";
 import { useAuth } from "@/shared/auth/useAuth";
-import { AppShell, Text, Button, Flex, Stack, Anchor, Box, Grid, Skeleton, TextInput, Title } from "@mantine/core";
+import { AppShell, Text, Button, Flex, Stack, Anchor, Box, Grid, Skeleton, Title, Group } from "@mantine/core";
 import { useState, useEffect } from "react";
 import { Outlet, useParams } from "react-router-dom";
 
@@ -12,23 +12,12 @@ type CourseDto = {
     description?: string | null;
 };
 
-/* type CourseLectureDto = {
-    id: string;
-    title: string;
-    description?: string | null;
-    videoUrl?: string | null;
-}; */
-
 type CourseLayoutState =
     | { kind: "loading" }
     | { kind: "error" }
     | { kind: "ready"; course: CourseDto };
 
 export function CoursesLayoutTab() {
-
-    // const [regOpened, reg] = useDisclosure(false);
-    // const [loginOpened, login] = useDisclosure(false);
-
     const { courseId } = useParams<{ courseId: string }>();
 
     const auth = useAuth();
@@ -36,38 +25,9 @@ export function CoursesLayoutTab() {
     const token = auth.state.accessToken ?? null;
 
     const [ui, setUi] = useState<CourseLayoutState>({ kind: "loading" });
-    //const [badLinkOpened, setBadLinkOpened] = useState(false);
-
-    /*     const courseTitle = useMemo(() => {
-            if (ui.kind === "ready" ) return "Time Title"; //ui.course.title;
-            return "";
-        }, [ui]); */
-
-    // const location = useLocation();
-    // const navigate = useNavigate();
-
-    /*
-        const [accessDeniedInfo, setAccessDeniedInfo] = useState<AccessDeniedInfo | undefined>(undefined);
-        const { close: closeReg } = reg;
-        const { close: closeLogin } = login;
-
-        useEffect(() => {
-            closeReg();
-            closeLogin();
-        }, [location.pathname, closeReg, closeLogin]);
 
     useEffect(() => {
-        const info = location.state as AccessDeniedInfo | undefined;
-        if (!info) return;
-
-        setAccessDeniedInfo(info);
-        // "обнуляем" state, чтобы сообщение не повторялось при back/forward
-        navigate("/courses", { replace: true, state: undefined });
-    }, [location.state, navigate]);
-         */
-
-    useEffect(() => {
-        if (!courseId || !token) {
+        if (!courseId) {
             // Defensive: RouteGuard should prevent entering here without token.
             setUi({ kind: "error" });
             return;
@@ -146,49 +106,7 @@ export function CoursesLayoutTab() {
                 </AppShell.Header>
 
                 <AppShell.Main >
-                    <Box p="md" >
-                        {ui.kind === "loading" ? (
-                            <Stack gap="xs">
-                                <Skeleton h={28} w={260} />
-                                <Skeleton h={36} />
-                                <Skeleton h={36} />
-                                <Skeleton h={52} />
-                            </Stack>
-                        ) : ui.kind === "error" ? (
-                            <Stack gap={4}>
-                                <Title order={3}>Course Lectures</Title>
-                                <Text c="dimmed">Проблема с сервером. Попробуйте позже.</Text>
-                            </Stack>
-                        ) : (
-                            <Stack gap="xs">
-                                {/*                                 <Group justify="space-between" align="center">
-                                    <Stack gap={0}>
-                                        <Title order={3}>Lectures</Title>
-                                        <Text c="dimmed" size="sm">
-                                            {courseTitle}
-                                        </Text>
-                                    </Stack>
-                                    <Badge variant="light">List Lectures</Badge>
-                                </Group> */}
-
-                                <Grid gutter="md">
-                                    <Grid.Col span={{ base: 12, md: 4 }}>
-                                        <TextInput label="Course Code" value={ui.course.code} readOnly />
-                                    </Grid.Col>
-                                    <Grid.Col span={{ base: 12, md: 8 }}>
-                                        <TextInput label="Course Title" value={ui.course.title} readOnly />
-                                    </Grid.Col>
-                                    <Grid.Col span={12}>
-                                        <TextInput
-                                            label="Course description"
-                                            value={ui.course.description ?? ""}
-                                            readOnly
-                                        />
-                                    </Grid.Col>
-                                </Grid>
-                            </Stack>
-                        )}
-                    </Box>
+                    <CourseHead />
                     <Outlet />
                 </AppShell.Main>
 
@@ -209,6 +127,48 @@ export function CoursesLayoutTab() {
             </AppShell>
         </div >
     );
+
+    function CourseHead() {
+        return <Box p="md" pos="sticky" top={0} className="layout-publicMainHeader">
+            {ui.kind === "loading" ? (
+                <Stack gap="xs">
+                    <Skeleton h={28} w={260} />
+                    <Skeleton h={36} />
+                    <Skeleton h={36} />
+                    <Skeleton h={52} />
+                </Stack>
+            ) : ui.kind === "error" ? (
+                <Stack gap={4}>
+                    <Title order={3}>Course Lectures</Title>
+                    <Text c="dimmed">Проблема с сервером. Попробуйте позже.</Text>
+                </Stack>
+            ) : (
+                <Grid gutter="xs">
+                    <Grid.Col span={{ base: 12, sm: 3 }}>
+                        {/* <TextInput label="Course Code" value={ui.course.code} readOnly /> */}
+                        <Group gap="sm">
+                            <Text size="xs" c="dimmed">Course code</Text>
+                            <Text fw={500}>{ui.course.code}</Text>
+                        </Group>
+                    </Grid.Col>
+                    <Grid.Col span={{ base: 12, sm: 9 }}>
+                        {/* <TextInput label="Course Title" value={ui.course.title} readOnly /> */}
+                        <Group gap="sm">
+                            <Text size="xs" c="dimmed">Course Title</Text>
+                            <Text fw={500}>{ui.course.title}</Text>
+                        </Group>
+                    </Grid.Col>
+                    <Grid.Col span={12}>
+                        <Group gap="sm">
+                            <Text size="xs" c="dimmed">Course description</Text>
+                            <Text fw={500}>{ui.course.description ?? ""}</Text>
+                        </Group>
+                        {/* <TextInput label="Course description" value={ui.course.description ?? ""} readOnly /> */}
+                    </Grid.Col>
+                </Grid>
+            )}
+        </Box>;
+    }
 }
 
 const demoCourse: CourseDto = {

@@ -9,6 +9,7 @@
   --pub-bg-2: #101B2E;
 
   --pub-surface-0: rgba(16, 27, 46, 0.85);
+  --pub-surface-headerMain: rgba(13, 27, 37, 0.88);
   --pub-border: rgba(255, 255, 255, 0.08);
 }
 
@@ -55,6 +56,12 @@
 .auth-modal-header {
   background: var(--mantine-color-dark-8);
   border-bottom: 2px solid var(--pub-border);
+}
+
+.layout-publicMainHeader {
+  background: var(--pub-surface-headerMain);
+  border-bottom: 1px solid var(--pub-border);
+  z-index: 10;
 }
 
 /* =========================

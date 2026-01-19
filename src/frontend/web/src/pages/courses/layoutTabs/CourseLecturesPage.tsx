@@ -1,18 +1,12 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Badge, Box, Card, Grid, Group, Modal, Skeleton, Stack, Text } from "@mantine/core";
 
 import { useAuth } from "@/shared/auth/useAuth";
 
-/* type CourseDto = {
-  id: string;
-  code: string;
-  title: string;
-  description?: string | null;
-};
- */
 type CourseLectureDto = {
   id: string;
+  order: number;
   title: string;
   description?: string | null;
   videoUrl?: string | null;
@@ -66,26 +60,22 @@ export function CourseLecturesPage() {
       return "";
     }, [ui]); */
 
+  const lectures: CourseLectureDto[] = demoLectures;
   useEffect(() => {
     if (!courseId || !token) {
       // Defensive: RouteGuard should prevent entering here without token.
       setUi({ kind: "error" });
       return;
     }
-
     const ac = new AbortController();
 
-    (async () => {
+    (async function () {
       try {
         setUi({ kind: "loading" });
-
         /*         const [course, lectures] = await Promise.all([
                   apiGetJson<CourseDto>(`/api/course/${courseId}`, token, ac.signal),
                   apiGetJson<CourseLectureDto[]>(`/api/courses/${courseId}/lectures`, token, ac.signal),
                 ]); */
-
-        const lectures: CourseLectureDto[] = demoLectures;
-
         if (!lectures || lectures.length === 0) {
           setUi({ kind: "empty" });
           return;
@@ -99,7 +89,13 @@ export function CourseLecturesPage() {
     })();
 
     return () => ac.abort();
-  }, [courseId, token]);
+  }, [courseId, token, lectures]);
+
+  const lecturesOrdered = useMemo(
+    () => [...lectures].sort((a, b) => a.order - b.order),
+    [lectures]
+  );
+
 
   const openLectureVideo = (lecture: CourseLectureDto) => {
     const url = (lecture.videoUrl ?? "").trim();
@@ -143,8 +139,8 @@ export function CourseLecturesPage() {
           <Text>В этом курсе ещё нет лекций</Text>
         ) : (
           <Grid gutter="md">
-            {ui.lectures.map((lec, idx) => (
-              <Grid.Col key={lec.id ?? String(idx)} span={{ base: 12, sm: 6, lg: 4 }}>
+            {lecturesOrdered.map((lec) => (
+              <Grid.Col key={lec.id} span={{ base: 12, sm: 6, lg: 4 }}>
                 <Card
                   withBorder
                   radius="md"
@@ -158,7 +154,7 @@ export function CourseLecturesPage() {
                 >
                   <Stack gap="xs">
                     <Group justify="space-between" align="center">
-                      <Badge variant="light">Lecture</Badge>
+                      <Badge variant="light">Lecture № {lec.order}</Badge>
                       <Badge variant="outline">▶</Badge>
                     </Group>
                     <Text fw={600} lineClamp={2}>
@@ -184,20 +180,46 @@ export function CourseLecturesPage() {
 const demoLectures: CourseLectureDto[] = [
   {
     id: "lecture-1",
+    order: 1,
     title: "Введение в курс",
     description: "Обзор целей курса, структуры и формата обучения.",
     videoUrl: "https://example.com/video/intro",
   },
   {
+    id: "lecture-5",
+    order: 5,
+    title: "Практический разбор",
+    description: "Разбор примеров и типичных ошибок на практике.",
+    videoUrl: "https://example.com/video/practice",
+  },
+  {
+    id: "lecture-6",
+    order: 6,
+    title: "Итоги и дальнейшие шаги",
+    description: "Подведение итогов курса и рекомендации по дальнейшему изучению.",
+    videoUrl: "https://example.com/video/summary",
+  },
+  {
     id: "lecture-2",
+    order: 2,
     title: "Базовые понятия",
     description: "Ключевые термины и базовые концепции, необходимые для дальнейших лекций.",
     videoUrl: "https://example.com/video/basics",
   },
   {
     id: "lecture-3",
-    title: "Практический разбор",
-    description: "Разбор примеров и типичных ошибок на практике.",
-    videoUrl: "https://example.com/video/practice",
+    order: 3,
+    title: "Инструменты и окружение",
+    description: "Настройка рабочего окружения и обзор используемых инструментов.",
+    videoUrl: "https://example.com/video/tools",
+  },
+  {
+    id: "lecture-4",
+    order: 4,
+    title: "Архитектурный обзор",
+    description: "Общее представление архитектуры проекта и основных компонентов.",
+    videoUrl: "https://example.com/video/architecture",
   },
 ];
+
+

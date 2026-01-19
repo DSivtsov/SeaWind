@@ -1,4 +1,4 @@
-import { FOOTER_HEIGHT, HEADER_HEIGHT } from "@/common/constants";
+import { FOOTER_HEIGHT, HEADER_HEIGHT, HEADER_HEIGHT_NARROW } from "@/common/constants";
 import { LoginModal } from "@/pages/auth/LoginModal";
 import { RegistrationModal } from "@/pages/auth/RegistrationModal";
 import { AvatarMenu } from "@/pages/avatar/AvatarMenu";
@@ -6,7 +6,7 @@ import { CoursesAccessDeniedModal, type AccessDeniedInfo } from "@/pages/courses
 import { CoursesListPage } from "@/pages/courses/list/CoursesListPage";
 import { showSuccessWithTitle } from "@/shared/ui/toast";
 import { AppShell, Text, Button, Flex, Stack, Anchor } from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
+import { useDisclosure, useMediaQuery } from "@mantine/hooks";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
@@ -34,11 +34,15 @@ export function CoursesLayout() {
         navigate("/courses", { replace: true, state: undefined });
     }, [location.state, navigate]);
 
+    const isNarrow = useMediaQuery("(max-width: 650px)");
+
     return (
         <div className="layout-publicBg">
             <AppShell
                 padding={0} // отключаем дефолтные padding Mantine — все отступы контролируем вручную
-                header={{ height: HEADER_HEIGHT }} // высота нужна Mantine для расчёта header offset
+                // высота нужна Mantine для расчёта header offset
+                // высота разная для разной ширины экрана
+                header={{ height: isNarrow ? HEADER_HEIGHT_NARROW : HEADER_HEIGHT }}
                 footer={{ height: FOOTER_HEIGHT }} // высота нужна Mantine для расчёта footer offset
                 styles={{
                     root: {
