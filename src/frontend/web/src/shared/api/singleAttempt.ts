@@ -10,7 +10,6 @@ export async function singleAttempt<T>(path: string, opts: RequestOptions, token
         Accept: parse === "text" ? "text/plain, */*" : "application/json",
     };
 
-    //const token = getAccessPack();
     if (token) headers.Authorization = `Bearer ${token}`;
 
     let body: string | undefined;

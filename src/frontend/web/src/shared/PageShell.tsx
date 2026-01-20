@@ -15,8 +15,8 @@ type PageShellProps = {
 export function PageShell(props: PageShellProps) {
     const { title, state, loadingView, emptyView, errorText, onRetry, children } = props;
     return (
-        <Stack gap="sm" p="md">
-            {title ? <Title order={2}>{title}</Title> : null}
+        <Stack gap="sm">
+            {title && <Title order={2}>{title}</Title>}
             {renderContent(state, loadingView, emptyView, errorText, onRetry, children)}
         </Stack>
     );

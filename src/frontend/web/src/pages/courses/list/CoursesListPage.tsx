@@ -29,8 +29,8 @@ export function CoursesListPage() {
         } catch (e: unknown) {
             if (isAbort(e)) return;
 
-            const msg = (e as ApiError).message ?? "Request failed";
-
+            const msg = `Проблема с сервером. Попробуйте позже. Error [${((e as ApiError).message ?? "Request failed")}]`;
+            console.log(msg);
             setErrorText(msg);
             setUiState("error");
         }
