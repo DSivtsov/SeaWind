@@ -32,6 +32,8 @@ public class CoursesController : ControllerBase
             return Ok(Array.Empty<CourseDto>());
         }
 
+        Response.Headers["Cache-Control"] = "public, max-age=60";
+
         return Ok(courses);
     }
 }
