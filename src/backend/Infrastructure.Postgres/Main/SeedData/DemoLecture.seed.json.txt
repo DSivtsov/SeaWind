@@ -1,0 +1,44 @@
+[
+  {
+    "Id": "!lecture.1",
+    "Title": "Classes and Objects",
+    "CourseId": "!course.ID1",
+    "Order": 1
+  },
+  {
+    "Id": "!lecture.2",
+    "Title": "Encapsulation",
+    "CourseId": "!course.ID3",
+    "Order": 2
+  },
+  {
+    "Id": "!lecture.3",
+    "Title": "Inheritance",
+    "CourseId": "!course.ID3",
+    "Order": 3
+  },
+  {
+    "Id": "!lecture.4",
+    "Title": "Polymorphism",
+    "CourseId": "!course.ID3",
+    "Order": 4
+  },
+  {
+    "Id": "!lecture.5",
+    "Title": "Interfaces",
+    "CourseId": "!course.ID3",
+    "Order": 5
+  },
+  {
+    "Id": "!lecture.5",
+    "Title": "Interfaces",
+    "CourseId": "!course.ID3",
+    "Order": 5
+  },
+  {
+    "Id": "!lecture.6",
+    "Title": "Interfaces",
+    "CourseId": "!course.ID300",
+    "Order": 5
+  }
+]

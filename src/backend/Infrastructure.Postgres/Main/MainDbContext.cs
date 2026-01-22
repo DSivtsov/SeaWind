@@ -11,12 +11,15 @@ public class MainDbContext : DbContext
 
     public DbSet<Course> Courses => Set<Course>();
 
+    public DbSet<Lecture> Lectures => Set<Lecture>();
+
     protected override void OnModelCreating(ModelBuilder builder)
     {
         // Таблицы будут создаваться в схеме main
         builder.HasDefaultSchema(Schema);
 
         builder.ApplyConfigurationsFromAssembly(typeof(CourseTableConfig).Assembly);
+        builder.ApplyConfigurationsFromAssembly(typeof(LectureTableConfig).Assembly);
 
     }
 }
