@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Badge, Box, Card, Grid, Group, Modal, Skeleton, Stack, Text } from "@mantine/core";
 import { useAuth } from "@/shared/auth/useAuth";
-import { getCourseLectures, type CourseLectureDto } from "@/pages/courses/layoutTabs/CourseLayoutTabsApi";
+import { getAllLecturesByCourseIdOrdered, type CourseLectureDto } from "@/pages/courses/layoutTabs/CourseLayoutTabsApi";
 import { PageShell } from "@/shared/PageShell";
 
 type LecturesPageState =
@@ -41,8 +41,8 @@ export function CourseLecturesPage() {
       try {
         setLecturesPageState({ kind: "loading" });
 
-        let lectures: CourseLectureDto[] = await getCourseLectures("", token, abortController.signal);
-        lectures = (() => [...lectures].sort((a, b) => a.order - b.order))();
+        const lectures: CourseLectureDto[] = await getAllLecturesByCourseIdOrdered(courseId, token, abortController.signal);
+        //lectures = (() => [...lectures].sort((a, b) => a.orderNo - b.orderNo))();
 
         if (!lectures || lectures.length === 0) {
           setLecturesPageState({ kind: "empty" });
@@ -128,7 +128,7 @@ function readyView(
         >
           <Stack gap="xs">
             <Group justify="space-between" align="center">
-              <Badge variant="light">Lecture № {lec.order}</Badge>
+              <Badge variant="light">Lecture № {lec.orderNo}</Badge>
               <Badge variant="outline">▶</Badge>
             </Group>
             <Text fw={600} lineClamp={2}>

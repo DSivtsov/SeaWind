@@ -4,7 +4,9 @@ namespace Application.Abstractions.Services;
 
 public interface ICourseService
 {
-    Task<IEnumerable<CourseDto>> GetAllAsync();
+    Task<IEnumerable<CourseDto>> GetAllCoursesAsync();
 
-    Task<CourseDto?> GetByIdAsync(string id);
+    Task<CourseDto?> GetCourseByIdAsync(string id);
+
+    Task<IEnumerable<LectureListItemDto>> GetAllLecturesByCourseIdAsync(string id);
 }

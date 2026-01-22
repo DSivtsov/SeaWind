@@ -1,7 +1,5 @@
-﻿using Api.Exceptions;
-using Application.Abstractions.Services;
+﻿using Application.Abstractions.Services;
 using Application.DtoCourse;
-using Application.DtoTime.Tester;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -22,41 +20,58 @@ public class CoursesController : ControllerBase
     /// Получить все доступные курсы
     /// </summary>
     /// <returns>
-    /// Возвращает коллекцию курсов. Если курсы не найдены возвращает пустую коллекцию
+    /// Возвращает коллекцию курсов. Если курсы не найдены возвращает пустую коллекцию.
     /// </returns>
     [HttpGet]
     [ProducesResponseType(typeof(IEnumerable<CourseDto>), StatusCodes.Status200OK)]
-    public async Task<ActionResult<IEnumerable<CourseDto>>> GetAll()
+    [ResponseCache(Duration = 60, Location = ResponseCacheLocation.Any)]
+    public async Task<ActionResult<IEnumerable<CourseDto>>> GetAllCoursesAsync()
     {
-        IEnumerable<CourseDto>? dtos = await _service.GetAllAsync();
+        IEnumerable<CourseDto> dtos = await _service.GetAllCoursesAsync();
 
-        if (dtos is null)
-        {
-            return Ok(Array.Empty<CourseDto>());
-        }
-
-        Response.Headers["Cache-Control"] = "public, max-age=60";
+        //Response.Headers["Cache-Control"] = "public, max-age=60";
 
         return Ok(dtos);
     }
 
     /// <summary>
-    /// Получить курс по его Id</summary>
+    /// Получить курс по его Id
+    /// </summary>
     /// <param name="courseId">Id курса</param>
     /// <returns>
     /// Возвращает курс.
-    /// Если курсы не найден возвращает <see cref="ActionResult"/> с кодом 404
+    /// Если курсы не найден возвращает <see cref="ActionResult"/> с кодом 404.
     /// </returns>
     [HttpGet("{courseId}")]
     [Authorize]
     [ProducesResponseType(typeof(CourseDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<CourseDto>> GetByIdAsync([FromRoute] string courseId)
+    public async Task<ActionResult<CourseDto>> GetCourseByIdAsync([FromRoute] string courseId)
     {
-        var dto = await _service.GetByIdAsync(courseId);
+        var dto = await _service.GetCourseByIdAsync(courseId);
 
         if (dto is null) return NotFound();
 
         return Ok(dto);
     }
+
+    /// <summary>
+    /// Получить все лекции курса по courseId
+    /// </summary>
+    /// <param name="courseId">Id курса</param>
+    /// <returns>
+    /// Возвращает коллекцию лекций курса, отсортированных по возрастанию OrderNo.
+    /// Если лекции не найдены — возвращает пустую коллекцию.
+    /// </returns>
+    [HttpGet("{courseId}/lectures")]
+    [Authorize]
+    [ProducesResponseType(typeof(IEnumerable<LectureListItemDto>), StatusCodes.Status200OK)]
+    public async Task<ActionResult<IEnumerable<LectureListItemDto>>> GetAllLecturesByCourseIdOrderedAsync(
+        [FromRoute] string courseId)
+    {
+        var dtos = await _service.GetAllLecturesByCourseIdAsync(courseId);
+
+        return Ok(dtos);
+    }
+    
 }

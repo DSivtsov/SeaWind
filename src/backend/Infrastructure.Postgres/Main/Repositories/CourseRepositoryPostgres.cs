@@ -13,18 +13,24 @@ public class CourseRepositoryPostgres : ICourseRepository
         _mainDbContext = mainDbContext;
     }
 
-    public async Task<IEnumerable<Course>> GetAllAsync()
+    public async Task<IEnumerable<Course>> GetAlCoursesAsync()
     {
-        var result = await _mainDbContext.Courses.AsNoTracking().ToListAsync();
-
-        return result ?? [];
+        return await _mainDbContext.Courses.AsNoTracking().ToListAsync();
     }
 
-    public async Task<Course?> GetByIdAsync(string courseId)
+    public async Task<Course?> GetCourseByIdAsync(string courseId)
     {
-        var result = await _mainDbContext.Courses.AsNoTracking()
-        .FirstOrDefaultAsync(x => x.Id == courseId);
+        return await _mainDbContext.Courses
+                        .AsNoTracking()
+                        .FirstOrDefaultAsync(x => x.Id == courseId);
+    }
 
-        return result;
+    public async Task<IEnumerable<Lecture>> GetAllLecturesByCourseIdOrderedAscAsyn(string courseId)
+    {
+        return await _mainDbContext.Lectures
+                        .AsNoTracking()
+                        .Where(lec => lec.CourseId == courseId)
+                        .OrderBy(lec => lec.OrderNo)
+                        .ToListAsync();
     }
 }
