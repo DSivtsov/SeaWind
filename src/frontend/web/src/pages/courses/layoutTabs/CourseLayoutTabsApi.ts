@@ -1,4 +1,5 @@
 import type { CourseDto } from "@/pages/courses/list/CoursesApi";
+import { apiRequest } from "@/shared/api/apiRequests";
 import { demoFunction, type DemoOpt } from "@/shared/api/stubApiRequest";
 
 export type CourseLectureDto = {
@@ -9,17 +10,14 @@ export type CourseLectureDto = {
     videoUrl?: string | null;
 };
 
-const demoGetCourse: DemoOpt = { delay: 1000, forceError: null };    // forceError = "DEMO_FORCED_ERROR"
+//const demoGetCourse: DemoOpt = { delay: 1000, forceError: null };    // forceError = "DEMO_FORCED_ERROR"
 const demoGetCourseLectures: DemoOpt = { delay: 1500, forceError: null };    // forceError = "DEMO_FORCED_ERROR"
 
-export async function getCourse(courseId: string, token: string, signal?: AbortSignal): Promise<CourseDto> {
-    void courseId;
-    void token;
-    void signal;
+export async function getCourseById(courseId: string, token: string, signal?: AbortSignal): Promise<CourseDto> {
+    //await demoFunction(demoGetCourse);
+    const urlGetCourseById = `/api/courses/${encodeURIComponent(courseId)}`;
 
-    await demoFunction(demoGetCourse);
-
-    return demoCourse;
+    return apiRequest<CourseDto>(urlGetCourseById, { method: "GET", parse: "json", signal }, token);
 }
 
 export async function getCourseLectures(courseId: string, token: string, signal?: AbortSignal): Promise<CourseLectureDto[]> {
@@ -34,11 +32,11 @@ export async function getCourseLectures(courseId: string, token: string, signal?
 }
 
 
-const demoCourse: CourseDto = {
+/* const demoCourse: CourseDto = {
     id: "demo101",
     title: "Demo Course",
     description: "Демо-курс для разработки и отладки интерфейса.",
-};
+}; */
 
 const demoLectures: CourseLectureDto[] = [
     {

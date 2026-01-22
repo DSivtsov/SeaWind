@@ -18,4 +18,11 @@ public class CourseService : ICourseService
 
         return courses.Select(c => new CourseDto(c.Id, c.Title,  c.Description));
     }
+
+    public async Task<CourseDto?> GetByIdAsync(string courseId)
+    {
+        var course = await _courseRepository.GetByIdAsync(courseId);
+
+        return course == null ? null : new CourseDto(course.Id, course.Title, course.Description);
+    }
 }

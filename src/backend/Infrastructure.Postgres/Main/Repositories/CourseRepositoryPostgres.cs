@@ -19,4 +19,12 @@ public class CourseRepositoryPostgres : ICourseRepository
 
         return result ?? [];
     }
+
+    public async Task<Course?> GetByIdAsync(string courseId)
+    {
+        var result = await _mainDbContext.Courses.AsNoTracking()
+        .FirstOrDefaultAsync(x => x.Id == courseId);
+
+        return result;
+    }
 }

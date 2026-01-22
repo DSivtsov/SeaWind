@@ -1,6 +1,6 @@
 import { FOOTER_HEIGHT, HEADER_HEIGHT } from "@/common/constants";
 import { AvatarMenu } from "@/pages/avatar/AvatarMenu";
-import { getCourse } from "@/pages/courses/layoutTabs/CourseLayoutTabsApi";
+import { getCourseById } from "@/pages/courses/layoutTabs/CourseLayoutTabsApi";
 import type { CourseDto } from "@/pages/courses/list/CoursesApi";
 import { useAuth } from "@/shared/auth/useAuth";
 import { AppShell, Text, Button, Flex, Stack, Anchor, Box, Grid, Skeleton, Title, Group } from "@mantine/core";
@@ -31,7 +31,7 @@ export function OldNewCoursesLayoutTab() {
             try {
                 setCourseLayoutState({ kind: "loading" });
 
-                const course: CourseDto = await getCourse("", token, abortController.signal);
+                const course: CourseDto = await getCourseById("", token, abortController.signal);
 
                 setCourseLayoutState({ kind: "ready", course });
             } catch {

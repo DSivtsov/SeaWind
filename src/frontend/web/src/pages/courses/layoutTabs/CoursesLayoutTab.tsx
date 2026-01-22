@@ -1,4 +1,4 @@
-import { getCourse } from "@/pages/courses/layoutTabs/CourseLayoutTabsApi";
+import { getCourseById } from "@/pages/courses/layoutTabs/CourseLayoutTabsApi";
 import type { CourseDto } from "@/pages/courses/list/CoursesApi";
 import { useAuth } from "@/shared/auth/useAuth";
 import { AppHeaderDefault } from "@/shared/layout/AppHeaderDefault";
@@ -33,7 +33,7 @@ export function CoursesLayoutTab() {
             try {
                 setCourseLayoutState({ kind: "loading" });
 
-                const course: CourseDto = await getCourse("", token, abortController.signal);
+                const course: CourseDto = await getCourseById(courseId, token, abortController.signal);
 
                 setCourseLayoutState({ kind: "ready", course });
             } catch {

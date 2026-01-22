@@ -5,4 +5,6 @@ namespace Application.Abstractions.Repositories;
 public interface ICourseRepository
 {
     Task<IEnumerable<Course>> GetAllAsync();
+
+    Task<Course?> GetByIdAsync(string courseId);
 }
