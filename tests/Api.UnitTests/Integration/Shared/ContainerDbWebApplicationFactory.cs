@@ -14,6 +14,8 @@ public class ContainerDbWebApplicationFactory : WebApplicationFactory<Program>
     {
         Environment.SetEnvironmentVariable("WC_USE_TEST_SETTINGS", "true");
 
+        Environment.SetEnvironmentVariable("WC_TEST_EMPTY_DB", "true");
+
         Environment.SetEnvironmentVariable("ConnectionStrings__Default",_connectionString);
 
         return base.CreateHost(builder);

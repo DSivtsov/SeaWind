@@ -13,6 +13,8 @@ internal sealed class SeedPresetAnalyzer
 
     private SeedPreset _seedPreset = SeedPreset.SeedCustom;
 
+    public bool UseEmptyDB => _seedPreset == SeedPreset.EmptyDb;
+
     public SeedPresetAnalyzer(ILogger<SeedPresetAnalyzer> log, IConfiguration cfg)
     {
         _log = log;
@@ -50,7 +52,7 @@ internal sealed class SeedPresetAnalyzer
                 AutoMigrate = true
             },
 
-            // SeedPreset.SeedOFF должно обрабатываться в самом начале через GetAndCheckIsSeedOff()
+            // SeedPreset.SeedOFF & .UseEmptyDB должно обрабатываться до вызова ApplySeedPreset(...)
             _ => throw new NotImplementedException($"Not support [{_seedPreset}] preset or error in logic")
         };
     }

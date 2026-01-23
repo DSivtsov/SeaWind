@@ -19,16 +19,19 @@ internal sealed class RunnerContextDB<TContext> : IDbContextRunner where TContex
     private readonly ILogger _logSeeder;
     private readonly IConfiguration _cfg;
     private readonly string _prefix;
+    private readonly SeedPresetAnalyzer _seedPresetAnalyzer;
 
     private bool IsEnabledDbContextSeeding() => _cfg.GetValue(_prefix + "Enabled", false);
 
-    public RunnerContextDB(IServiceProvider serviceProvider, IConfiguration cfg, ILoggerFactory lf)
+    public RunnerContextDB(IServiceProvider serviceProvider, IConfiguration cfg, ILoggerFactory lf,
+        SeedPresetAnalyzer seedPresetAnalyzer)
     {
         _serviceProvider = serviceProvider;
         _cfg = cfg;
         string nameDbContext = typeof(TContext).Name;
         _prefix = $"Seed:{nameDbContext}:";
         _logSeeder = lf.CreateLogger($"Seeding{nameDbContext}");
+        _seedPresetAnalyzer = seedPresetAnalyzer;
     }
 
     public async Task<bool> RunAsync(CancellationToken ct = default)
@@ -41,6 +44,16 @@ internal sealed class RunnerContextDB<TContext> : IDbContextRunner where TContex
             return false;
         }
 
+        if (_seedPresetAnalyzer.UseEmptyDB)
+        {
+            bool migrationRez = await MadeMigration(ct);
+            if (!migrationRez)
+                return AbortDbContextNotReady();
+
+            _logSeeder.LogInformation("Set EmptyDB для [{DbContext}]", typeof(TContext).Name);
+            return true;
+        }
+
         var checkerOption = new Options<TContext>(_logSeeder, _cfg, _prefix);
         var optRez = checkerOption.CheckAndGet();
         if (!optRez.Ok)
@@ -49,8 +62,7 @@ internal sealed class RunnerContextDB<TContext> : IDbContextRunner where TContex
             return false;
         }
 
-        var seedPresetAnalyzer = _serviceProvider.GetRequiredService<SeedPresetAnalyzer>(); ;
-        optRez = seedPresetAnalyzer.ApplySeedPreset(optRez);
+        optRez = _seedPresetAnalyzer.ApplySeedPreset(optRez);
 
         var runnerSeedDataFiles = new RunnerSeedDataFiles(_logSeeder);
         var rezOk = runnerSeedDataFiles.Run(optRez.PathBase, optRez.UUIDmode);
@@ -70,9 +82,7 @@ internal sealed class RunnerContextDB<TContext> : IDbContextRunner where TContex
         {
             if (optRez.AutoMigrate)
             {
-                var migrator = ActivatorUtilities.CreateInstance<Migrate<TContext>>(_serviceProvider, _logSeeder);
-                await migrator.Run(ct);
-                dbContextRez = true;
+                dbContextRez = await MadeMigration(ct);
             }
             else
             {
@@ -82,12 +92,9 @@ internal sealed class RunnerContextDB<TContext> : IDbContextRunner where TContex
         }
 
         if (!dbContextRez)
-        {
-            _logSeeder.LogError("Abort Seeding. DbContext not Ready.");
-            return false;
-        }
+            return AbortDbContextNotReady();
 
-        var seedUUIDStateChecher = new SeedUUIDStateChecker(_logSeeder, optRez, seedPresetAnalyzer.IsOptionsUnderFullManualControl);
+        var seedUUIDStateChecher = new SeedUUIDStateChecker(_logSeeder, optRez, _seedPresetAnalyzer.IsOptionsUnderFullManualControl);
         optRez = seedUUIDStateChecher.FreshExistenDataIfNeed();
 
         if (optRez.ExistenData == ExistenData.Fresh)
@@ -102,5 +109,17 @@ internal sealed class RunnerContextDB<TContext> : IDbContextRunner where TContex
         seedUUIDStateChecher.StoreCurrentUsedSeedUUID();
 
         return true;
+    }
+
+    private bool AbortDbContextNotReady()
+    {
+        _logSeeder.LogError("Abort Seeding. DbContext not Ready.");
+        return false;
+    }
+
+    private async Task<bool> MadeMigration(CancellationToken ct)
+    {
+        var migrator = ActivatorUtilities.CreateInstance<Migrate<TContext>>(_serviceProvider, _logSeeder);
+        return await migrator.Run(ct);
     }
 }
