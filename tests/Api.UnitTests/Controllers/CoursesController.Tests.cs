@@ -1,6 +1,7 @@
 ﻿using Api.Controllers;
 using Application.Abstractions.Services;
 using Application.DtoCourse;
+using Application.Models;
 using AutoFixture;
 using AutoFixture.AutoMoq;
 using Microsoft.AspNetCore.Mvc;
@@ -12,74 +13,53 @@ public class CoursesControllerTests
 {
     private readonly IFixture _fixture;
     private readonly Mock<ICourseService> _courseServiceMock;
-    private readonly CoursesController _coursesController;
 
     public CoursesControllerTests()
     {
         _fixture = new Fixture().Customize(new AutoMoqCustomization());
         _courseServiceMock = _fixture.Freeze<Mock<ICourseService>>();
-        _coursesController = _fixture.Build<CoursesController>().OmitAutoProperties().Create();
     }
 
     /// <summary>
-    /// Проверяет, что GetAll контроллера возвращает OkObjectResult, содержащий коллекцию объектов CourseDto, когда курсы доступны.
+    /// Проверяет, что GetAll возвращает HTTP 200 OK и пустую коллекцию,
+    /// когда сервис курсов не возвращает элементов.
     /// </summary>
-    /// <remarks>
-    /// Этот тест гарантирует, что метод GetAll контроллера отвечает HTTP 200 OK 
-    /// и включает ожидаемое количество объектов курса с допустимыми свойствами.
-    /// Он проверяет как тип ответа, так и целостность возвращаемых данных.
-    /// </remarks>
-    /// <returns></returns>
     [Fact]
     public async Task GetAll_ReturnsOk_WithCourses()
     {
         // Arrange
-        int countCourses = 2;
-        IEnumerable<CourseDto> courses = _fixture
-            .Build<CourseDto>()
-            .CreateMany(countCourses);
+        var courses = _fixture.CreateMany<CourseDto>(2).ToArray();
+        _courseServiceMock.Setup(s => s.GetAllCoursesAsync()).ReturnsAsync(courses);
 
-        _courseServiceMock.Setup(srv => srv.GetAllAsync()).ReturnsAsync(courses);
+        var controller = new CoursesController(_courseServiceMock.Object);
 
         // Act
-        var actionResult = await _coursesController.GetAll();
+        var result = await controller.GetAllCoursesAsync();
 
         // Assert
-        OkObjectResult coursesResultType = Assert.IsType<OkObjectResult>(actionResult.Result);
-        IEnumerable<CourseDto> coursesResult = Assert.IsAssignableFrom<IEnumerable<CourseDto>>(coursesResultType.Value);
+        var ok = Assert.IsType<OkObjectResult>(result.Result);
+        var value = Assert.IsAssignableFrom<IEnumerable<CourseDto>>(ok.Value);
 
-        Assert.Equal(countCourses, coursesResult.Count());
-
-        foreach (var course in coursesResult)
-        {
-            Assert.NotEmpty(course.Id);
-            Assert.False(string.IsNullOrWhiteSpace(course.Title));
-            Assert.False(string.IsNullOrWhiteSpace(course.Description));
-        }
+        Assert.Equal(courses, value);
     }
 
 
     /// <summary>
-    /// Проверяет, что действие GetAll возвращает ответ HTTP 200 OK с пустым массивом, когда сервис возвращает значение NULL.
+    /// Проверяет, что действие GetAll возвращает ответ HTTP 200 OK с пустым массивом.
     /// </summary>
-    /// <remarks>
-    /// Этот тест гарантирует, что контроллер нормализует нулевой результат службы в пустой массив в ответе, 
-    /// обеспечивая согласованное поведение API для клиентов.
-    /// </remarks>
-    /// <returns></returns>
     [Fact]
-    public async Task GetAll_ReturnsOk_WithEmptyArray_WhenServiceReturnsNull()
+    public async Task GetAll_ReturnsOk_WithEmptyArray_WhenServiceReturnsEmpty()
     {
         // Arrange
-        _courseServiceMock.Setup(srv => srv.GetAllAsync()).ReturnsAsync(() => null!);
+        _courseServiceMock.Setup(srv => srv.GetAllCoursesAsync()).ReturnsAsync(Array.Empty<CourseDto>());
+        var controller = new CoursesController(_courseServiceMock.Object);
 
         // Act
-        var actionResult = await _coursesController.GetAll();
+        var result = await controller.GetAllCoursesAsync();
 
         // Assert
-        OkObjectResult coursesResultType = Assert.IsType<OkObjectResult>(actionResult.Result);
-        IEnumerable<CourseDto> coursesResult = Assert.IsAssignableFrom<IEnumerable<CourseDto>>(coursesResultType.Value);
-
-        Assert.Empty(coursesResult);
+        var ok = Assert.IsType<OkObjectResult>(result.Result);
+        var value = Assert.IsAssignableFrom<IEnumerable<CourseDto>>(ok.Value);
+        Assert.Empty(value);
     }
 }

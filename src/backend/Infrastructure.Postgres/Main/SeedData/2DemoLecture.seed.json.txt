@@ -3,7 +3,7 @@
     "Id": "!lecture.1",
     "CourseId": "!course.ID1",
     "OrderNo": 1,
-    "Title": "Введение в C#",
+    "Title": "Лекция 1: Основы C#",
     "VideoUrl": "https://example.com/video/csharp-basic/1",
     "Description": "Демо-лекция 1 для курса «Основы C#»."
   },
@@ -11,7 +11,7 @@
     "Id": "!lecture.2",
     "CourseId": "!course.ID1",
     "OrderNo": 2,
-    "Title": "Переменные и типы данных",
+    "Title": "Лекция 2: Основы C#",
     "VideoUrl": "https://example.com/video/csharp-basic/2",
     "Description": "Демо-лекция 2 для курса «Основы C#»."
   },
@@ -19,7 +19,7 @@
     "Id": "!lecture.3",
     "CourseId": "!course.ID1",
     "OrderNo": 3,
-    "Title": "Условия и циклы",
+    "Title": "Лекция 3: Основы C#",
     "VideoUrl": "https://example.com/video/csharp-basic/3",
     "Description": "Демо-лекция 3 для курса «Основы C#»."
   },
@@ -27,7 +27,7 @@
     "Id": "!lecture.4",
     "CourseId": "!course.ID1",
     "OrderNo": 4,
-    "Title": "Методы и параметры",
+    "Title": "Лекция 4: Основы C#",
     "VideoUrl": "https://example.com/video/csharp-basic/4",
     "Description": "Демо-лекция 4 для курса «Основы C#»."
   },
@@ -35,7 +35,7 @@
     "Id": "!lecture.5",
     "CourseId": "!course.ID1",
     "OrderNo": 5,
-    "Title": "Практика: простые задачи",
+    "Title": "Лекция 5: Основы C#",
     "VideoUrl": "https://example.com/video/csharp-basic/5",
     "Description": "Демо-лекция 5 для курса «Основы C#»."
   },
@@ -43,7 +43,7 @@
     "Id": "!lecture.6",
     "CourseId": "!course.ID1",
     "OrderNo": 6,
-    "Title": "Итоги и дальнейшие шаги",
+    "Title": "Лекция 6: Основы C#",
     "VideoUrl": "https://example.com/video/csharp-basic/6",
     "Description": "Демо-лекция 6 для курса «Основы C#»."
   },
@@ -51,7 +51,7 @@
     "Id": "!lecture.7",
     "CourseId": "!course.ID2",
     "OrderNo": 1,
-    "Title": "Введение в Unity",
+    "Title": "Лекция 1: Unity Intro",
     "VideoUrl": "https://example.com/video/un201/1",
     "Description": "Демо-лекция 1 для курса «Unity Intro»."
   },
@@ -59,7 +59,7 @@
     "Id": "!lecture.8",
     "CourseId": "!course.ID2",
     "OrderNo": 2,
-    "Title": "Интерфейс редактора Unity",
+    "Title": "Лекция 2: Unity Intro",
     "VideoUrl": "https://example.com/video/un201/2",
     "Description": "Демо-лекция 2 для курса «Unity Intro»."
   },
@@ -67,7 +67,7 @@
     "Id": "!lecture.9",
     "CourseId": "!course.ID2",
     "OrderNo": 3,
-    "Title": "GameObject и Components",
+    "Title": "Лекция 3: Unity Intro",
     "VideoUrl": "https://example.com/video/un201/3",
     "Description": "Демо-лекция 3 для курса «Unity Intro»."
   },
@@ -75,7 +75,7 @@
     "Id": "!lecture.10",
     "CourseId": "!course.ID2",
     "OrderNo": 4,
-    "Title": "Сцены и Prefab'ы",
+    "Title": "Лекция 4: Unity Intro",
     "VideoUrl": "https://example.com/video/un201/4",
     "Description": "Демо-лекция 4 для курса «Unity Intro»."
   },
@@ -83,7 +83,7 @@
     "Id": "!lecture.11",
     "CourseId": "!course.ID2",
     "OrderNo": 5,
-    "Title": "Практика: первый прототип",
+    "Title": "Лекция 5: Unity Intro",
     "VideoUrl": "https://example.com/video/un201/5",
     "Description": "Демо-лекция 5 для курса «Unity Intro»."
   },
@@ -91,7 +91,7 @@
     "Id": "!lecture.12",
     "CourseId": "!course.ID2",
     "OrderNo": 6,
-    "Title": "Итоги и дальнейшие шаги",
+    "Title": "Лекция 6: Unity Intro",
     "VideoUrl": "https://example.com/video/un201/6",
     "Description": "Демо-лекция 6 для курса «Unity Intro»."
   },
@@ -99,7 +99,7 @@
     "Id": "!lecture.13",
     "CourseId": "!course.ID3",
     "OrderNo": 1,
-    "Title": "Основы ООП",
+    "Title": "Лекция 1: C# OOP",
     "VideoUrl": "https://example.com/video/csharp-oop/1",
     "Description": "Демо-лекция 1 для курса «C# OOP»."
   },
@@ -107,7 +107,7 @@
     "Id": "!lecture.14",
     "CourseId": "!course.ID3",
     "OrderNo": 2,
-    "Title": "Классы и объекты",
+    "Title": "Лекция 2: C# OOP",
     "VideoUrl": "https://example.com/video/csharp-oop/2",
     "Description": "Демо-лекция 2 для курса «C# OOP»."
   },
@@ -115,7 +115,7 @@
     "Id": "!lecture.15",
     "CourseId": "!course.ID4",
     "OrderNo": 1,
-    "Title": "List и массивы",
+    "Title": "Лекция 1: C# Collections",
     "VideoUrl": "https://example.com/video/csharp-collections/1",
     "Description": "Демо-лекция 1 для курса «C# Collections»."
   },
@@ -123,7 +123,7 @@
     "Id": "!lecture.16",
     "CourseId": "!course.ID4",
     "OrderNo": 2,
-    "Title": "Dictionary и HashSet",
+    "Title": "Лекция 2: C# Collections",
     "VideoUrl": "https://example.com/video/csharp-collections/2",
     "Description": "Демо-лекция 2 для курса «C# Collections»."
   },
@@ -131,7 +131,7 @@
     "Id": "!lecture.17",
     "CourseId": "!course.ID5",
     "OrderNo": 1,
-    "Title": "Основы LINQ",
+    "Title": "Лекция 1: C# LINQ",
     "VideoUrl": "https://example.com/video/_test/1",
     "Description": "Демо-лекция 1 для курса «C# LINQ»."
   },
@@ -139,7 +139,7 @@
     "Id": "!lecture.18",
     "CourseId": "!course.ID5",
     "OrderNo": 2,
-    "Title": "Практика LINQ-запросов",
+    "Title": "Лекция 2: C# LINQ",
     "VideoUrl": "https://example.com/video/_test/2",
     "Description": "Демо-лекция 2 для курса «C# LINQ»."
   },
@@ -147,7 +147,7 @@
     "Id": "!lecture.19",
     "CourseId": "!course.ID6",
     "OrderNo": 1,
-    "Title": "Task и async/await",
+    "Title": "Лекция 1: C# Async",
     "VideoUrl": "https://example.com/video/csharp-async/1",
     "Description": "Демо-лекция 1 для курса «C# Async»."
   },
@@ -155,7 +155,7 @@
     "Id": "!lecture.20",
     "CourseId": "!course.ID6",
     "OrderNo": 2,
-    "Title": "Отмена и обработка ошибок",
+    "Title": "Лекция 2: C# Async",
     "VideoUrl": "https://example.com/video/csharp-async/2",
     "Description": "Демо-лекция 2 для курса «C# Async»."
   },
@@ -163,7 +163,7 @@
     "Id": "!lecture.21",
     "CourseId": "!course.ID7",
     "OrderNo": 1,
-    "Title": "Спрайты и сцены 2D",
+    "Title": "Лекция 1: Unity 2D Basics",
     "VideoUrl": "https://example.com/video/end-/1",
     "Description": "Демо-лекция 1 для курса «Unity 2D Basics»."
   },
@@ -171,7 +171,7 @@
     "Id": "!lecture.22",
     "CourseId": "!course.ID7",
     "OrderNo": 2,
-    "Title": "Физика 2D и коллизии",
+    "Title": "Лекция 2: Unity 2D Basics",
     "VideoUrl": "https://example.com/video/end-/2",
     "Description": "Демо-лекция 2 для курса «Unity 2D Basics»."
   },
@@ -179,7 +179,7 @@
     "Id": "!lecture.23",
     "CourseId": "!course.ID8",
     "OrderNo": 1,
-    "Title": "Сцена 3D и материалы",
+    "Title": "Лекция 1: Unity 3D Basics",
     "VideoUrl": "https://example.com/video/un3d/1",
     "Description": "Демо-лекция 1 для курса «Unity 3D Basics»."
   },
@@ -187,7 +187,7 @@
     "Id": "!lecture.24",
     "CourseId": "!course.ID8",
     "OrderNo": 2,
-    "Title": "Камера и управление в 3D",
+    "Title": "Лекция 2: Unity 3D Basics",
     "VideoUrl": "https://example.com/video/un3d/2",
     "Description": "Демо-лекция 2 для курса «Unity 3D Basics»."
   },
@@ -195,7 +195,7 @@
     "Id": "!lecture.25",
     "CourseId": "!course.ID9",
     "OrderNo": 1,
-    "Title": "Rigidbody и Colliders",
+    "Title": "Лекция 1: Unity Physics",
     "VideoUrl": "https://example.com/video/unphy/1",
     "Description": "Демо-лекция 1 для курса «Unity Physics»."
   },
@@ -203,7 +203,7 @@
     "Id": "!lecture.26",
     "CourseId": "!course.ID9",
     "OrderNo": 2,
-    "Title": "Триггеры и столкновения",
+    "Title": "Лекция 2: Unity Physics",
     "VideoUrl": "https://example.com/video/unphy/2",
     "Description": "Демо-лекция 2 для курса «Unity Physics»."
   },
@@ -211,7 +211,7 @@
     "Id": "!lecture.27",
     "CourseId": "!course.ID10",
     "OrderNo": 1,
-    "Title": "Canvas и UI-элементы",
+    "Title": "Лекция 1: Unity UI",
     "VideoUrl": "https://example.com/video/unui/1",
     "Description": "Демо-лекция 1 для курса «Unity UI»."
   },
@@ -219,7 +219,7 @@
     "Id": "!lecture.28",
     "CourseId": "!course.ID10",
     "OrderNo": 2,
-    "Title": "Layout и обработка событий",
+    "Title": "Лекция 2: Unity UI",
     "VideoUrl": "https://example.com/video/unui/2",
     "Description": "Демо-лекция 2 для курса «Unity UI»."
   },
@@ -227,7 +227,7 @@
     "Id": "!lecture.29",
     "CourseId": "!course.ID11",
     "OrderNo": 1,
-    "Title": "Core loop и цели игры",
+    "Title": "Лекция 1: Game Design Basics",
     "VideoUrl": "https://example.com/video/gd101/1",
     "Description": "Демо-лекция 1 для курса «Game Design Basics»."
   },
@@ -235,7 +235,7 @@
     "Id": "!lecture.30",
     "CourseId": "!course.ID11",
     "OrderNo": 2,
-    "Title": "Баланс и прототипирование",
+    "Title": "Лекция 2: Game Design Basics",
     "VideoUrl": "https://example.com/video/gd101/2",
     "Description": "Демо-лекция 2 для курса «Game Design Basics»."
   },
@@ -243,7 +243,7 @@
     "Id": "!lecture.31",
     "CourseId": "!course.ID12",
     "OrderNo": 1,
-    "Title": "Алгоритмическое мышление",
+    "Title": "Лекция 1: Algorithms Intro",
     "VideoUrl": "https://example.com/video/alg101/1",
     "Description": "Демо-лекция 1 для курса «Algorithms Intro»."
   },
@@ -251,7 +251,7 @@
     "Id": "!lecture.32",
     "CourseId": "!course.ID12",
     "OrderNo": 2,
-    "Title": "Сложность и базовые подходы",
+    "Title": "Лекция 2: Algorithms Intro",
     "VideoUrl": "https://example.com/video/alg101/2",
     "Description": "Демо-лекция 2 для курса «Algorithms Intro»."
   },
@@ -259,7 +259,7 @@
     "Id": "!lecture.33",
     "CourseId": "!course.ID13",
     "OrderNo": 1,
-    "Title": "Массивы и списки",
+    "Title": "Лекция 1: Data Structures",
     "VideoUrl": "https://example.com/video/ds101/1",
     "Description": "Демо-лекция 1 для курса «Data Structures»."
   },
@@ -267,7 +267,7 @@
     "Id": "!lecture.34",
     "CourseId": "!course.ID13",
     "OrderNo": 2,
-    "Title": "Стек и очередь",
+    "Title": "Лекция 2: Data Structures",
     "VideoUrl": "https://example.com/video/ds101/2",
     "Description": "Демо-лекция 2 для курса «Data Structures»."
   },
@@ -275,7 +275,7 @@
     "Id": "!lecture.35",
     "CourseId": "!course.ID14",
     "OrderNo": 1,
-    "Title": "Брейкпоинты и отладчик",
+    "Title": "Лекция 1: Debugging",
     "VideoUrl": "https://example.com/video/dbg101/1",
     "Description": "Демо-лекция 1 для курса «Debugging»."
   },
@@ -283,7 +283,7 @@
     "Id": "!lecture.36",
     "CourseId": "!course.ID14",
     "OrderNo": 2,
-    "Title": "Типовые причины багов",
+    "Title": "Лекция 2: Debugging",
     "VideoUrl": "https://example.com/video/dbg101/2",
     "Description": "Демо-лекция 2 для курса «Debugging»."
   },
@@ -291,7 +291,7 @@
     "Id": "!lecture.37",
     "CourseId": "!course.ID15",
     "OrderNo": 1,
-    "Title": "Имена и функции",
+    "Title": "Лекция 1: Clean Code",
     "VideoUrl": "https://example.com/video/cln101/1",
     "Description": "Демо-лекция 1 для курса «Clean Code»."
   },
@@ -299,7 +299,7 @@
     "Id": "!lecture.38",
     "CourseId": "!course.ID15",
     "OrderNo": 2,
-    "Title": "Рефакторинг и структура проекта",
+    "Title": "Лекция 2: Clean Code",
     "VideoUrl": "https://example.com/video/cln101/2",
     "Description": "Демо-лекция 2 для курса «Clean Code»."
   },
@@ -307,7 +307,7 @@
     "Id": "!lecture.39",
     "CourseId": "!course.ID16",
     "OrderNo": 1,
-    "Title": "Коммиты и ветки",
+    "Title": "Лекция 1: Git Basics",
     "VideoUrl": "https://example.com/video/git101/1",
     "Description": "Демо-лекция 1 для курса «Git Basics»."
   },
@@ -315,7 +315,7 @@
     "Id": "!lecture.40",
     "CourseId": "!course.ID16",
     "OrderNo": 2,
-    "Title": "Pull request и workflow",
+    "Title": "Лекция 2: Git Basics",
     "VideoUrl": "https://example.com/video/git101/2",
     "Description": "Демо-лекция 2 для курса «Git Basics»."
   },
@@ -323,7 +323,7 @@
     "Id": "!lecture.41",
     "CourseId": "!course.ID17",
     "OrderNo": 1,
-    "Title": "Animator и state machine",
+    "Title": "Лекция 1: Unity Animation",
     "VideoUrl": "https://example.com/video/unanim/1",
     "Description": "Демо-лекция 1 для курса «Unity Animation»."
   },
@@ -331,7 +331,7 @@
     "Id": "!lecture.42",
     "CourseId": "!course.ID17",
     "OrderNo": 2,
-    "Title": "Переходы и blend tree",
+    "Title": "Лекция 2: Unity Animation",
     "VideoUrl": "https://example.com/video/unanim/2",
     "Description": "Демо-лекция 2 для курса «Unity Animation»."
   },
@@ -339,7 +339,7 @@
     "Id": "!lecture.43",
     "CourseId": "!course.ID18",
     "OrderNo": 1,
-    "Title": "AudioSource и AudioClip",
+    "Title": "Лекция 1: Unity Audio",
     "VideoUrl": "https://example.com/video/unaud/1",
     "Description": "Демо-лекция 1 для курса «Unity Audio»."
   },
@@ -347,7 +347,7 @@
     "Id": "!lecture.44",
     "CourseId": "!course.ID18",
     "OrderNo": 2,
-    "Title": "Микшер и уровни громкости",
+    "Title": "Лекция 2: Unity Audio",
     "VideoUrl": "https://example.com/video/unaud/2",
     "Description": "Демо-лекция 2 для курса «Unity Audio»."
   },
@@ -355,7 +355,7 @@
     "Id": "!lecture.45",
     "CourseId": "!course.ID19",
     "OrderNo": 1,
-    "Title": "Слои и компоненты проекта",
+    "Title": "Лекция 1: Game Architecture",
     "VideoUrl": "https://example.com/video/ga101/1",
     "Description": "Демо-лекция 1 для курса «Game Architecture»."
   },
@@ -363,7 +363,7 @@
     "Id": "!lecture.46",
     "CourseId": "!course.ID19",
     "OrderNo": 2,
-    "Title": "События и состояния",
+    "Title": "Лекция 2: Game Architecture",
     "VideoUrl": "https://example.com/video/ga101/2",
     "Description": "Демо-лекция 2 для курса «Game Architecture»."
   },
@@ -371,7 +371,7 @@
     "Id": "!lecture.47",
     "CourseId": "!course.ID20",
     "OrderNo": 1,
-    "Title": "Планирование учебного проекта",
+    "Title": "Лекция 1: Project Practice",
     "VideoUrl": "https://example.com/video/prj101/1",
     "Description": "Демо-лекция 1 для курса «Project Practice»."
   },
@@ -379,7 +379,7 @@
     "Id": "!lecture.48",
     "CourseId": "!course.ID20",
     "OrderNo": 2,
-    "Title": "Сборка и публикация",
+    "Title": "Лекция 2: Project Practice",
     "VideoUrl": "https://example.com/video/prj101/2",
     "Description": "Демо-лекция 2 для курса «Project Practice»."
   }

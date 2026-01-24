@@ -46,7 +46,7 @@ export function CoursesListPageStub() {
             if (isEmpty) {
                 setState("empty");
             } else {
-                setState("default");
+                setState("ready");
             }
         }, 550);
 
@@ -58,7 +58,7 @@ export function CoursesListPageStub() {
         setState("loading");
         // simplest retry: re-run the same loading logic
         setCourses(DEMO_COURSES);
-        setState(DEMO_COURSES.length === 0 ? "empty" : "default");
+        setState(DEMO_COURSES.length === 0 ? "empty" : "ready");
     };
 
     return (

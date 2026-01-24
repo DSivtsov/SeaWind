@@ -17,6 +17,8 @@ import { TestMePage } from "@/pages/auth/TestMePage";
 
 import { RouteGuard } from "@/shared/RouteGuard";
 import { ForbiddenPage } from "@/pages/guard/ForbiddenPage";
+import { CoursesLayoutTab } from "@/pages/courses/layoutTabs/CoursesLayoutTab";
+import { CourseLecturesPage } from "@/pages/courses/layoutTabs/CourseLecturesPage";
 
 export function AppRoutes() {
   return (
@@ -50,9 +52,9 @@ export function AppRoutes() {
       <Route element={<RouteGuard />}>
         {/* Course area (tabs layout in MVP) */}
 
-        <Route path="/courses/:courseId" element={<PagePlaceholder title="CourseLayout (Tabs wrapper)" />}>
+        <Route path="/courses/:courseId" element={<CoursesLayoutTab />}>
           <Route index element={<Navigate to="lectures" replace />} />
-          <Route path="lectures" element={<PagePlaceholder title="CourseLectures (Tab)" />} />
+          <Route path="lectures" element={<CourseLecturesPage />} />
           <Route path="exercises" element={<PagePlaceholder title="CourseExercises (Tab)" />} />
           <Route path="workshop-sessions" element={<PagePlaceholder title="CourseWorkshopSessions (Tab)" />} />
         </Route>

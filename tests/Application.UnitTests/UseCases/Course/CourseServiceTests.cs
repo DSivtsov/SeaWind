@@ -32,10 +32,10 @@ public class CourseServiceTests
         // Arrange
         var expectedCourses = _fixture.CreateMany<Models.Course>(3).ToList();
         _courseRepositoryMock
-            .Setup(repo => repo.GetAllAsync())
+            .Setup(repo => repo.GetAlCoursesAsync())
             .ReturnsAsync(expectedCourses);
         // Act
-        var result = await _courseService.GetAllAsync();
+        var result = await _courseService.GetAllCoursesAsync();
         // Assert
         Assert.NotNull(result);
         var resultList = result.ToList();
@@ -46,6 +46,6 @@ public class CourseServiceTests
             Assert.Equal(expectedCourses[i].Title, resultList[i].Title);
             Assert.Equal(expectedCourses[i].Description, resultList[i].Description);
         }
-        _courseRepositoryMock.Verify(repo => repo.GetAllAsync(), Times.Once);
+        _courseRepositoryMock.Verify(repo => repo.GetAlCoursesAsync(), Times.Once);
     }
 }

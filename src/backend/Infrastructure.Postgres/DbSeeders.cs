@@ -45,6 +45,7 @@ public static class AddDbSeeders
         services.AddScoped<ISeeder<TimeDbContext>, TesterSeeder>();
         services.AddScoped<ISeeder<TimeDbContext>, CarSeeder>();
         services.AddScoped<ISeeder<MainDbContext>, CourseSeeder>();
+        services.AddScoped<ISeeder<MainDbContext>, LectureSeeder>();
 
         return services;
     }

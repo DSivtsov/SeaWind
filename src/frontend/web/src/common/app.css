@@ -9,11 +9,12 @@
   --pub-bg-2: #101B2E;
 
   --pub-surface-0: rgba(16, 27, 46, 0.85);
-  --pub-border: rgba(255, 255, 255, 0.08);
+  --pub-surface-headerMain: rgba(13, 27, 37, 0.88);
 }
 
 .layout-publicBg {
   min-height: 100vh;
+  --app-shell-border-color: #0e6fe6;
   background:
     radial-gradient(1200px 800px at 70% 15%, rgba(122, 167, 255, 0.10), transparent 55%),
     radial-gradient(900px 600px at 20% 80%, rgba(53, 196, 106, 0.08), transparent 60%),
@@ -43,18 +44,16 @@
   backdrop-filter: blur(10px);
 }
 
-.layout-publicHeader {
-  border-bottom: 1px solid var(--pub-border);
-}
-
-.layout-publicFooter {
-  border-top: 1px solid var(--pub-border);
-}
-
 /* Auth modal */
 .auth-modal-header {
   background: var(--mantine-color-dark-8);
   border-bottom: 2px solid var(--pub-border);
+}
+
+.layout-publicMainHeader {
+  background: rgba(25, 47, 87, 0.955);
+  border-bottom: 1px solid var(--pub-border);
+  z-index: 10;
 }
 
 /* =========================

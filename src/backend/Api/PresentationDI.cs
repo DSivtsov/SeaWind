@@ -89,6 +89,27 @@ public static class PresentationDI
         app.UseAuthentication();
         app.UseAuthorization();
 
+        // В соответствие с REST выставить по умолчанию дял всех /api* cache "no-store"
+        app.Use(async (context, next) =>
+        {
+            if (context.Request.Path.StartsWithSegments("/api"))
+            {
+                context.Response.OnStarting(() =>
+                {
+                    // Если заголовки уже выставлены (public/private/no-store) — не трогаем
+                    if (context.Response.Headers.ContainsKey("Cache-Control"))
+                        return Task.CompletedTask;
+
+                    // Консервативный дефолт для API
+                    context.Response.Headers["Cache-Control"] = "no-store";
+
+                    return Task.CompletedTask;
+                });
+            }
+
+            await next();
+        });
+
         // СНАЧАЛА API-маршруты (чтобы их не перехватывал SPA-fallback)
         app.MapControllers();
 
