@@ -18,7 +18,9 @@
 | URL | Component | Назначение | Примечания |
 |-----|----------|------------|------------|
 | `/` | `LandingPage.tsx` | Публичная landing page проекта | Использует Public Theme v0 |
-| `/courses` | `CoursesLayout.tsx` | Страница списка курсов | Использует реальный API backend |
+| `/courses` | `CoursesLayout.tsx` | Страница списка курсов | Данные через `/api/courses` |
+| `/courses/:courseId` | `CourseLayoutTabs.tsx` | Контейнер курса с вкладками | Общая инфраструктура вкладок курса |
+| `/courses/:courseId/lectures` | `CourseLecturesPage.tsx` | Просмотр списка лекций курса | Данные через `/api/courses/{courseId}/lectures` |
 
 ### Модальные окна (доступны со страницы `/courses`)
 
