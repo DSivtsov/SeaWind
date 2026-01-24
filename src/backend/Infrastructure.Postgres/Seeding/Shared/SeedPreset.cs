@@ -6,6 +6,7 @@
 /// <para>SuperFast   - UUID=STABLE, ExistenData=NotDel, InsertMode=InsertOnly, AutoMigrate=true</para>
 /// <para>Fast        - UUID=STABLE, ExistenData=NotDel, InsertMode=InsertOrUpdate, AutoMigrate=true</para>
 /// <para>Real        - UUID=Real, ExistenData=Fresh, InsertMode=InsertOnly, AutoMigrate=true</para>
+/// <para>EmptyDb     - система сидирования только для создания таблиц без импорта демоданных</para>
 /// </summary>
 public enum SeedPreset
 {
@@ -13,5 +14,6 @@ public enum SeedPreset
     SeedCustom,
     SuperFast,
     Fast,
-    Real
+    Real,
+    EmptyDb
 }

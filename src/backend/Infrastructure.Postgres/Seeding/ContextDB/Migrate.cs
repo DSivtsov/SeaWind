@@ -33,7 +33,7 @@ internal class Migrate<TContext> where TContext : DbContext
         }
         catch (Exception ex)
         {
-            _log.LogError(ex, $"Error while Migration for {_db.Database.GetDbConnection().Database}");
+            _log.LogError(ex, "Error while Migration for {Database}", _db.Database.GetDbConnection().Database);
             return false;
         }
     }

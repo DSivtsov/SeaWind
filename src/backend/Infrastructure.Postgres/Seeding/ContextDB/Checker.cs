@@ -60,13 +60,13 @@ internal class Checker<TContext> where TContext : DbContext
         {
             var canConnect = await _db.Database.CanConnectAsync(ct);
             if (!canConnect)
-                _log.LogError($"Cannot connect to database: {_db.Database.GetDbConnection().Database}.");
+                _log.LogError("Cannot connect to database: {Database}", _db.Database.GetDbConnection().Database);
 
             return canConnect;
         }
         catch (Exception ex)
         {
-            _log.LogError(ex, $"Error while checking connection for {_db.Database.GetDbConnection().Database}");
+            _log.LogError(ex, "Error while checking connection for {Database}", _db.Database.GetDbConnection().Database);
             return false;
         }
     }

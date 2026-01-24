@@ -1,6 +1,9 @@
 ﻿using DotNet.Testcontainers.Builders;
 using DotNet.Testcontainers.Configurations;
+using Infrastructure.Postgres.Main;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Npgsql;
 using Testcontainers.PostgreSql;
 
@@ -10,8 +13,11 @@ public class ContainerDbFixture : IAsyncLifetime
 {
     private const string FILENAME_DB_LOG = "postgres_log.txt";
     private const int TIME_SEC_STOP_FROZZEN_CONTAINER = 15;
-    public HttpClient? Client;
+    private HttpClient? _client;
     private WebApplicationFactory<Program>? _factory;
+
+    public HttpClient? Client => _client;
+    public WebApplicationFactory<Program>? Factory => _factory;
 
     // 3. защита от зависаний
     private static readonly Action<IWaitStrategy> _waitStrategy = strategy
@@ -48,12 +54,41 @@ public class ContainerDbFixture : IAsyncLifetime
         await Container.StartAsync();
 
         _factory = new ContainerDbWebApplicationFactory(Container.GetConnectionString());
-        Client = _factory.CreateClient();
+        _client = _factory.CreateClient();
     }
-    
+
+    public async Task ResetMainDbAsync()
+    {
+        using var scope = _factory!.Services.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<MainDbContext>();
+
+        var conn = db.Database.GetDbConnection();
+        await conn.OpenAsync();
+
+        using var cmd = conn.CreateCommand();
+        cmd.CommandText = """
+        DO $$
+        DECLARE
+            r RECORD;
+        BEGIN
+            FOR r IN
+                SELECT tablename
+                FROM pg_tables
+                WHERE schemaname = 'main'
+            LOOP
+                EXECUTE format('TRUNCATE TABLE main.%I RESTART IDENTITY CASCADE', r.tablename);
+            END LOOP;
+        END
+        $$;
+        """;
+
+        await cmd.ExecuteNonQueryAsync();
+    }
+
+
     public async Task DisposeAsync()
     {
-        Client?.Dispose();
+        _client?.Dispose();
         _factory?.Dispose();
 
         if (Container is not null)
