@@ -23,7 +23,6 @@ export function AppFrame({ header, footer = <AppFooterDefault />, children }: Ap
                 // высота разная для разной ширины экрана
                 header={{ height: isNarrow ? HEADER_HEIGHT_NARROW : HEADER_HEIGHT }}
                 footer={{ height: FOOTER_HEIGHT }} // высота нужна Mantine для расчёта footer offset
-                //withBorder={false}
                 styles={{
                     root: {
                         height: "100vh", // фиксируем layout по высоте viewport (иначе main растёт по контенту)

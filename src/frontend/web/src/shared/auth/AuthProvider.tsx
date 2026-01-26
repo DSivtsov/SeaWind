@@ -1,13 +1,14 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { clearAccessPack, getAccessPack, onAccessDenied, setAccessPack, ACCESS_PACK_KEY, type StoredAuth, type LoginReason } from "./authStorage";
-import { AuthContext } from "@/shared/auth/useAuth";
+import { clearAccessPack, getAccessPack, setAccessPack, ACCESS_PACK_KEY } from "./authStorage";
+import { AuthContext } from "@/shared/auth/authContext";
 import { useNavigate } from "react-router-dom";
 import { fetchMe, type Me } from "@/shared/auth/meApi";
 import type { AccessDeniedInfo } from "@/pages/courses/list/CoursesAccessDeniedModal";
+import { onAccessDenied, type AccessDeniedReason } from "@/shared/auth/authListeners";
 
 export type AuthState = {
   initials: string;
-  accessToken: string | null;
+  token: string | null;
 };
 
 export type AuthApi = {
@@ -16,14 +17,15 @@ export type AuthApi = {
 
   me: Me;
 
-  login: (accessToken: string, email: string) => void;
+  login: (token: string, email: string) => void;
   logout: () => void;
 };
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const navigate = useNavigate();
 
-  const handleLogoutRedirect = useCallback((reason?: LoginReason) => {
+  // Handle action at any AccessDeniedReason
+  const handleOnAccessDeniedCases = useCallback((reason?: AccessDeniedReason) => {
     const info: AccessDeniedInfo | undefined = reason ? { reason: reason } : undefined;
     navigate("/courses", {
       replace: true,
@@ -35,26 +37,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const accessPack = getAccessPack();
     return {
       initials: accessPack?.initials ?? "",
-      accessToken: accessPack?.accessToken ?? null,
+      token: accessPack?.token ?? null,
     };
   });
 
   const [me, setMe] = useState<Me>({ kind: "empty" });
 
   useEffect(() => {
-    // MVP: on unauthorized/forbidden -> logout (if needed) and redirect to /courses with reason.
-    const unsub = onAccessDenied((reason) => {
+    const unsubscribe = onAccessDenied((reason) => {
       if (reason === "unauthorized") {
         clearAccessPack();
         setMe({ kind: "empty" });
-        setState({ initials: "", accessToken: null });
+        setState({ initials: "", token: null });
       }
 
-      handleLogoutRedirect(reason);
+      handleOnAccessDeniedCases(reason);
     });
-    return unsub;
-  }, [handleLogoutRedirect]);
+    return unsubscribe;
+  }, [handleOnAccessDeniedCases]);
 
+  // Handle auto-logout from all pages if it occurs
   useEffect(() => {
     const onStorage = (e: StorageEvent) => {
       // реагируем только на изменения ключа токена в localStorage
@@ -63,30 +65,31 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       // если в другой вкладке токен удалили -> разлогиниваемся здесь
       if (e.newValue == null) {
         setMe({ kind: "empty" });
-        setState({ initials: "", accessToken: null });
-        handleLogoutRedirect();
+        setState({ initials: "", token: null });
+        handleOnAccessDeniedCases();
       }
     };
 
     window.addEventListener("storage", onStorage);
     return () => window.removeEventListener("storage", onStorage);
-  }, [handleLogoutRedirect]);
+  }, [handleOnAccessDeniedCases]);
 
+  // Handle State of object Me on any token changes
   useEffect(() => {
-    const accessToken = state.accessToken;
+    const token = state.token;
 
-    if (!accessToken) {
+    if (!token) {
       setMe({ kind: "empty" });
       return;
     }
 
     const ctrl = new AbortController();
 
-    const loadMe = async () => {
+    const loadMeAsync = async () => {
       setMe({ kind: "loading" });
 
       try {
-        const user = await fetchMe(accessToken, ctrl.signal);
+        const user = await fetchMe(token, ctrl.signal);
         setMe({ kind: "ready", user });
       } catch {
         // сюда попадают network/5xx и также 401/403 (которые уже обработаны через emit+redirect)
@@ -95,34 +98,35 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
     };
 
-    loadMe();
+    loadMeAsync();
 
     return () => ctrl.abort();
-  }, [state.accessToken]);
+  }, [state.token]);
 
+  const login = useCallback((token: string, email: string) => {
+    const namePart = email.split("@")[0];
+    const initials = namePart.slice(0, 2).toUpperCase();
+
+    setState({ initials, token });
+    setAccessPack({ initials, token });
+  }, []);
+
+  const logout = useCallback(() => {
+    clearAccessPack();
+    setMe({ kind: "empty" });
+    setState({ initials: "", token: null });
+  }, []);
+
+  // Handle State of object AuthApi on any changes
   const api = useMemo<AuthApi>(() => {
     return {
       state,
-      isAuthenticated: Boolean(state.accessToken),
-
+      isAuthenticated: Boolean(state.token),
       me,
-
-      login: (token: string, email: string) => {
-        const namePart = email.split("@")[0];
-        const initials = namePart.slice(0, 2).toUpperCase();
-
-        setState({ initials, accessToken: token });
-
-        const accessPack: StoredAuth = { accessToken: token, initials };
-        setAccessPack(accessPack);
-      },
-      logout: () => {
-        clearAccessPack();
-        setMe({ kind: "empty" });
-        setState({ initials: "", accessToken: null });
-      },
+      login,
+      logout,
     };
-  }, [state, me]);
+  }, [state, me, login, logout]);
 
   return <AuthContext.Provider value={api}>{children}</AuthContext.Provider>;
 }

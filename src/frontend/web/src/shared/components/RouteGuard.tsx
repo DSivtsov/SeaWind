@@ -1,7 +1,7 @@
 import type { AccessDeniedInfo } from "@/pages/courses/list/CoursesAccessDeniedModal";
 import type { Role } from "@/shared/auth/meApi";
-import { useAuth } from "@/shared/auth/useAuth";
-import { PagePlaceholder } from "@/shared/PagePlaceholder";
+import { useAuthContext } from "@/shared/auth/authContext";
+import { PagePlaceholder } from "@/shared/components/PagePlaceholder";
 import { Navigate, Outlet, useLocation } from "react-router-dom";
 
 type Requirement =
@@ -46,10 +46,10 @@ function pickRequirement(pathname: string): Requirement {
 }
 
 export function RouteGuard() {
-  const auth = useAuth();
+  const authCtx = useAuthContext();
   const location = useLocation();
 
-  if (!auth.isAuthenticated) {
+  if (!authCtx.isAuthenticated) {
 
     const info: AccessDeniedInfo = { reason: "unauthorized", fromLocation: location.pathname };
     //console.log(`[RouteGuard] ${JSON.stringify(info, null, 2)}`);
@@ -59,14 +59,14 @@ export function RouteGuard() {
   // below only if auth.isAuthenticated = true
 
   // Layout-level loading: we have a token, but role isn't known yet.
-  if (auth.me.kind === "loading") {
+  if (authCtx.me.kind === "loading") {
     return <PagePlaceholder title="Loading..." />;
   }
 
-  if (auth.me.kind === "ready") {
+  if (authCtx.me.kind === "ready") {
     const requirement = pickRequirement(location.pathname);
 
-    if (requirement.kind === "role-only" && !requirement.roles.includes(auth.me.user.role)) {
+    if (requirement.kind === "role-only" && !requirement.roles.includes(authCtx.me.user.role)) {
       return <Navigate to="/403" replace />;
     }
 

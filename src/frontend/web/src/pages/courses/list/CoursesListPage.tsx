@@ -1,7 +1,7 @@
 import { getCourses, type CourseDto } from "@/pages/courses/list/CoursesApi";
-import { PageShell } from "@/shared/PageShell";
+import { PageShell } from "@/shared/components/PageShell";
 import { CourseCard } from "@/pages/courses/list/CourseCard";
-import type { UiState } from "@/shared/UiState";
+import type { UiState } from "@/shared/types/UiState";
 import { Box, SimpleGrid } from "@mantine/core";
 import { useState, useEffect, useRef } from "react";
 import { isAbort, type ApiError } from "@/shared/api/apiRequests";

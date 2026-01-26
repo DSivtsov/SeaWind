@@ -1,6 +1,6 @@
 import { getCourseById } from "@/pages/courses/layoutTabs/CourseLayoutTabsApi";
 import type { CourseDto } from "@/pages/courses/list/CoursesApi";
-import { useAuth } from "@/shared/auth/useAuth";
+import { useAuthContext } from "@/shared/auth/authContext";
 import { AppHeaderDefault } from "@/shared/layout/AppHeaderDefault";
 import { AppFrame } from "@/shared/layout/AppFrame";
 import { Text, Stack, Box, Grid, Skeleton, Group } from "@mantine/core";
@@ -16,8 +16,8 @@ type CourseLayoutState =
 
 export function CoursesLayoutTab() {
     const { courseId } = useParams<{ courseId: string }>();
-    const auth = useAuth();
-    const token = auth.state.accessToken ?? null;
+    const authCtx = useAuthContext();
+    const token = authCtx.state.token ?? null;
 
     const [courseLayoutState, setCourseLayoutState] = useState<CourseLayoutState>({ kind: "loading" });
 

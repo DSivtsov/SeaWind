@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Badge, Box, Card, Grid, Group, Modal, Skeleton, Stack, Text } from "@mantine/core";
-import { useAuth } from "@/shared/auth/useAuth";
+import { useAuthContext } from "@/shared/auth/authContext";
 import { getAllLecturesByCourseIdOrdered, type CourseLectureDto } from "@/pages/courses/layoutTabs/CourseLayoutTabsApi";
-import { PageShell } from "@/shared/PageShell";
+import { PageShell } from "@/shared/components/PageShell";
 
 type LecturesPageState =
   | { kind: "loading" }
@@ -22,9 +22,9 @@ function isValidHttpUrl(url: string): boolean {
 
 export function CourseLecturesPage() {
   const { courseId } = useParams<{ courseId: string }>();
-  const auth = useAuth();
+  const authCtx = useAuthContext();
 
-  const token = auth.state.accessToken ?? null;
+  const token = authCtx.state.token ?? null;
 
   const [lecturesPageState, setLecturesPageState] = useState<LecturesPageState>({ kind: "loading" });
   const [badLinkOpened, setBadLinkOpened] = useState(false);

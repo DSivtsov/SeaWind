@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { Box, Button, Code, Stack, Text } from "@mantine/core";
 import { apiRequest } from "@/shared/api/apiRequests";
-import { useAuth } from "@/shared/auth/useAuth";
+import { useAuthContext } from "@/shared/auth/authContext";
 
 export function TestMePage() {
-    const auth = useAuth();
-    const token = auth.state.accessToken;
+    const authCtx = useAuthContext();
+    const token = authCtx.state.token;
 
     const [resultApiMe, setResultApiMe] = useState<string>("");
     const [resultNoAccess, setResultNoAccess] = useState<string>("");

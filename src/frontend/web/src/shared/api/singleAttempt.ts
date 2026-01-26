@@ -1,6 +1,6 @@
 import { type RequestOptions, buildUrl, httpError, isAbortError, isApiError } from "@/shared/api/apiRequests";
 import { readErrorMessage } from "@/shared/api/readErrorMessage";
-import { emitAccessDenied } from "@/shared/auth/authStorage";
+import { emitAccessDenied } from "@/shared/auth/authListeners";
 
 
 export async function singleAttempt<T>(path: string, opts: RequestOptions, token: string | null): Promise<T> {

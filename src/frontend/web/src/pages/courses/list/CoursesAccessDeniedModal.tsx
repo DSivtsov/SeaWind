@@ -1,4 +1,3 @@
-import type { LoginReason } from "@/shared/auth/authStorage";
 import { Code, Group, Modal, Text, ThemeIcon } from "@mantine/core";
 import { IconAlertTriangle, IconInfoCircle } from "@tabler/icons-react";
 

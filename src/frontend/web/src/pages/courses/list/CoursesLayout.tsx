@@ -4,7 +4,7 @@ import { CoursesAccessDeniedModal, type AccessDeniedInfo } from "@/pages/courses
 import { CoursesListPage } from "@/pages/courses/list/CoursesListPage";
 import { AppFrame } from "@/shared/layout/AppFrame";
 import { AppHeaderCourses } from "@/shared/layout/AppHeaderCourses";
-import { showSuccessWithTitle } from "@/shared/ui/toast";
+import { showSuccessWithTitle } from "@/shared/functions/toast";
 import { useDisclosure } from "@mantine/hooks";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -19,11 +19,13 @@ export function CoursesLayout() {
     const { close: closeReg } = reg;
     const { close: closeLogin } = login;
 
+    //Handel auto-close modal Registration & Login at route changes
     useEffect(() => {
         closeReg();
         closeLogin();
     }, [location.pathname, closeReg, closeLogin]);
 
+    //Handel route changes with state included AccessDeniedInfo
     useEffect(() => {
         const info = location.state as AccessDeniedInfo | undefined;
         if (!info) return;

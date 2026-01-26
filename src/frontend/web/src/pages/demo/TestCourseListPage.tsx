@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { TestPageShell } from "@/pages/demo/shared/TestPageShell";
-import type { UiState } from "@/shared/UiState";
+import type { UiState } from "@/shared/types/UiState";
 
 type CourseListItem = {
   id: string;
