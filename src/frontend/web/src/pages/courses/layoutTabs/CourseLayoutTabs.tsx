@@ -3,108 +3,32 @@ import type { CourseDto } from "@/pages/courses/list/CoursesApi";
 import { useAuthContext } from "@/shared/auth/authContext";
 import { AppHeaderDefault } from "@/shared/layout/AppHeaderDefault";
 import { AppFrame } from "@/shared/layout/AppFrame";
-import { Text, Stack, Box, Grid, Skeleton, Group, Tabs } from "@mantine/core";
+import { Stack, Box, Skeleton } from "@mantine/core";
 import { useState, useEffect } from "react";
-import { Outlet, useLocation, useParams } from "react-router-dom";
+import { Outlet, useLocation, useNavigate, useParams } from "react-router-dom";
 import { PageShell } from "@/shared/components/PageShell";
-import { TabsNavLinkTab } from "@/shared/components/TabsNavLinkTab";
+import { ReadyCourseView, } from "@/pages/courses/layoutTabs/ReadyCourseView";
+import { getActiveTabText, isCourseTab, type CourseTab } from "./COURSE_TABS";
 
 type CourseLayoutState =
     | { kind: "loading" }
     | { kind: "error" }
     | { kind: "ready"; course: CourseDto };
 
-type CourseTab = "lectures" | "exercises" | "workshops";
-const COURSE_TAB_ORDER: CourseTab[] = ["lectures", "exercises", "workshops"];
-
-const COURSE_TABS: Record<CourseTab, { text: string }> = {
-    lectures: { text: "Лекции" },
-    exercises: { text: "Упражнения" },
-    workshops: { text: "Семинары" },
-};
-
-function isCourseTab(value: string): value is CourseTab {
-    return value in COURSE_TABS;
-}
-
-function TabLabel(props: { tab: CourseTab; activeTab: CourseTab }) {
-    const isActive = props.activeTab === props.tab;
-    const text = COURSE_TABS[props.tab].text;
-    return (
-        <Text fw={isActive ? 600 : undefined} c={isActive ? undefined : "dimmed"} size="sm">
-            {text}
-        </Text>
-    );
-}
-
-type ReadyCourseViewProps = {
-    course: CourseDto,
-    activeTab: CourseTab,
-};
-
-function ReadyCourseView({ course, activeTab }: ReadyCourseViewProps) {
-    const { id, title, description } = course;
-    return (
-        <Group justify="space-between">
-            <Box maw={600}>
-                <Grid gutter="xs">
-                    <Grid.Col span={{ base: 12, sm: 4 }}>
-                        <Group gap="sm">
-                            <Text size="xs" c="dimmed">Course code</Text>
-                            <Text fw={500}>{id}</Text>
-                        </Group>
-                    </Grid.Col>
-                    <Grid.Col span={{ base: 12, sm: 8 }}>
-                        <Group gap="sm">
-                            <Text size="xs" c="dimmed">Course Title</Text>
-                            <Text fw={500}>{title}</Text>
-                        </Group>
-                    </Grid.Col>
-                    <Grid.Col span={12}>
-                        <Group gap="sm">
-                            <Text size="xs" c="dimmed">Course description</Text>
-                            <Text fw={500}>{description ?? ""}</Text>
-                        </Group>
-                    </Grid.Col>
-                </Grid>
-            </Box>
-            <Tabs variant="pills" radius="xs" color="indigo" value={activeTab} orientation="vertical" placement="right">
-                <Tabs.List>
-                    {COURSE_TAB_ORDER.map((item) => (
-                        <TabsNavLinkTab key={item} tabsTabPropsValue={item} navLinkPropsTo={item}>
-                            <TabLabel tab={item} activeTab={activeTab} />
-                        </TabsNavLinkTab>
-                    ))}
-                </Tabs.List>
-            </Tabs>
-        </Group>
-    );
-}
-
 const loadingCourseView = <Stack gap="xs">
     <Skeleton h={28} w={500} />
     <Skeleton h={52} />
 </Stack>;
 
-function getHeaderDefaultForActiveTab(activeTab: CourseTab) {
-    return (
-        <AppHeaderDefault
-            headerTitle={COURSE_TABS[activeTab].text + " курса"}
-            headerDescription="Переходи к нужной"
-            allCoursesOnClick={() => {
-                console.log("[CoursesLayoutTab]: onClick [Все курсы]");
-            }}
-        />);
-}
-
 export function CourseLayoutTabs() {
+
     const { courseId } = useParams<{ courseId: string }>();
     const authCtx = useAuthContext();
     const token = authCtx.state.token ?? null;
 
     const location = useLocation();
+    const navigate = useNavigate();
     const [activeTab, setActiveTab] = useState<CourseTab>("lectures");
-
 
     useEffect(() => {
         const last = location.pathname.split("/").at(-1);
@@ -137,9 +61,18 @@ export function CourseLayoutTabs() {
         return () => abortController.abort();
     }, [courseId, token]);
 
+    const headerDefaultForActiveTab =
+        <AppHeaderDefault
+            headerTitle={getActiveTabText(activeTab) + " курса"}
+            headerDescription="Переходи к нужной"
+            allCoursesOnClick={() => {
+                navigate("/courses");
+            }}
+        />;
+
     return (
         <div className="layout-publicBg">
-            <AppFrame header={getHeaderDefaultForActiveTab(activeTab)}>
+            <AppFrame header={headerDefaultForActiveTab}>
                 <Box p="xs" pos="sticky" top={0} className="layout-publicMainHeader">
                     <PageShell
                         state={courseLayoutState.kind}
