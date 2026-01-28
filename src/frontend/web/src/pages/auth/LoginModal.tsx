@@ -1,6 +1,6 @@
 import { useState, type FormEvent } from "react";
 import { Modal, TextInput, PasswordInput, Button, Stack, Text, Box } from "@mantine/core";
-import { isApiError } from "@/shared/api/apiRequests";
+import { isApiError } from "@/shared/api/apiError";
 import { loginRequest } from "@/pages/auth/AuthApi";
 import { useAuthContext } from "@/shared/auth/authContext";
 

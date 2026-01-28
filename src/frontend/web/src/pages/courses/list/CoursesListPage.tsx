@@ -4,13 +4,13 @@ import { CourseCard } from "@/pages/courses/list/CourseCard";
 import type { UiState } from "@/shared/types/UiState";
 import { Box, SimpleGrid } from "@mantine/core";
 import { useState, useEffect, useRef } from "react";
-import { isAbort, type ApiError } from "@/shared/api/apiRequests";
+import { isAbort, type ApiError } from "@/shared/api/apiError";
 
 export function CoursesListPage() {
     // union type for UI state
     const [uiState, setUiState] = useState<UiState>("loading");
     const [courses, setCourses] = useState<CourseDto[]>([]);
-    const [errorText, setErrorText] = useState<string>("");
+    const [apiError, setApiError] = useState<ApiError | undefined>(undefined);
 
     const controllerRef = useRef<AbortController | null>(null);
 
@@ -26,12 +26,9 @@ export function CoursesListPage() {
 
             setCourses(data);
             setUiState(data.length === 0 ? "empty" : "ready");
-        } catch (e: unknown) {
+        } catch (e) {
             if (isAbort(e)) return;
-
-            const msg = `Проблема с сервером. Попробуйте позже. Error [${((e as ApiError).message ?? "Request failed")}]`;
-            console.log(msg);
-            setErrorText(msg);
+            setApiError(e as ApiError);
             setUiState("error");
         }
     };
@@ -45,7 +42,10 @@ export function CoursesListPage() {
     const onRetry = load;
 
     return (
-        <PageShell state={uiState} errorText={errorText} onRetry={onRetry}>
+        <PageShell state={uiState}
+            errorText="Проблема с сервером. Не могу получить информацию о курсах."
+            error={apiError}
+            onRetry={onRetry}>
             <Box p="md" >
                 <SimpleGrid cols={2}>
                     {courses.map((item) => (

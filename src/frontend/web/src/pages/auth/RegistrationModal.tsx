@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { Modal, TextInput, PasswordInput, Button, Stack, Text, Box, Group } from "@mantine/core";
 import { IconCheck, IconX } from "@tabler/icons-react";
-import { isApiError } from "@/shared/api/apiRequests";
+import { isApiError } from "@/shared/api/apiError";
 import { registerRequest } from "@/pages/auth/AuthApi";
 import { buildPasswordRules, isValidEmail, type RuleCheck } from "@/pages/auth/RegistrationRules";
 

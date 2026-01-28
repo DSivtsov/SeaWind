@@ -9,10 +9,11 @@ import { Outlet, useLocation, useNavigate, useParams } from "react-router-dom";
 import { PageShell } from "@/shared/components/PageShell";
 import { ReadyCourseView, } from "@/pages/courses/layoutTabs/ReadyCourseView";
 import { getActiveTabText, isCourseTab, type CourseTab } from "./COURSE_TABS";
+import { httpError, type ApiError } from "@/shared/api/apiError";
 
 type CourseLayoutState =
     | { kind: "loading" }
-    | { kind: "error" }
+    | { kind: "error"; error: ApiError }
     | { kind: "ready"; course: CourseDto };
 
 const loadingCourseView = <Stack gap="xs">
@@ -40,7 +41,7 @@ export function CourseLayoutTabs() {
     useEffect(() => {
         if (!courseId || !token) {
             // Defensive: RouteGuard should prevent entering here without token.
-            setCourseLayoutState({ kind: "error" });
+            setCourseLayoutState({ kind: "error", error: httpError("parse", "Missing courseId or token"), });
             return;
         }
         const abortController = new AbortController();
@@ -52,9 +53,9 @@ export function CourseLayoutTabs() {
                 const course: CourseDto = await getCourseById(courseId, token, abortController.signal);
 
                 setCourseLayoutState({ kind: "ready", course });
-            } catch {
+            } catch (e) {
                 if (abortController.signal.aborted) return;
-                setCourseLayoutState({ kind: "error" });
+                setCourseLayoutState({ kind: "error", error: e as ApiError });
             }
         })();
 
@@ -77,7 +78,8 @@ export function CourseLayoutTabs() {
                     <PageShell
                         state={courseLayoutState.kind}
                         loadingView={loadingCourseView}
-                        errorText="Проблема с сервером. Попробуйте позже."
+                        errorText="Проблема с сервером. Не могу получить информацию о курсе."
+                        error={courseLayoutState.kind === "error" ? courseLayoutState.error : undefined}
                     >
                         {courseLayoutState.kind === "ready"
                             && <ReadyCourseView course={courseLayoutState.course} activeTab={activeTab} />}
