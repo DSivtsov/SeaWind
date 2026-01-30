@@ -17,10 +17,12 @@
 
 | URL | Component | Назначение | Примечания |
 |-----|----------|------------|------------|
-| `/` | `LandingPage.tsx` | Публичная landing page проекта | Использует Public Theme v0 |
-| `/courses` | `CoursesLayout.tsx` | Страница списка курсов | Данные через `/api/courses` |
+| `http://localhost:5173/` | `LandingPage.tsx` | Публичная landing page проекта | Использует Public Theme v0 |
+| `http://localhost:5173/courses` | `CoursesLayout.tsx` | Страница списка курсов | Данные через `/api/courses` |
 | `/courses/:courseId` | `CourseLayoutTabs.tsx` | Контейнер курса с вкладками | Общая инфраструктура вкладок курса |
 | `/courses/:courseId/lectures` | `CourseLecturesPage.tsx` | Просмотр списка лекций курса | Данные через `/api/courses/{courseId}/lectures` |
+| `/courses/:courseId/exercises` | `PagePlaceholder.tsx` | Список упражнений курса (stub) | Данные через `/api/courses/{courseId}/exercises` |
+| `/courses/:courseId/workshop-sessions` | `PagePlaceholder.tsx` | Сессии воркшопов курса (stub) | Данные через `/api/courses/{courseId}/workshop-sessions` |
 
 ### Модальные окна (доступны со страницы `/courses`)
 
