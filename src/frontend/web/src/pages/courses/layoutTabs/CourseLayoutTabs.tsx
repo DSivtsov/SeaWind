@@ -99,19 +99,3 @@ export function CourseLayoutTabs() {
     <Text c="dimmed">Попробуйте позже.</Text>
 </Stack>; */
 
-/* import { useLocation, useResolvedPath } from "react-router-dom";
-
-export function DebugPaths() {
-    const location = useLocation();              // текущий URL
-    const base = useResolvedPath(".");           // route-контекст
-    const lectures = useResolvedPath("lectures");
-    const exercises = useResolvedPath("exercises");
-
-    console.log("location =", location.pathname);
-    console.log("base =", base.pathname);
-    console.log("lectures =", lectures.pathname);
-    console.log("exercises =", exercises.pathname);
-
-    return null;
-}
- */

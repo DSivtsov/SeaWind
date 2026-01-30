@@ -24,15 +24,6 @@ export type AuthApi = {
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const navigate = useNavigate();
 
-  // Handle action at any AccessDeniedReason
-  const handleOnAccessDeniedCases = useCallback((reason?: AccessDeniedReason) => {
-    const info: AccessDeniedInfo | undefined = reason ? { reason: reason } : undefined;
-    navigate("/courses", {
-      replace: true,
-      state: info,
-    });
-  }, [navigate]);
-
   const [state, setState] = useState<AuthState>(() => {
     const accessPack = getAccessPack();
     return {
@@ -41,7 +32,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
   });
 
-  const [me, setMe] = useState<Me>({ kind: "empty" });
+  const [me, setMe] = useState<Me>(() => {
+    const accessPack = getAccessPack();
+    return accessPack?.token
+      ? { kind: "loading" }
+      : { kind: "empty" };
+  });
+
+  // Handle action at any AccessDeniedReason
+  const handleOnAccessDeniedCases = useCallback((reason?: AccessDeniedReason) => {
+    const info: AccessDeniedInfo | undefined = reason ? { reason: reason } : undefined;
+    navigate("/courses", {
+      replace: true,
+      state: info,
+    });
+  }, [navigate]);
 
   useEffect(() => {
     const unsubscribe = onAccessDenied((reason) => {
@@ -77,7 +82,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   // Handle State of object Me on any token changes
   useEffect(() => {
     const token = state.token;
-
     if (!token) {
       setMe({ kind: "empty" });
       return;
