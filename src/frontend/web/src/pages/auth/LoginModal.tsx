@@ -1,8 +1,8 @@
 import { useState, type FormEvent } from "react";
 import { Modal, TextInput, PasswordInput, Button, Stack, Text, Box } from "@mantine/core";
-import { isApiError } from "@/shared/api/apiRequests";
+import { isApiError } from "@/shared/api/apiError";
 import { loginRequest } from "@/pages/auth/AuthApi";
-import { useAuth } from "@/shared/auth/useAuth";
+import { useAuthContext } from "@/shared/auth/authContext";
 
 type LoginModalProps = {
   opened: boolean;
@@ -15,7 +15,7 @@ type LoginModalProps = {
 };
 
 export function LoginModal({ opened, onClose, onLogon }: LoginModalProps) {
-  const auth = useAuth();
+  const authCtx = useAuthContext();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -45,7 +45,7 @@ export function LoginModal({ opened, onClose, onLogon }: LoginModalProps) {
 
     try {
       const rez = await loginRequest(email.trim(), password);
-      auth.login(rez.accessToken, email);
+      authCtx.login(rez.accessToken, email);
       onLogon?.();
       onClose();
     } catch (e: unknown) {

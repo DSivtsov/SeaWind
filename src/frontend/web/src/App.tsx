@@ -7,6 +7,7 @@ import '@mantine/notifications/styles.css';
 import { MantineProvider, createTheme } from '@mantine/core';
 import { Notifications } from '@mantine/notifications';
 import { AuthProvider } from '@/shared/auth/AuthProvider';
+import { BootstrapGuard } from '@/shared/components/BootstrapGuard';
 
 /**
  * Brand color palette (Mantine scale 0–9)
@@ -47,7 +48,9 @@ export default function App() {
       <Notifications />
       <BrowserRouter>
         <AuthProvider>
-          <AppRoutes />
+          <BootstrapGuard>
+            <AppRoutes />
+          </BootstrapGuard>
         </AuthProvider>
       </BrowserRouter>
     </MantineProvider>

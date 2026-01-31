@@ -1,55 +1,7 @@
+import { isApiError } from "@/shared/api/apiError";
 import { singleAttempt } from "@/shared/api/singleAttempt";
 
 const RETRY_DELAYS = [200, 500, 1000]; // ms
-
-export function buildUrl(path: string): string {
-  return path;
-}
-
-function shouldRetry(method: string, attempt: number, e: unknown, signal?: AbortSignal): boolean {
-  if (signal?.aborted) return false;
-  if (method !== "GET") return false;
-  if (attempt >= RETRY_DELAYS.length) return false;
-
-  if (!isApiError(e)) return false;
-
-  if (e.kind === "network") return true;
-  if (e.kind === "http" && e.status && [502, 503, 504].includes(e.status)) return true;
-
-  return false;
-}
-
-function sleep(ms: number) {
-  return new Promise(r => setTimeout(r, ms));
-}
-
-export type ApiErrorKind = "http" | "network" | "abort" | "parse";
-
-export type ApiError = {
-  kind: ApiErrorKind;
-  message: string;
-  status?: number;
-};
-
-export function httpError(kind: ApiErrorKind, message: string, status?: number): ApiError {
-  return { kind, message, status };
-}
-
-export function isAbortError(e: unknown): boolean {
-  return e instanceof DOMException && e.name === "AbortError";
-}
-
-export function isApiError(e: unknown): e is ApiError {
-  return typeof e === "object" && e !== null && "kind" in e && "message" in e;
-}
-
-export function isUnauthorized(e: unknown): boolean {
-  return isApiError(e) && e.kind === "http" && e.status === 401;
-}
-
-export function isAbort(e: unknown): boolean {
-  return isApiError(e) && e.kind === "abort";
-}
 
 type JsonBody = Record<string, unknown> | unknown[] | null;
 
@@ -68,6 +20,27 @@ type TextRequestOptions = {
 };
 
 export type RequestOptions = JsonRequestOptions | TextRequestOptions;
+
+export function buildUrl(path: string): string {
+  return path;
+}
+
+function sleep(ms: number) {
+  return new Promise(r => setTimeout(r, ms));
+}
+
+function shouldRetry(method: string, attempt: number, e: unknown, signal?: AbortSignal): boolean {
+  if (signal?.aborted) return false;
+  if (method !== "GET") return false;
+  if (attempt >= RETRY_DELAYS.length) return false;
+
+  if (!isApiError(e)) return false;
+
+  if (e.kind === "network") return true;
+  if (e.kind === "http" && e.status && [502, 503, 504].includes(e.status)) return true;
+
+  return false;
+}
 
 // Делает Retry только для Get см. shouldRetry()
 export async function apiRequest<T>(path: string, opts: RequestOptions, token: string | null): Promise<T> {

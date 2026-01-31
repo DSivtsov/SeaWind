@@ -5,7 +5,7 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import TestManTine from '@/pages/demo/TestManTine';
 import TestCourseListPage from "@/pages/demo/TestCourseListPage";
 
-import { PagePlaceholder } from "@/shared/PagePlaceholder";
+import { PagePlaceholder } from "@/shared/components/PagePlaceholder";
 import { TestCoursesLayout } from "@/pages/demo/TestCoursesLayout";
 import { CoursesLayout } from "@/pages/courses/list/CoursesLayout";
 import { CoursesLayoutStub } from "@/pages/courses/list-stub/CoursesLayout.stub";
@@ -15,10 +15,10 @@ import { LandingPage } from "@/pages/landing/LandingPage";
 import { Test } from "@/pages/demo/Test";
 import { TestMePage } from "@/pages/auth/TestMePage";
 
-import { RouteGuard } from "@/shared/RouteGuard";
+import { RouteGuard } from "@/shared/components/RouteGuard";
 import { ForbiddenPage } from "@/pages/guard/ForbiddenPage";
-import { CoursesLayoutTab } from "@/pages/courses/layoutTabs/CoursesLayoutTab";
 import { CourseLecturesPage } from "@/pages/courses/layoutTabs/CourseLecturesPage";
+import { CourseLayoutTabs } from "@/pages/courses/layoutTabs/CourseLayoutTabs";
 
 export function AppRoutes() {
   return (
@@ -52,11 +52,11 @@ export function AppRoutes() {
       <Route element={<RouteGuard />}>
         {/* Course area (tabs layout in MVP) */}
 
-        <Route path="/courses/:courseId" element={<CoursesLayoutTab />}>
+        <Route path="/courses/:courseId" element={<CourseLayoutTabs />}>
           <Route index element={<Navigate to="lectures" replace />} />
           <Route path="lectures" element={<CourseLecturesPage />} />
           <Route path="exercises" element={<PagePlaceholder title="CourseExercises (Tab)" />} />
-          <Route path="workshop-sessions" element={<PagePlaceholder title="CourseWorkshopSessions (Tab)" />} />
+          <Route path="workshops" element={<PagePlaceholder title="CourseWorkshopSessions (Tab)" />} />
         </Route>
 
         {/* Student&Mentor: full-screen chat (outside tabs, no direct navigation) */}

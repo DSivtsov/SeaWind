@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { ActionIcon, Avatar, Badge, Divider, Group, Loader, Menu, Stack, Text, } from "@mantine/core";
 import { IconDoorExit, IconLayoutDashboard, IconUser } from "@tabler/icons-react";
-import { useAuth } from "@/shared/auth/useAuth";
+import { useAuthContext } from "@/shared/auth/authContext";
 
 type WorkspaceTarget = "/admin" | "/mentor";
 
@@ -17,11 +17,11 @@ function toRoleLabel(role: string): string {
 }
 
 export function AvatarMenu() {
-  const auth = useAuth();
+  const authCtx = useAuthContext();
   const navigate = useNavigate();
 
-  const isAuthed = auth.isAuthenticated;
-  const me = auth.me;
+  const isAuthed = authCtx.isAuthenticated;
+  const me = authCtx.me;
 
   const ui = useMemo(() => {
     if (me.kind === "loading") return { kind: "loading" as const };
@@ -54,13 +54,13 @@ export function AvatarMenu() {
     navigate(ui.workspaceTarget);
   };
   const onLogout = () => {
-    auth.logout();
+    authCtx.logout();
   };
 
   const avatarVariant = isAuthed ? "filled" : "transparent";
   const avatarSize = isAuthed ? "lg" : "md";
   const avatarColor = isAuthed ? "green" : undefined;
-  const avatarText = isAuthed ? auth.state.initials : "";
+  const avatarText = isAuthed ? authCtx.state.initials : "";
   return (
     <Menu width={280} position="bottom-end" shadow="md" withArrow>
       <Menu.Target>

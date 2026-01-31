@@ -1,4 +1,4 @@
-import type { UiState } from "@/shared/UiState";
+import type { UiState } from "@/shared/types/UiState";
 import { Stack, Button, Text, Title } from '@mantine/core';
 import { IconReload } from '@tabler/icons-react';
 

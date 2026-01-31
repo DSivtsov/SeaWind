@@ -1,13 +1,14 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Badge, Box, Card, Grid, Group, Modal, Skeleton, Stack, Text } from "@mantine/core";
-import { useAuth } from "@/shared/auth/useAuth";
+import { useAuthContext } from "@/shared/auth/authContext";
 import { getAllLecturesByCourseIdOrdered, type CourseLectureDto } from "@/pages/courses/layoutTabs/CourseLayoutTabsApi";
-import { PageShell } from "@/shared/PageShell";
+import { PageShell } from "@/shared/components/PageShell";
+import { httpError, type ApiError } from "@/shared/api/apiError";
 
 type LecturesPageState =
   | { kind: "loading" }
-  | { kind: "error" }
+  | { kind: "error"; error: ApiError }
   | { kind: "empty" }
   | { kind: "ready"; lectures: CourseLectureDto[] };
 
@@ -22,9 +23,9 @@ function isValidHttpUrl(url: string): boolean {
 
 export function CourseLecturesPage() {
   const { courseId } = useParams<{ courseId: string }>();
-  const auth = useAuth();
+  const authCtx = useAuthContext();
 
-  const token = auth.state.accessToken ?? null;
+  const token = authCtx.state.token ?? null;
 
   const [lecturesPageState, setLecturesPageState] = useState<LecturesPageState>({ kind: "loading" });
   const [badLinkOpened, setBadLinkOpened] = useState(false);
@@ -32,7 +33,7 @@ export function CourseLecturesPage() {
   useEffect(() => {
     if (!courseId || !token) {
       // Defensive: RouteGuard should prevent entering here without token.
-      setLecturesPageState({ kind: "error" });
+      setLecturesPageState({ kind: "error", error: httpError("parse", "Missing courseId or token"), });
       return;
     }
     const abortController = new AbortController();
@@ -50,9 +51,9 @@ export function CourseLecturesPage() {
         }
 
         setLecturesPageState({ kind: "ready", lectures });
-      } catch {
+      } catch (e) {
         if (abortController.signal.aborted) return;
-        setLecturesPageState({ kind: "error" });
+        setLecturesPageState({ kind: "error", error: e as ApiError });
       }
     })();
 
@@ -84,7 +85,8 @@ export function CourseLecturesPage() {
         state={lecturesPageState.kind}
         loadingView={loadingView}
         emptyView={emptyView}
-        errorText="Проблема с сервером. Попробуйте позже."
+        errorText="Проблема с сервером. Не могу получить информацию о лекциях курса."
+        error={lecturesPageState.kind === "error" ? lecturesPageState.error : undefined}
       >
         {lecturesPageState.kind === "ready" && readyView(lecturesPageState.lectures, openLectureVideo)}
       </PageShell>

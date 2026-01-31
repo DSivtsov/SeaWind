@@ -51,11 +51,8 @@ function PageShell(props: PageShellProps) {
             );
           case "ready":
             return <div>{children}</div>;
-          default: {
-            // Exhaustiveness guard: if UiState changes, TS will error here.
-            const _never: never = state;
-            return _never;
-          }
+          default:
+            return exhaustivenessGuard(state);
         }
       })()}
     </div>
@@ -64,14 +61,16 @@ function PageShell(props: PageShellProps) {
 
 /** Custom hook (typed) + cleanup in useEffect */
 function useDebouncedValue<T>(value: T, delayMs: number) {
-  const [debounced, setDebounced] = useState<T>(value);
+  const [localDebounced, setDebounced] = useState<T>(value);
 
   useEffect(() => {
     const id = window.setTimeout(() => setDebounced(value), delayMs);
+
     return () => window.clearTimeout(id);
+
   }, [value, delayMs]);
 
-  return debounced;
+  return localDebounced;
 }
 
 /** One generic component example */
@@ -88,8 +87,8 @@ function Select<T>(props: SelectProps<T>) {
 
   return (
     <div style={{ display: "grid", gap: 6 }}>
-      {items.map((it) => {
-        const key = getKey(it);
+      {items.map((item) => {
+        const key = getKey(item);
         const isSelected = value != null && getKey(value) === key;
 
         return (
@@ -98,7 +97,7 @@ function Select<T>(props: SelectProps<T>) {
             type="button"
             onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
               e.preventDefault();
-              onSelect(it);
+              onSelect(item);
             }}
             style={{
               textAlign: "left",
@@ -110,7 +109,7 @@ function Select<T>(props: SelectProps<T>) {
               cursor: "pointer",
             }}
           >
-            {render(it)}
+            {render(item)}
           </button>
         );
       })}
@@ -249,3 +248,8 @@ function TestPage() {
 }
 
 export default TestPage;
+
+function exhaustivenessGuard(state: never): never {
+  void state;
+  throw new Error("Unhandled UiState case");
+}

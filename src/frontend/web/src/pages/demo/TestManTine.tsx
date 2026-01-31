@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
-import type { UiState } from "@/shared/UiState";
+import type { UiState } from "@/shared/types/UiState";
 import { TestPageShell } from "@/pages/demo/shared/TestPageShell";
-import { Select } from "@/shared/ui/Select";
+import { Select } from "@/shared/components/Select";
 import { useDebouncedValue } from "@/shared/hooks/useDebouncedValue";
 import { Box, Button, Stack, Text, TextInput } from "@mantine/core";
 

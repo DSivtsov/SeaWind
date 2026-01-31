@@ -1,7 +1,7 @@
-import { type RequestOptions, buildUrl, httpError, isAbortError, isApiError } from "@/shared/api/apiRequests";
+import { type RequestOptions, buildUrl } from "@/shared/api/apiRequests";
+import { httpError, isAbortError, isApiError } from "./apiError";
 import { readErrorMessage } from "@/shared/api/readErrorMessage";
-import { emitAccessDenied } from "@/shared/auth/authStorage";
-
+import { emitAccessDenied } from "@/shared/auth/authListeners";
 
 export async function singleAttempt<T>(path: string, opts: RequestOptions, token: string | null): Promise<T> {
     const parse = opts.parse ?? "json";
@@ -34,21 +34,23 @@ export async function singleAttempt<T>(path: string, opts: RequestOptions, token
             signal: opts.signal,
         });
 
+        const correlationId = res.headers.get("x-correlation-id") ?? undefined;
+
         if (res.status === 401) {
             // MVP contract: 401 -> redirect to /courses and show info ("unauthorized")
             emitAccessDenied("unauthorized");
-            throw httpError("http", "Unauthorized", 401);
+            throw httpError("http", "Unauthorized", 401, correlationId);
         }
 
         if (res.status === 403) {
             // MVP contract: 403 -> redirect to /courses and show info ("forbidden")
             emitAccessDenied("forbidden");
-            throw httpError("http", "Forbidden", 403);
+            throw httpError("http", "Forbidden", 403, correlationId);
         }
 
         if (!res.ok) {
             const msg = await readErrorMessage(res);
-            throw httpError("http", msg, res.status);
+            throw httpError("http", msg, res.status, correlationId);
         }
 
         // For 204 No Content etc.
@@ -63,19 +65,19 @@ export async function singleAttempt<T>(path: string, opts: RequestOptions, token
 
         if (parse === "empty") {
             if (trimmed) {
-                throw httpError("parse", "Expected empty response", res.status);
+                throw httpError("parse", "Expected empty response", res.status, correlationId);
             }
             return undefined as T;
         }
 
         if (parse === "json") {
             if (!trimmed) {
-                throw httpError("parse", "Expected JSON response", res.status);
+                throw httpError("parse", "Expected JSON response", res.status, correlationId);
             }
             try {
                 return JSON.parse(text) as T;
             } catch {
-                throw httpError("parse", "Failed to parse JSON", res.status);
+                throw httpError("parse", "Failed to parse JSON", res.status, correlationId);
             }
         }
 

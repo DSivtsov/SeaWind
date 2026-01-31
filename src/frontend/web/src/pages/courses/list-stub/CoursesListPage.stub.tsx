@@ -1,6 +1,6 @@
-import { PageShell } from "@/shared/PageShell";
+import { PageShell } from "@/shared/components/PageShell";
 import { CourseCard, type Course } from "@/pages/courses/list/CourseCard";
-import type { UiState } from "@/shared/UiState";
+import type { UiState } from "@/shared/types/UiState";
 import { ScrollArea, SimpleGrid } from "@mantine/core";
 import { useState, useEffect } from "react";
 
