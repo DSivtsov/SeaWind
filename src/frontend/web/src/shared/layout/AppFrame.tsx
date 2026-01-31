@@ -1,15 +1,31 @@
 import { HEADER_HEIGHT_NARROW, HEADER_HEIGHT, FOOTER_HEIGHT } from "@/common/constants";
-import { AppFooterDefault } from "@/shared/layout/AppFooterDefault";
 import { AppCtx } from "@/shared/layout/appCtx";
-import { AppShell } from "@mantine/core";
-import { useMediaQuery } from "@mantine/hooks";
+import { AppShell, Burger, Drawer } from "@mantine/core";
+import { useDisclosure, useMediaQuery } from "@mantine/hooks";
 import { useMemo, type ReactNode } from "react";
 import type React from "react";
+
+const APP_SHELL_STYLES = {
+    root: {
+        height: "100vh",
+        display: "flex",
+        flexDirection: "column",
+        "--app-shell-border-color": "#2a3c62",
+    },
+    main: {
+        flex: 1,
+        minHeight: 0,
+        overflowY: "auto",
+        paddingTop: "var(--app-shell-header-offset)",
+        paddingBottom: "var(--app-shell-footer-offset)",
+    },
+} as const;
 
 export type AppFrameProps =
     React.PropsWithChildren<{
         header: ReactNode;
-        footer?: ReactNode
+        navbar?: ReactNode;
+        footer?: ReactNode;
     }>
 
 export type AppFrameContext =
@@ -17,55 +33,59 @@ export type AppFrameContext =
         isNarrow: boolean,
     };
 
-export function AppFrame({ header, footer = <AppFooterDefault />, children }: AppFrameProps) {
-
+export function AppFrame({ header, navbar, footer, children }: AppFrameProps) {
+    const [burgerOpened, { toggle }] = useDisclosure();
     const isNarrowCurrent = useMediaQuery("(max-width: 750px)");
+    const WIDTH_MENU_NAVBAR = 200;
     const appCtx = useMemo<AppFrameContext>(() => {
-        return {
-            isNarrow: isNarrowCurrent
-        };
+        return { isNarrow: isNarrowCurrent };
     }, [isNarrowCurrent]);
+
+    const headerHeight = isNarrowCurrent ? HEADER_HEIGHT_NARROW : HEADER_HEIGHT;
+    const hasFooter = footer != null;
+
+    const hasNavbarCommon = navbar != null && !isNarrowCurrent;
+    const hasNavDrawer = navbar != null && isNarrowCurrent;
+
     return (
         <div className="layout-publicBg">
             <AppShell
-                padding={0} // отключаем дефолтные padding Mantine — все отступы контролируем вручную
-                // высота нужна Mantine для расчёта header offset
-                // высота разная для разной ширины экрана
-                header={{ height: appCtx.isNarrow ? HEADER_HEIGHT_NARROW : HEADER_HEIGHT }}
-                footer={{ height: FOOTER_HEIGHT }} // высота нужна Mantine для расчёта footer offset
-                styles={{
-                    root: {
-                        height: "100vh", // фиксируем layout по высоте viewport (иначе main растёт по контенту)
-                        display: "flex", // делаем корень flex-контейнером
-                        flexDirection: "column", // вертикальная колонка: header / main / footer
-                        "--app-shell-border-color": "#2a3c62",
-                    },
-                    main: {
-                        flex: 1, // main занимает всё оставшееся место между header и footer
-                        minHeight: 0, // критично для flex: позволяет main сжиматься и включать overflow
-                        overflowY: "auto", // скролл ТОЛЬКО внутри main
-
-                        // Компенсация overlay header/footer. Offsets рассчитываются Mantine автоматически.
-                        // Контентные отступы (pt/pb/px) задаются на уровне страницы (CoursesListPage).
-                        paddingTop: "var(--app-shell-header-offset)",
-                        paddingBottom: "var(--app-shell-footer-offset)",
-                    },
-                }}
+                padding={0}// отключаем дефолтные padding Mantine — все отступы контролируем вручную
+                header={{ height: headerHeight }}
+                footer={hasFooter ? { height: FOOTER_HEIGHT } : undefined}
+                navbar={hasNavbarCommon ? { width: WIDTH_MENU_NAVBAR, breakpoint: "xs" } : undefined}
+                styles={APP_SHELL_STYLES}
             >
-                <AppShell.Header>
+                <AppShell.Header >
                     {header}
                 </AppShell.Header>
 
                 <AppShell.Main>
                     <AppCtx.Provider value={appCtx}>
+                        {hasNavDrawer &&
+                            <Burger size="sm" opened={burgerOpened} onClick={toggle} />}
                         {children}
                     </AppCtx.Provider>
                 </AppShell.Main>
 
-                <AppShell.Footer >
-                    {footer}
-                </AppShell.Footer>
+                {hasNavbarCommon && (
+                    <AppShell.Navbar>
+                        {navbar}
+                    </AppShell.Navbar>)}
+
+                {hasFooter && (
+                    <AppShell.Footer >
+                        {footer}
+                    </AppShell.Footer>)}
             </AppShell>
+            {hasNavDrawer &&
+                <Drawer opened={burgerOpened} onClose={toggle} size={WIDTH_MENU_NAVBAR} padding={0}
+                    styles={{
+                        content: { display: "flex", flexDirection: "column" },
+                        body: { flex: 1, padding: 0, display: "flex", alignItems: "center", justifyContent: "center" }
+                    }}>
+                    {navbar}
+                </Drawer>}
         </div >
     );
 }
