@@ -8,6 +8,7 @@ import { showSuccessWithTitle } from "@/shared/functions/toast";
 import { useDisclosure } from "@mantine/hooks";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { AppFooterDefault } from "@/shared/layout/AppFooterDefault";
 
 export function CoursesLayout() {
     const [regOpened, reg] = useDisclosure(false);
@@ -42,7 +43,7 @@ export function CoursesLayout() {
 
     return (
         <div className="layout-publicBg">
-            <AppFrame header={headerCourses}>
+            <AppFrame header={headerCourses} footer={<AppFooterDefault />}>
                 <CoursesListPage />
             </AppFrame >
             {

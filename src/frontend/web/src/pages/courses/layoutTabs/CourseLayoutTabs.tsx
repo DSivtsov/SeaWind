@@ -10,6 +10,7 @@ import { PageShell } from "@/shared/components/PageShell";
 import { ReadyCourseView, } from "@/pages/courses/layoutTabs/ReadyCourseView";
 import { getActiveTabText, isCourseTab, type CourseTab } from "./COURSE_TABS";
 import { httpError, type ApiError } from "@/shared/api/apiError";
+import { AppFooterDefault } from "@/shared/layout/AppFooterDefault";
 
 type CourseLayoutState =
     | { kind: "loading" }
@@ -73,7 +74,7 @@ export function CourseLayoutTabs() {
 
     return (
         <div className="layout-publicBg">
-            <AppFrame header={headerDefaultForActiveTab}>
+            <AppFrame header={headerDefaultForActiveTab} footer={<AppFooterDefault />}>
                 <Box p="xs" pos="sticky" top={0} className="layout-publicMainHeader">
                     <PageShell
                         state={courseLayoutState.kind}
@@ -90,12 +91,3 @@ export function CourseLayoutTabs() {
         </div >
     );
 }
-
-
-
-/* const errorView = <Stack gap={4}>
-    <Title order={5}>Проблема с сервером...</Title>
-    <Text c="dimmed">Не могу получить данные курса.</Text>
-    <Text c="dimmed">Попробуйте позже.</Text>
-</Stack>; */
-

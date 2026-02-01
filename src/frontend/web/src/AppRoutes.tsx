@@ -20,6 +20,8 @@ import { ForbiddenPage } from "@/pages/guard/ForbiddenPage";
 import { CourseLecturesPage } from "@/pages/courses/layoutTabs/CourseLecturesPage";
 import { CourseLayoutTabs } from "@/pages/courses/layoutTabs/CourseLayoutTabs";
 
+import { AdminLayout } from "@/pages/admin/AdminLayout";
+
 export function AppRoutes() {
   return (
     <Routes>
@@ -80,10 +82,10 @@ export function AppRoutes() {
 
 
         {/* Admin area */}
-        <Route path="/admin" element={<PagePlaceholder title="AdminLayout (wrapper)" />}>
-          <Route index element={<Navigate to="hours-added" replace />} />
+        <Route path="/admin" element={<AdminLayout />}>
+          <Route index element={<Navigate to="users-roles" replace />} />
           <Route path="hours-added" element={<PagePlaceholder title="Admin · EditHoursAdded" />} />
-          <Route path="support/inbox" element={<PagePlaceholder title="Admin · SupportInbox" />} />
+          <Route path="support-inbox" element={<PagePlaceholder title="Admin · SupportInbox" />} />
           <Route path="users-roles" element={<PagePlaceholder title="Admin · ManageUsers" />} />
         </Route>
 
