@@ -1,5 +1,5 @@
 import { NavLink, Text } from "@mantine/core";
-import { NavLink as RouterNavLink } from "react-router-dom";
+import { NavLink as RouterNavLink, useMatch, useResolvedPath } from "react-router-dom";
 
 export type NavItemProps = {
     linkTo: string;
@@ -7,14 +7,16 @@ export type NavItemProps = {
 };
 
 export function NavItem({ linkTo, linkLabel }: NavItemProps) {
+    const resolved = useResolvedPath(linkTo);
+    const match = useMatch({ path: resolved.pathname, end: true });
+
     return (
-        <RouterNavLink to={linkTo} style={{ textDecoration: "none" }}>
-            {({ isActive }) => (
-                <NavLink
-                    label={<Text ta="center">{linkLabel}</Text>}
-                    active={isActive}
-                />
-            )}
-        </RouterNavLink>
+        <NavLink
+            component={RouterNavLink}
+            to={linkTo}
+            label={<Text ta="center">{linkLabel}</Text>}
+            active={Boolean(match)}
+            style={{ textDecoration: "none" }}
+        />
     );
 }

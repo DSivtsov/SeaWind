@@ -16,11 +16,13 @@ export function AdminLayout() {
         />;
 
     const navbarDefaultForAdmin =
-        <Center className="layout-publicHeader" h="100%">
+        // className="layout-publicHeader" set directly at AppFrame level for NavBar & Drawer
+        //  (Drawer header issue it bg not set by other)
+        <Center h="100%">
             <Stack align="center" gap={30} justify="center" p="md">
-                <NavItem linkTo={"users-roles"} linkLabel={"Управления ролями пользователей"} />
+                <NavItem linkTo={"users-roles"} linkLabel={"Управление ролями пользователей"} />
                 <NavItem linkTo={"support-inbox"} linkLabel={"Входящие сообщения пользователей"} />
-                <NavItem linkTo={"hours-added"} linkLabel={"Редактирование учебных часов"} />
+                <NavItem linkTo={"hours-added"} linkLabel={"Управление учебными часами студентов"} />
             </Stack>
         </Center>;
 
