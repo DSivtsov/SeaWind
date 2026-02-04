@@ -1,4 +1,5 @@
-﻿using Infrastructure.Postgres.Main;
+﻿using Infrastructure.Postgres.Identity;
+using Infrastructure.Postgres.Main;
 using Infrastructure.Postgres.Main.Seeders;
 using Infrastructure.Postgres.Seeding;
 using Infrastructure.Postgres.Seeding.ContextDB;
@@ -26,6 +27,9 @@ public static class AddDbSeeders
         services.AddSingleton<ISeedCoreOptions, DefaultSeedCoreOptions>();
         services.AddSingleton<IPathFile, PathFile>();
 
+        // регистратор сервиса проверки наличия и создания администратора
+        services.AddScoped<EnsureSuperAdmin>();
+
         // регистратор сервиса анализа престов сидирования
         services.AddSingleton<SeedPresetAnalyzer>();
 
@@ -40,12 +44,15 @@ public static class AddDbSeeders
         // Нужно указать DbContext в который будут загружаться данные
         services.AddScoped<IDbContextRunner, RunnerContextDB<MainDbContext>>();
         services.AddScoped<IDbContextRunner, RunnerContextDB<TimeDbContext>>();
+        services.AddScoped<IDbContextRunner, RunnerContextDB<AppIdentityDbContext>>();
 
         // Нужно указать сидеры которые будут загружать данные
         services.AddScoped<ISeeder<TimeDbContext>, TesterSeeder>();
         services.AddScoped<ISeeder<TimeDbContext>, CarSeeder>();
         services.AddScoped<ISeeder<MainDbContext>, CourseSeeder>();
         services.AddScoped<ISeeder<MainDbContext>, LectureSeeder>();
+        services.AddScoped<ISeeder<AppIdentityDbContext>, AppUserSeeder>();
+        services.AddScoped<ISeeder<AppIdentityDbContext>, AspNetUserRolesSeeder>();
 
         return services;
     }

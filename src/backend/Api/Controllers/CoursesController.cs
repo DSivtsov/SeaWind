@@ -29,8 +29,6 @@ public class CoursesController : ControllerBase
     {
         IEnumerable<CourseDto> dtos = await _service.GetAllCoursesAsync();
 
-        //Response.Headers["Cache-Control"] = "public, max-age=60";
-
         return Ok(dtos);
     }
 

@@ -1,7 +1,7 @@
 ﻿using Api.Identity;
+using Application.Models;
 using AutoFixture;
 using AutoFixture.AutoMoq;
-using Infrastructure.Postgres.Identity;
 using Microsoft.AspNetCore.Identity;
 
 namespace Api.UnitTests.Identity;

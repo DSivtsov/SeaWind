@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
 
-namespace Infrastructure.Postgres.Identity;
+namespace Application.Models;
 
 public class AppUser : IdentityUser { }

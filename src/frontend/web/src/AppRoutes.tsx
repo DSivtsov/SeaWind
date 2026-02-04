@@ -21,6 +21,7 @@ import { CourseLecturesPage } from "@/pages/courses/layoutTabs/CourseLecturesPag
 import { CourseLayoutTabs } from "@/pages/courses/layoutTabs/CourseLayoutTabs";
 
 import { AdminLayout } from "@/pages/admin/AdminLayout";
+import { AdminManageUserRoles } from "@/pages/admin/AdminManageUserRoles";
 
 export function AppRoutes() {
   return (
@@ -86,7 +87,7 @@ export function AppRoutes() {
           <Route index element={<Navigate to="users-roles" replace />} />
           <Route path="hours-added" element={<PagePlaceholder title="Admin · EditHoursAdded" />} />
           <Route path="support-inbox" element={<PagePlaceholder title="Admin · SupportInbox" />} />
-          <Route path="users-roles" element={<PagePlaceholder title="Admin · ManageUsers" />} />
+          <Route path="users-roles" element={<AdminManageUserRoles />} />
         </Route>
 
 

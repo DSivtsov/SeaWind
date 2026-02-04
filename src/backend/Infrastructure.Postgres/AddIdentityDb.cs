@@ -1,4 +1,6 @@
-﻿using Infrastructure.Postgres.Identity;
+﻿using Application.Abstractions.Repositories;
+using Infrastructure.Postgres.Identity;
+using Infrastructure.Postgres.Identity.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -19,6 +21,9 @@ internal static class AddIdentityDb
                     npg.MigrationsHistoryTable("__EFMigrationsHistory", schema: AppIdentityDbContext.Schema);
                 })
             );
+
+        // Репозитории AppIdentityDbContext
+        services.AddScoped<IAdminRepository, AdminRepositoryPostgres>();
 
         return services;
     }
