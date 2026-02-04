@@ -69,7 +69,7 @@ export function AppFrame({ header, navbar, footer, children }: AppFrameProps) {
                 </AppShell.Main>
 
                 {hasNavbarCommon && (
-                    <AppShell.Navbar>
+                    <AppShell.Navbar className="layout-publicHeader">
                         {navbar}
                     </AppShell.Navbar>)}
 
@@ -79,11 +79,7 @@ export function AppFrame({ header, navbar, footer, children }: AppFrameProps) {
                     </AppShell.Footer>)}
             </AppShell>
             {hasNavDrawer &&
-                <Drawer opened={burgerOpened} onClose={toggle} size={WIDTH_MENU_NAVBAR} padding={0}
-                    styles={{
-                        content: { display: "flex", flexDirection: "column" },
-                        body: { flex: 1, padding: 0, display: "flex", alignItems: "center", justifyContent: "center" }
-                    }}>
+                <Drawer opened={burgerOpened} onClose={toggle} size={WIDTH_MENU_NAVBAR} className="layout-publicDrawer">
                     {navbar}
                 </Drawer>}
         </div >

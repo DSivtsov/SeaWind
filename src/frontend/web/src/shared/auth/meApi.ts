@@ -1,6 +1,6 @@
 import { apiRequest } from "@/shared/api/apiRequests";
 
-export type Role = "Guest" | "FreeStudent" | "Student" | "Mentor" | "Admin";
+export type Role = "FreeStudent" | "Student" | "Mentor" | "Admin";
 
 export type User = {
     role: Role;
