@@ -1,4 +1,5 @@
 ﻿using Api.Filters;
+using Application.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
@@ -14,7 +15,7 @@ public static class SetupIdentity
     {
         // Регистрирует базовые сервисы ASP.NET Core Identity без UI (UserManager, SignInManager и др.)
         // Используется для управления пользователями (регистрация, вход, смена пароля и т.п.)
-        services.AddIdentityCore<Infrastructure.Postgres.Identity.AppUser>(opt =>
+        services.AddIdentityCore<AppUser>(opt =>
                 {
                     opt.Password.RequireNonAlphanumeric = false;
                     opt.ClaimsIdentity.UserIdClaimType = ClaimTypes.NameIdentifier;

@@ -14,15 +14,17 @@
 ---
 
 ## Список страниц (Frontend MVP)
-
-| URL | Component | Назначение | Примечания |
-|-----|----------|------------|------------|
-| `http://localhost:5173/` | `LandingPage.tsx` | Публичная landing page проекта | Использует Public Theme v0 |
-| `http://localhost:5173/courses` | `CoursesLayout.tsx` | Страница списка курсов | Данные через `/api/courses` |
-| `/courses/:courseId` | `CourseLayoutTabs.tsx` | Контейнер курса с вкладками | Общая инфраструктура вкладок курса |
-| `/courses/:courseId/lectures` | `CourseLecturesPage.tsx` | Просмотр списка лекций курса | Данные через `/api/courses/{courseId}/lectures` |
-| `/courses/:courseId/exercises` | `PagePlaceholder.tsx` | Список упражнений курса (stub) | Данные через `/api/courses/{courseId}/exercises` |
-| `/courses/:courseId/workshop-sessions` | `PagePlaceholder.tsx` | Сессии воркшопов курса (stub) | Данные через `/api/courses/{courseId}/workshop-sessions` |
+| URL                                    | Component                  | Назначение                           | Примечания                                                                 |
+| -------------------------------------- | -------------------------- | ------------------------------------ | -------------------------------------------------------------------------- |
+| `http://localhost:5173/`               | `LandingPage.tsx`          | Публичная landing page проекта       | Использует Public Theme v0                                                 |
+| `http://localhost:5173/courses`        | `CoursesLayout.tsx`        | Страница списка курсов               | Данные через `/api/courses`                                                |
+| `/courses/:courseId`                   | `CourseLayoutTabs.tsx`     | Контейнер курса с вкладками          | Общая инфраструктура вкладок курса                                         |
+| `/courses/:courseId/lectures`          | `CourseLecturesPage.tsx`   | Просмотр списка лекций курса         | Данные через `/api/courses/{courseId}/lectures`                            |
+| `/courses/:courseId/exercises`         | `PagePlaceholder.tsx`      | Список упражнений курса (stub)       | Данные через `/api/courses/{courseId}/exercises`                           |
+| `/courses/:courseId/workshop-sessions` | `PagePlaceholder.tsx`      | Сессии воркшопов курса (stub)        | Данные через `/api/courses/{courseId}/workshop-sessions`                   |
+| `/admin/hours-added`                   | `PagePlaceholder.tsx`      | Управление временем студентов (stub) | Будущий экран Admin                                                        |
+| `/admin/support/inbox`                 | `PagePlaceholder.tsx`      | Support Chat (Admin, stub)           | Будущий экран Admin                                                        |
+| `/admin/users-roles`                   | `AdminManageUserRoles.tsx` | Управление ролями пользователей      | Данные через `/api/Users`, изменение роли через `PUT /api/Users/{id}/role` |
 
 ### Модальные окна (доступны со страницы `/courses`)
 

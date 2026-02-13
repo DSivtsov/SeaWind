@@ -1,0 +1,77 @@
+[
+  {
+    "Id": "!AppUser.1",
+    "Email": "alice.free@example.com",
+    "PasswordHash": "AQAAAAIAAYagAAAAEGyhfcZ7KecYyWwVmYJOmUf10+s4hjg8FvrrWGhFGZVx7GXRG4gJioCAKarxJ2eGEg=="
+  },
+  {
+    "Id": "!AppUser.2",
+    "Email": "bob.student@example.com",
+    "PasswordHash": "AQAAAAIAAYagAAAAEGyhfcZ7KecYyWwVmYJOmUf10+s4hjg8FvrrWGhFGZVx7GXRG4gJioCAKarxJ2eGEg=="
+  },
+  {
+    "Id": "!AppUser.3",
+    "Email": "carol.student@example.com",
+    "PasswordHash": "AQAAAAIAAYagAAAAEGyhfcZ7KecYyWwVmYJOmUf10+s4hjg8FvrrWGhFGZVx7GXRG4gJioCAKarxJ2eGEg=="
+  },
+  {
+    "Id": "!AppUser.4",
+    "Email": "dave.mentor@example.com",
+    "PasswordHash": "AQAAAAIAAYagAAAAEGyhfcZ7KecYyWwVmYJOmUf10+s4hjg8FvrrWGhFGZVx7GXRG4gJioCAKarxJ2eGEg=="
+  },
+  {
+    "Id": "!AppUser.5",
+    "Email": "erin.admin@example.com",
+    "PasswordHash": "AQAAAAIAAYagAAAAEGyhfcZ7KecYyWwVmYJOmUf10+s4hjg8FvrrWGhFGZVx7GXRG4gJioCAKarxJ2eGEg=="
+  },
+  {
+    "Id": "!AppUser.6",
+    "Email": "frank.free@example.com",
+    "PasswordHash": "AQAAAAIAAYagAAAAEGyhfcZ7KecYyWwVmYJOmUf10+s4hjg8FvrrWGhFGZVx7GXRG4gJioCAKarxJ2eGEg=="
+  },
+  {
+    "Id": "!AppUser.7",
+    "Email": "grace.student@example.com",
+    "PasswordHash": "AQAAAAIAAYagAAAAEGyhfcZ7KecYyWwVmYJOmUf10+s4hjg8FvrrWGhFGZVx7GXRG4gJioCAKarxJ2eGEg=="
+  },
+  {
+    "Id": "!AppUser.8",
+    "Email": "heidi.mentor@example.com",
+    "PasswordHash": "AQAAAAIAAYagAAAAEGyhfcZ7KecYyWwVmYJOmUf10+s4hjg8FvrrWGhFGZVx7GXRG4gJioCAKarxJ2eGEg=="
+  },
+  {
+    "Id": "!AppUser.9",
+    "Email": "ivan.admin@example.com",
+    "PasswordHash": "AQAAAAIAAYagAAAAEGyhfcZ7KecYyWwVmYJOmUf10+s4hjg8FvrrWGhFGZVx7GXRG4gJioCAKarxJ2eGEg=="
+  },
+  {
+    "Id": "!AppUser.10",
+    "Email": "judy.student@example.com",
+    "PasswordHash": "AQAAAAIAAYagAAAAEGyhfcZ7KecYyWwVmYJOmUf10+s4hjg8FvrrWGhFGZVx7GXRG4gJioCAKarxJ2eGEg=="
+  },
+  {
+    "Id": "!AppUser.11",
+    "Email": "kate.free@example.com",
+    "PasswordHash": "AQAAAAIAAYagAAAAEGyhfcZ7KecYyWwVmYJOmUf10+s4hjg8FvrrWGhFGZVx7GXRG4gJioCAKarxJ2eGEg=="
+  },
+  {
+    "Id": "!AppUser.12",
+    "Email": "leo.student@example.com",
+    "PasswordHash": "AQAAAAIAAYagAAAAEGyhfcZ7KecYyWwVmYJOmUf10+s4hjg8FvrrWGhFGZVx7GXRG4gJioCAKarxJ2eGEg=="
+  },
+  {
+    "Id": "!AppUser.13",
+    "Email": "mia.student@example.com",
+    "PasswordHash": "AQAAAAIAAYagAAAAEGyhfcZ7KecYyWwVmYJOmUf10+s4hjg8FvrrWGhFGZVx7GXRG4gJioCAKarxJ2eGEg=="
+  },
+  {
+    "Id": "!AppUser.14",
+    "Email": "nick.mentor@example.com",
+    "PasswordHash": "AQAAAAIAAYagAAAAEGyhfcZ7KecYyWwVmYJOmUf10+s4hjg8FvrrWGhFGZVx7GXRG4gJioCAKarxJ2eGEg=="
+  },
+  {
+    "Id": "!AppUser.15",
+    "Email": "olivia.admin@example.com",
+    "PasswordHash": "AQAAAAIAAYagAAAAEGyhfcZ7KecYyWwVmYJOmUf10+s4hjg8FvrrWGhFGZVx7GXRG4gJioCAKarxJ2eGEg=="
+  }
+]

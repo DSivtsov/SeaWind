@@ -1,4 +1,4 @@
-﻿using Infrastructure.Postgres.Identity;
+﻿using Application.Models;
 using Microsoft.AspNetCore.Identity;
 using System.Globalization;
 using System.Net.Mail;

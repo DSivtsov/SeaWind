@@ -1,7 +1,7 @@
 ﻿using Api.Dtos;
 using Api.Exceptions;
 using Api.Identity;
-using Infrastructure.Postgres.Identity;
+using Application.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 

@@ -16,17 +16,19 @@ internal sealed class MainRunner : IMainRunnerSeeding
     private readonly IOptions<SeedCoreParameters> _coreOpt;
     private readonly ILogger<MainRunner> _logger;
     private readonly SeedPresetAnalyzer _seedPresetAnalyzer;
-
+    private readonly EnsureSuperAdmin _ensureSuperAdmin;
 
     public MainRunner(IEnumerable<IDbContextRunner> runners,
-                    IOptions<SeedCoreParameters> coreOpt,
-                    ILogger<MainRunner> logger,
-                    SeedPresetAnalyzer seedPresetAnalyzer)
+                     IOptions<SeedCoreParameters> coreOpt,
+                     ILogger<MainRunner> logger,
+                     SeedPresetAnalyzer seedPresetAnalyzer,
+                     EnsureSuperAdmin ensureSuperAdmin)
     {
         _runners = runners;
         _coreOpt = coreOpt;
         _logger = logger;
         _seedPresetAnalyzer = seedPresetAnalyzer;
+        _ensureSuperAdmin = ensureSuperAdmin;
     }
 
     public async Task Run(CancellationToken ct = default)
@@ -54,6 +56,8 @@ internal sealed class MainRunner : IMainRunnerSeeding
         {
             await runner.RunAsync(ct);
         }
+
+        await _ensureSuperAdmin.CreateSuperAdminAsync();
 
         _logger.LogInformation("[SEEDING FINISHED]");
     }

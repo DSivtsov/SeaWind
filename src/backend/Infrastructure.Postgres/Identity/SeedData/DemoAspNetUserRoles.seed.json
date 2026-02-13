@@ -1,0 +1,62 @@
+[
+  {
+    "UserId": "!AppUser.1",
+    "RoleId": "role-freestudent"
+  },
+  {
+    "UserId": "!AppUser.2",
+    "RoleId": "role-student"
+  },
+  {
+    "UserId": "!AppUser.3",
+    "RoleId": "role-student"
+  },
+  {
+    "UserId": "!AppUser.4",
+    "RoleId": "role-mentor"
+  },
+  {
+    "UserId": "!AppUser.5",
+    "RoleId": "role-admin"
+  },
+  {
+    "UserId": "!AppUser.6",
+    "RoleId": "role-freestudent"
+  },
+  {
+    "UserId": "!AppUser.7",
+    "RoleId": "role-student"
+  },
+  {
+    "UserId": "!AppUser.8",
+    "RoleId": "role-mentor"
+  },
+  {
+    "UserId": "!AppUser.9",
+    "RoleId": "role-admin"
+  },
+  {
+    "UserId": "!AppUser.10",
+    "RoleId": "role-student"
+  },
+  {
+    "UserId": "!AppUser.11",
+    "RoleId": "role-freestudent"
+  },
+  {
+    "UserId": "!AppUser.12",
+    "RoleId": "role-student"
+  },
+  {
+    "UserId": "!AppUser.13",
+    "RoleId": "role-student"
+  },
+  {
+    "UserId": "!AppUser.14",
+    "RoleId": "role-mentor"
+  },
+  {
+    "UserId": "!AppUser.15",
+    "RoleId": "role-admin"
+  }
+]

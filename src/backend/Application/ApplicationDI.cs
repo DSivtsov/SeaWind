@@ -1,5 +1,6 @@
 using Application.Abstractions.Services;
 using Application.AbstractionsTime.Services;
+using Application.UseCasesAdmin;
 using Application.UseCasesCourse;
 using Application.UseCasesTime;
 using Microsoft.Extensions.DependencyInjection;
@@ -12,6 +13,7 @@ public static class ApplicationDI
     {
         services.AddScoped<ITesterService, TesterService>();
         services.AddScoped<ICourseService, CourseService>();
+        services.AddScoped<IAdminUserService, AdminUserService>();
         return services;
     }
 }
