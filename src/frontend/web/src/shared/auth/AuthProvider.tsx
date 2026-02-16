@@ -3,8 +3,8 @@ import { clearAccessPack, getAccessPack, setAccessPack, ACCESS_PACK_KEY } from "
 import { AuthContext } from "@/shared/auth/authContext";
 import { useNavigate } from "react-router-dom";
 import { fetchMe, type Me } from "@/shared/auth/meApi";
-import type { AccessDeniedInfo } from "@/pages/courses/list/CoursesAccessDeniedModal";
-import { onAccessDenied, type AccessDeniedReason } from "@/shared/auth/authListeners";
+import type { RedirectInfo } from "@/pages/courses/list/CoursesAccessDeniedModal";
+import { onAccessDenied, type RedirectReason } from "@/shared/auth/authListeners";
 
 export type AuthState = {
   initials: string;
@@ -40,8 +40,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   });
 
   // Handle action at any AccessDeniedReason
-  const handleOnAccessDeniedCases = useCallback((reason?: AccessDeniedReason) => {
-    const info: AccessDeniedInfo | undefined = reason ? { reason: reason } : undefined;
+  const handleOnAccessDeniedCases = useCallback((reason?: RedirectReason) => {
+    const info: RedirectInfo | undefined = reason ? { reason: reason } : undefined;
     navigate("/courses", {
       replace: true,
       state: info,

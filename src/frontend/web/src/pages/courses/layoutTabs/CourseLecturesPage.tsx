@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Badge, Box, Card, Grid, Group, Modal, Skeleton, Stack, Text } from "@mantine/core";
 import { useAuthContext } from "@/shared/auth/authContext";
-import { getAllLecturesByCourseIdOrdered, type CourseLectureDto } from "@/pages/courses/layoutTabs/CourseLayoutTabsApi";
+import { getAllLecturesByCourseIdOrdered, type CourseLectureDto }
+  from "@/pages/courses/layoutTabs/courseLayoutTabsApi";
 import { PageShell } from "@/shared/components/PageShell";
 import { httpError, type ApiError } from "@/shared/api/apiError";
 
@@ -140,7 +141,7 @@ function readyView(
               {lec.description ?? ""}
             </Text>
             <Text size="xs" c="dimmed">
-              Click to open video
+              Нажмите ▶ для открытия видеоурока.
             </Text>
           </Stack>
         </Card>

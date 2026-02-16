@@ -12,13 +12,16 @@
     "typecheck_min": "npx tsc -b --noEmit --pretty false"
   },
   "dependencies": {
+    "@mantine/code-highlight": "^8.3.12",
     "@mantine/core": "^8.3.10",
     "@mantine/hooks": "^8.3.10",
     "@mantine/notifications": "^8.3.12",
     "@tabler/icons-react": "^3.36.0",
+    "mermaid": "^11.12.3",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
-    "react-router-dom": "^7.9.4"
+    "react-router-dom": "^7.9.4",
+    "shiki": "^3.22.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.36.0",

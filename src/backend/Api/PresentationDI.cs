@@ -1,5 +1,6 @@
 ﻿using Api.Filters;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
+using Microsoft.AspNetCore.StaticFiles;
 using System.Text.Json.Serialization;
 
 namespace Api;
@@ -74,13 +75,20 @@ public static class PresentationDI
             app.UseSwagger();
             app.UseSwaggerUI();
             app.UseCors("Dev"); // разрешаем фронту с 5173
-            // В DEV SPA раздаёт Vite: статику и fallback здесь не включаем
         }
-        else
+
+        // В PROD SPA уже собран и лежит в wwwroot/
+        // В DEV SPA раздаёт Vite: но статику для wwwroot/exercises/ раздает всегда API Server
+        // но fallback здесь не включаем
+        var contentTypeProvider = new FileExtensionContentTypeProvider();
+        contentTypeProvider.Mappings[".cs"] = "text/plain; charset=utf-8";
+        contentTypeProvider.Mappings[".mmd"] = "text/plain; charset=utf-8";
+        contentTypeProvider.Mappings[".md"] = "text/markdown; charset=utf-8";
+
+        app.UseStaticFiles(new StaticFileOptions
         {
-            // В PROD SPA уже собран и лежит в wwwroot/
-            app.UseStaticFiles();
-        }
+            ContentTypeProvider = contentTypeProvider
+        });
 
         app.UseRouting();
 
@@ -114,7 +122,7 @@ public static class PresentationDI
         app.MapControllers();
 
         // Потом SPA-fallback (только в PROD)
-        if (!app.Environment.IsDevelopment())
+        if (!app.Environment.IsDevelopment() && !isIntegrationTestRun)
         {
             app.MapFallbackToFile("{*path}", "index.html");
         }

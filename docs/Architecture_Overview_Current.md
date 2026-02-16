@@ -1,5 +1,5 @@
 # Architecture Overview — WorkshopCode (Current)
-**Version:** v17
+**Version:** v19
 
 ## 🧾 About
  Описывает решения принятые в процесс разработки проекта.
@@ -372,33 +372,95 @@ src/
 ```
 
 ### Совместная работа фроненда и бекенда
-Зависит от типа окружения
-- **DEV:**
-  - **CORS** включён только в Dev, чтобы фронтенд (SPA на `5173`) мог обращаться к API (`5000`).
-  - SPA: `http://localhost:5173`
-  - API: `http://localhost:5000/api/...`
-  - Swagger: `http://localhost:5000/swagger`
-  - В директории `wwwroot` сервиса API находится заглушка, которая отдаёт статику и выполняет fallback на `index.html`.
-- **PROD:**
-  - SPA и API на одном домене
-  - Готовая сборка фронтенда копируется в `src/backend/Api/wwwroot`, где бэкенд отдаёт статику и обеспечивает **SPA fallback**  на `index.html`
+Работа фронтенда и бекенда зависит от типа окружения (DEV / PROD).
+Во всех окружениях используется единый принцип разделения маршрутов:
 
-#### Middleware и порядок в Program.cs
-| Middleware                        | Dev (Vite)      | Prod (wwwroot + SPA)       | Назначение |
-| --------------------------------- | --------------- | -------------------------- | ------------------------------------------------ |
-| `UseForwardedHeaders()`           | ❌ (опционально) | ✅ (если есть прокси) | Поддержка X-Forwarded-* за реверс-прокси |
-| `UseHttpsRedirection()`           | ❌ | ✅ | Перенаправление на HTTPS |
-| `UseHsts()`                       | ❌ | ✅ | Защита от downgrade-атак |
-| `UseStaticFiles()`                | ❌ | ✅ | Отдаём SPA-сборку из wwwroot |
-| `UseRouting()`                    | ✅ | ✅ | Общий пайплайн API |
-| `UseCors("Dev")`                 | ✅ | ❌ | CORS только в Dev (для Vite) |
-| `UseAuthentication()` / `UseAuthorization()` | ⚠️ при наличии | ⚠️ при наличии | Для JWT/Auth |
-| `MapControllers()`                | ✅ | ✅ | API до fallback |
-| `MapFallbackToFile("index.html")` | ❌ | ✅ | SPA fallback |
-**Почему так**
-- В Dev: Vite даёт HMR и быструю итерацию.
-- В Prod: бэкенд обслуживает и API, и SPA на одном домене.
-- Порядок в Program.cs (сначала Controllers, затем Fallback) гарантирует разделение `/api/*` и роутов SPA.
+* `/api/*` → API-контроллеры
+* `/exercises/*` → статические файлы упражнений (из `wwwroot`)
+* всё остальное → маршрутизация SPA (React Router)
+
+---
+
+### DEV
+
+В DEV фронтенд и бекенд запускаются отдельно.
+
+* SPA (Vite): `http://localhost:5173`
+* API: `http://localhost:5000`
+* Swagger: `http://localhost:5000/swagger`
+
+Особенности:
+
+* **CORS включён только в DEV**, чтобы SPA могла обращаться к API.
+* Vite обслуживает SPA и обеспечивает HMR.
+* API обслуживает:
+
+  * `/api/*`
+  * `/exercises/*` (статика упражнений из `wwwroot`)
+* `MapFallbackToFile("index.html")` в DEV не используется.
+* SPA-маршрутизация полностью обрабатывается Vite dev-server.
+
+---
+
+### PROD
+
+В PROD SPA и API находятся на одном домене.
+
+Production build фронтенда копируется в:
+
+```
+src/backend/Api/wwwroot
+```
+
+Особенности:
+
+* `UseStaticFiles()` обслуживает:
+
+  * SPA build
+  * статические файлы упражнений (`/exercises/*`)
+* `MapControllers()` обслуживает `/api/*`
+* `MapFallbackToFile("index.html")` обеспечивает SPA fallback
+  (deep-links корректно работают)
+
+Итоговое поведение:
+
+* `/api/*` → контроллеры
+* `/exercises/*` → физические файлы
+* любые другие пути → `index.html` → React Router
+
+---
+
+## Middleware и порядок в Program.cs
+
+| Middleware                                   | Dev (Vite) | Prod (wwwroot + SPA)  | Назначение                                  |
+| -------------------------------------------- | ---------- | --------------------- | ------------------------------------------- |
+| `UseForwardedHeaders()`                      | ❌          | ✅ (при proxy/nginx)   | Поддержка X-Forwarded-*                     |
+| `UseHttpsRedirection()`                      | ❌          | ❌ (HTTPS через proxy) | Перенаправление на HTTPS                    |
+| `UseHsts()`                                  | ❌          | ❌ (через proxy)       | HSTS                                        |
+| `UseStaticFiles()`                           | ✅          | ✅                     | Раздача `/exercises/*` и (в PROD) SPA build |
+| `UseRouting()`                               | ✅          | ✅                     | Общий pipeline                              |
+| `UseCors("Dev")`                             | ✅          | ❌                     | Только для DEV                              |
+| `UseAuthentication()` / `UseAuthorization()` | ⚠️         | ⚠️                    | JWT / роли                                  |
+| `MapControllers()`                           | ✅          | ✅                     | Обработка `/api/*`                          |
+| `MapFallbackToFile("index.html")`            | ❌          | ✅                     | SPA fallback                                |
+
+---
+
+## Почему порядок важен
+
+1. `UseStaticFiles()` должен идти **до fallback**,
+   чтобы `/exercises/*` не перехватывался SPA.
+
+2. `MapControllers()` должен идти **до fallback**,
+   чтобы `/api/*` не уходил в `index.html`.
+
+3. `MapFallbackToFile()` должен быть последним.
+
+Это гарантирует корректное разделение:
+
+* API
+* статических файлов упражнений
+* маршрутов SPA
 
 ---
 
@@ -455,6 +517,7 @@ CI/CD реализован с использованием GitHub Actions (**wor
 📘 Детальное описание см. [ADR-0021 — Create CI & CD for develop & TST](./adr/0021-create-ci-cd-develop-tst.md)
 
 ## Change Log
+- v19 (2026-02-18) — актуализация  разделов `Совместная работа фроненда и бекенда` (`UseStaticFiles() in DEV`)
 - v18 (2026-01-30) — актуализация  разделов `Аутентификация и управление доступом` (BootstrapGuard)
 - v17 (2026-01-18) — актуализация  разделов `Аутентификация и управление доступом` ("разделение 403 по уровням")
 - v16 (2026-01-17) — актуализация  разделов `Аутентификация и управление доступом` (guard)

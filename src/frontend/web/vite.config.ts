@@ -6,6 +6,10 @@ import path from "path";
 const target = process.env.API_URL || 'http://localhost:5000';
 
 export default defineConfig({
+  build: {
+    chunkSizeWarningLimit: 800, // или 1000
+  },
+
   plugins: [react()],
 
   resolve: {
@@ -20,6 +24,16 @@ export default defineConfig({
         target,
         changeOrigin: true,
         secure: false
+      },
+      "/contentExercises": {
+        target,
+        changeOrigin: true,
+        secure: false,
+      },
+      "/chatsExercise": {
+        target,
+        changeOrigin: true,
+        secure: false,
       }
     }
   }

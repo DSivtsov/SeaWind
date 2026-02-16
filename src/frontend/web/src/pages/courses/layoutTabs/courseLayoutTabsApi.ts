@@ -1,3 +1,4 @@
+import { stub_getAllExercisesByCourseIdOrdered } from "@/pages/courses/layoutTabs/stubCourseLayoutTabsApi";
 import type { CourseDto } from "@/pages/courses/list/CoursesApi";
 import { apiRequest } from "@/shared/api/apiRequests";
 
@@ -7,6 +8,13 @@ export type CourseLectureDto = {
     title: string;
     videoUrl?: string | null;
     description?: string | null;
+};
+
+export type CourseExerciseDto = {
+    id: string;
+    orderNo: number;
+    title: string;
+    shortDescription?: string;
 };
 
 export async function getCourseById(courseId: string, token: string, signal?: AbortSignal): Promise<CourseDto> {
@@ -20,3 +28,11 @@ export async function getAllLecturesByCourseIdOrdered(courseId: string, token: s
 
     return apiRequest<CourseLectureDto[]>(urlGetAllLecturesByCourseId, { method: "GET", parse: "json", signal }, token);
 }
+
+export async function getAllExercisesByCourseIdOrdered(courseId: string, token: string, signal?: AbortSignal): Promise<CourseExerciseDto[]> {
+
+    return stub_getAllExercisesByCourseIdOrdered(courseId, token, signal);
+}
+
+
+

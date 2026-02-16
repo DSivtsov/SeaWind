@@ -20,7 +20,7 @@ type ReadyCourseViewProps = {
     activeTab: CourseTab,
 };
 
-export function ReadyCourseView({ course, activeTab }: ReadyCourseViewProps) {
+export function CourseView({ course, activeTab }: ReadyCourseViewProps) {
     const { id, title, description } = course;
     const { isNarrow } = useAppCtx();
     const navigate = useNavigate();
