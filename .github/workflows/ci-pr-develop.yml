@@ -5,6 +5,10 @@ on:
     types: [opened, reopened, synchronize]
     branches:
       - develop
+    paths:
+      - 'src/**'
+      - 'docker/**'
+      - 'tests/**'
 
 jobs:
   ci-pr-develop:
