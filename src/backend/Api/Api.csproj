@@ -25,6 +25,7 @@
 	<!--Это не логическая связь Api c Application и Infrastructure, а технологическая для запуска DI-->
 	<ItemGroup>
 		<ProjectReference Include="..\Application\Application.csproj" />
+		<ProjectReference Include="..\Infrastructure.Mongo\Infrastructure.Mongo.csproj" />
 		<ProjectReference Include="..\Infrastructure.Postgres\Infrastructure.Postgres.csproj" />
 	</ItemGroup>
 </Project>

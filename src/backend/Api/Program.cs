@@ -3,6 +3,7 @@ using Api.Identity;
 using Api.Trace;
 using Application;
 using Infrastructure.Postgres;
+using Infrastructure.Mongo;
 using Infrastructure.Postgres.Seeding;
 
 namespace Api;
@@ -21,6 +22,7 @@ public class Program
         builder.Services
             .AddApplication()
             .AddInfrastructure(cfg)
+            .AddMongoInfrastructure(cfg)
             .AddPresentation(cfg, builder.Environment);
 
         // Настраиваем JWT аутентификацию и авторизацию
