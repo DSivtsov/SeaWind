@@ -22,6 +22,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infrastructure.Postgres", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infrastructure.UnitTests", "tests\Infrastructure.UnitTests\Infrastructure.UnitTests.csproj", "{71AF16C1-B994-4434-8549-73DBA802DFBF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infrastructure.Mongo", "src\backend\Infrastructure.Mongo\Infrastructure.Mongo.csproj", "{2BC5ED42-2D18-4456-BCC2-B8A2D211ABBC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -52,6 +54,10 @@ Global
 		{71AF16C1-B994-4434-8549-73DBA802DFBF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{71AF16C1-B994-4434-8549-73DBA802DFBF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{71AF16C1-B994-4434-8549-73DBA802DFBF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2BC5ED42-2D18-4456-BCC2-B8A2D211ABBC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2BC5ED42-2D18-4456-BCC2-B8A2D211ABBC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2BC5ED42-2D18-4456-BCC2-B8A2D211ABBC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2BC5ED42-2D18-4456-BCC2-B8A2D211ABBC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -63,6 +69,7 @@ Global
 		{B6F7D088-C83D-46A1-BDC4-9D0218ACABDC} = {019FED03-8ADF-4C25-8B4B-A2E69B26B1D8}
 		{0D9A3B91-6F59-4B22-8DC3-9FE4835A4456} = {EAF2A4AC-4A44-4DE0-BECA-E72C68007453}
 		{71AF16C1-B994-4434-8549-73DBA802DFBF} = {019FED03-8ADF-4C25-8B4B-A2E69B26B1D8}
+		{2BC5ED42-2D18-4456-BCC2-B8A2D211ABBC} = {EAF2A4AC-4A44-4DE0-BECA-E72C68007453}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {563DA8B7-95B5-4369-9D07-AE43505E9535}

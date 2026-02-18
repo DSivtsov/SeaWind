@@ -17,11 +17,11 @@ services:
       - pgdata:/var/lib/postgresql/data
       - ./init:/docker-entrypoint-initdb.d:ro
     healthcheck:
-      test: ["CMD-SHELL","pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}" ]
       interval: 5s
       timeout: 3s
       retries: 20
-    networks: [internal]
+    networks: [ internal ]
 
   api:
     build:
@@ -36,6 +36,8 @@ services:
     environment:
       # перекрывает appsettings.Development.json:
       ConnectionStrings__Default: "Host=db;Port=${POSTGRES_PORT_INT};Database=${POSTGRES_DB};Username=${APP_USER};Password=${APP_PASSWORD};Pooling=true"
+      Mongo__SupportChat: "mongodb://${MONGO_INITDB_ROOT_USERNAME}:${MONGO_INITDB_ROOT_PASSWORD}@${MONGO_CONTAINER}:${MONGO_PORT_INT}/${MONGO_DB_SUPPORT}?authSource=admin"
+      Mongo__ExerciseChat: "mongodb://${MONGO_INITDB_ROOT_USERNAME}:${MONGO_INITDB_ROOT_PASSWORD}@${MONGO_CONTAINER}:${MONGO_PORT_INT}/${MONGO_DB_EXERCISE}?authSource=admin"
       ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENVIRONMENT}
       ASPNETCORE_DataProtection__ApplicationName: WorkshopCode.Dev
       DataProtection__Path: /keys
@@ -43,17 +45,40 @@ services:
     depends_on:
       db:
         condition: service_healthy
+      mongo:
+        condition: service_healthy
     ports:
       - "${HTTP_PORT_EXT}:${HTTP_PORT_INT}"
     healthcheck:
-      test: ["CMD-SHELL", "curl -fsS http://localhost:${HTTP_PORT_INT}/health || exit 1"]
+      test: [ "CMD-SHELL", "curl -fsS http://localhost:${HTTP_PORT_INT}/health || exit 1" ]
       interval: 10s
       timeout: 3s
       retries: 12
-    networks: [internal]
+    networks: [ internal ]
+
+  mongo:
+    image: mongo:7.0.29
+    container_name: ${MONGO_CONTAINER}
+    restart: unless-stopped
+    ports:
+      - "${MONGO_PORT_EXT}:${MONGO_PORT_INT}"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
+    volumes:
+      - mongo_data:/data/db
+    healthcheck:
+      test: [ "CMD-SHELL", "mongosh --quiet --username $${MONGO_INITDB_ROOT_USERNAME} --password $${MONGO_INITDB_ROOT_PASSWORD} --authenticationDatabase admin --eval 'db.adminCommand({ ping: 1 }).ok' | grep 1 >/dev/null || exit 1" ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+    networks: [ internal ]
 
 networks:
   internal:
 
+
 volumes:
   pgdata:
+  mongo_data:
