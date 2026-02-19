@@ -1,3 +1,3 @@
 ﻿namespace Api.Dtos;
 
-public record UserMeDto(string role, string email);
+public record UserMeDto(string userId, string role, string email);
