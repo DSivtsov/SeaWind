@@ -31,7 +31,6 @@
 	</ItemGroup>
 	<ItemGroup>
 		<!--Replace to CopyToOutputDirectory=PreserveNewest-->
-		<None Include="Time\SeedData\**\*" CopyToOutputDirectory="Always" />
 		<None Include="Main\SeedData\**\*" CopyToOutputDirectory="Always" />
 		<None Include="Identity\SeedData\**\*" CopyToOutputDirectory="Always" />
 	</ItemGroup>

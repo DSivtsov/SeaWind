@@ -4,8 +4,6 @@ using Infrastructure.Postgres.Main.Seeders;
 using Infrastructure.Postgres.Seeding;
 using Infrastructure.Postgres.Seeding.ContextDB;
 using Infrastructure.Postgres.Seeding.Shared;
-using Infrastructure.Postgres.Time;
-using Infrastructure.Postgres.Time.Seeders;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -43,12 +41,9 @@ public static class AddDbSeeders
 
         // Нужно указать DbContext в который будут загружаться данные
         services.AddScoped<IDbContextRunner, RunnerContextDB<MainDbContext>>();
-        services.AddScoped<IDbContextRunner, RunnerContextDB<TimeDbContext>>();
         services.AddScoped<IDbContextRunner, RunnerContextDB<AppIdentityDbContext>>();
 
         // Нужно указать сидеры которые будут загружать данные
-        services.AddScoped<ISeeder<TimeDbContext>, TesterSeeder>();
-        services.AddScoped<ISeeder<TimeDbContext>, CarSeeder>();
         services.AddScoped<ISeeder<MainDbContext>, CourseSeeder>();
         services.AddScoped<ISeeder<MainDbContext>, LectureSeeder>();
         services.AddScoped<ISeeder<AppIdentityDbContext>, AppUserSeeder>();
