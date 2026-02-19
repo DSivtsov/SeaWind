@@ -3,6 +3,7 @@ import { apiRequest } from "@/shared/api/apiRequests";
 export type Role = "FreeStudent" | "Student" | "Mentor" | "Admin";
 
 export type User = {
+    userId: string;
     role: Role;
     email: string;
 };

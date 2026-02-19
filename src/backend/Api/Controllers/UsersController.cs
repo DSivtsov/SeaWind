@@ -28,7 +28,7 @@ public sealed class UsersController : ControllerBase
     /// Возвращает информацию о текущем авторизованном пользователе из JWT-токена.
     /// </summary>
     /// <remarks>
-    /// Использует данные из клеймов токена (Role и Email).
+    /// Использует данные из клеймов токена (userId, Role и Email).
     /// </remarks>
     /// <returns>
     /// Объект <see cref="UserMeDto"/> с именем и идентификатором пользователя.
@@ -40,15 +40,18 @@ public sealed class UsersController : ControllerBase
     [ProducesResponseType(typeof(UserMeDto), StatusCodes.Status200OK)]
     public ActionResult<UserMeDto> GetMe()
     {
-        var role = User.FindFirst(ClaimTypes.Role)?.Value;          // role есть всегда в текущем JWT
-        var email = User.FindFirst(ClaimTypes.Email)?.Value;         // emailaddress есть всегда в текущем JWT
-
         // В рамках MVP формат JWT фиксирован,
-        // поэтому наличие клеймов токена (Role и Email) считается детерминированным
-        if (role == null || email == null)
-            throw new InvariantViolationException("Ошибка получения данных.");
+        // поэтому наличие клеймов токена (userId, Role и Email) считается детерминированным
+        string userId = User.FindFirstValue(ClaimTypes.NameIdentifier)
+            ?? throw new InvariantViolationException("Missing NameIdentifier claim.");
 
-        return Ok(new UserMeDto(role, email));
+        string role = User.FindFirstValue(ClaimTypes.Role)
+            ?? throw new InvariantViolationException("Missing Role claim.");
+
+        string email = User.FindFirstValue(ClaimTypes.Email)
+            ?? throw new InvariantViolationException("Missing Email claim.");
+
+        return Ok(new UserMeDto(userId, role, email));
     }
 
     /// <summary>
