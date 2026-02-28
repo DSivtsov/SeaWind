@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Badge, Box, Card, Grid, Group, Modal, Skeleton, Stack, Text } from "@mantine/core";
 import { useAuthContext } from "@/shared/auth/authContext";
@@ -25,41 +25,47 @@ function isValidHttpUrl(url: string): boolean {
 export function CourseLecturesPage() {
   const { courseId } = useParams<{ courseId: string }>();
   const authCtx = useAuthContext();
-
   const token = authCtx.state.token ?? null;
-
   const [lecturesPageState, setLecturesPageState] = useState<LecturesPageState>({ kind: "loading" });
   const [badLinkOpened, setBadLinkOpened] = useState(false);
+  const refController = useRef<AbortController>(null);
 
-  useEffect(() => {
+  const load = useCallback(async () => {
     if (!courseId || !token) {
       // Defensive: RouteGuard should prevent entering here without token.
       setLecturesPageState({ kind: "error", error: httpError("parse", "Missing courseId or token"), });
       return;
     }
+
+    refController.current?.abort();
     const abortController = new AbortController();
+    refController.current = abortController;
 
-    (async function () {
-      try {
-        setLecturesPageState({ kind: "loading" });
+    try {
+      setLecturesPageState({ kind: "loading" });
 
-        const lectures: CourseLectureDto[] = await getAllLecturesByCourseIdOrdered(courseId, token, abortController.signal);
-        //lectures = (() => [...lectures].sort((a, b) => a.orderNo - b.orderNo))();
+      const lectures: CourseLectureDto[] = await getAllLecturesByCourseIdOrdered(courseId, token, abortController.signal);
 
-        if (!lectures || lectures.length === 0) {
-          setLecturesPageState({ kind: "empty" });
-          return;
-        }
-
-        setLecturesPageState({ kind: "ready", lectures });
-      } catch (e) {
-        if (abortController.signal.aborted) return;
-        setLecturesPageState({ kind: "error", error: e as ApiError });
+      if (!lectures || lectures.length === 0) {
+        setLecturesPageState({ kind: "empty" });
+        return;
       }
-    })();
 
-    return () => abortController.abort();
+      setLecturesPageState({ kind: "ready", lectures });
+    } catch (e) {
+      if (abortController.signal.aborted) return;
+      setLecturesPageState({ kind: "error", error: e as ApiError });
+    }
+
   }, [courseId, token]);
+
+  useEffect(() => {
+    load();
+
+    return () => refController.current?.abort();
+  }, [load]);
+
+  const retry = load;
 
   const openLectureVideo = (lecture: CourseLectureDto) => {
     const url = (lecture.videoUrl ?? "").trim();
@@ -88,6 +94,7 @@ export function CourseLecturesPage() {
         emptyView={emptyView}
         errorText="Проблема с сервером. Не могу получить информацию о лекциях курса."
         error={lecturesPageState.kind === "error" ? lecturesPageState.error : undefined}
+        onRetry={retry}
       >
         {lecturesPageState.kind === "ready" && readyView(lecturesPageState.lectures, openLectureVideo)}
       </PageShell>

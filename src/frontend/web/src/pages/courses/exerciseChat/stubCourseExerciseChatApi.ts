@@ -1,24 +1,28 @@
-import type { ExerciseContentBlockDto, ChatMessageDto, ChatThreadDto, ChatAttachmentDto }
+import type { ExerciseContentBlockDto, ChatMessageDto, ChatThreadDto, ChatAttachmentDto, ExerciseDto }
     from "@/pages/courses/exerciseChat/courseExerciseChatApi";
 import { Exercises } from "@/pages/courses/layoutTabs/stubCourseLayoutTabsApi";
 import { httpError } from "@/shared/api/apiError";
 import { demoFunction, generateSafeName, generateUUIDNoDash, type DemoOpt } from "@/shared/api/stubApiRequest";
 
-const demoExerciseData: DemoOpt = { delay: 1000, forceError: null };    // forceError = "DEMO_FORCED_ERROR"
+// import {type ApiError}  from "@/shared/api/apiError";
+// const error: ApiError = httpError("http", "msg", 404);
+const demoExerciseData: DemoOpt = { delay: 1000, };    // forceError: error | forceThrow "DEMO_FORCED_ERROR" | undefined
 
-export async function stub_getExerciseData(token: string, signal: AbortSignal | undefined, exerciseId: string) {
+export async function stub_getExerciseData(token: string, signal: AbortSignal | undefined, exerciseId: string): Promise<ExerciseDto> {
     void token;
     void signal;
 
     await demoFunction(demoExerciseData);
 
-    if (exerciseId !== "60659bf0-0b5a-11f1-b4ac-0800200c9a66") {
+    if (exerciseId !== "cb47b48f-af74-522f-9428-00b63ecd5dff") {
         throw httpError("http", "NotFoundError", 404);
     }
-    return Exercises[0];
+
+    const exercise: ExerciseDto = Exercises[0];
+    return exercise;
 }
 
-const demoExerciseContentBlock: DemoOpt = { delay: 1000, forceError: null };    // forceError = "DEMO_FORCED_ERROR"
+const demoExerciseContentBlock: DemoOpt = { delay: 1000, forceError: null };    // forceError: error | forceThrow "DEMO_FORCED_ERROR" | undefined
 
 export async function stub_getExerciseContentBlock(token: string, signal: AbortSignal | undefined, exerciseId: string) {
     void token;
@@ -27,7 +31,7 @@ export async function stub_getExerciseContentBlock(token: string, signal: AbortS
     //return apiRequest<CourseExerciseChatDto>(urlGetCourseById, { method: "GET", parse: "json", signal }, token);
     await demoFunction(demoExerciseContentBlock);
 
-    if (exerciseId !== "60659bf0-0b5a-11f1-b4ac-0800200c9a66") {
+    if (exerciseId !== "cb47b48f-af74-522f-9428-00b63ecd5dff") {
         throw httpError("http", "NotFoundError", 404);
     }
     return demoContentBlock;
@@ -52,19 +56,19 @@ const demoContentBlock: ExerciseContentBlockDto = {
 
     "blocks": [
         {
-            "kind": "code",
-            "language": "csharp",
-            "contentUrl": "/contentExercises/func-basic/example.cs",
+            "kind": "Code",
+            "typeContent": "CSharp",
+            "urlFile": "/contentExercises/csharp-basic/func-basic_example.cs",
         },
         {
-            "kind": "picture",
-            "contentUrl": "/contentExercises/func-basic/example.png",
+            "kind": "Picture",
+            "urlFile": "/contentExercises/csharp-basic/func-basic_example.png",
         }
     ]
 };
 
 
-const demoPostAttachmentMessage: DemoOpt = { delay: 3000, forceError: null };    // forceError = "DEMO_FORCED_ERROR"
+const demoPostAttachmentMessage: DemoOpt = { delay: 3000, forceError: null };    // forceError: error | forceThrow "DEMO_FORCED_ERROR" | undefined
 
 export async function stub_postAttachmentMessage(token: string, signal: AbortSignal | undefined,
     exerciseId: string, file: File): Promise<ChatAttachmentDto> {
@@ -85,7 +89,7 @@ export async function stub_postAttachmentMessage(token: string, signal: AbortSig
 }
 
 
-const demoPostExerciseChatMessages: DemoOpt = { delay: 4000, forceError: null };    // forceError = "DEMO_FORCED_ERROR"
+const demoPostExerciseChatMessages: DemoOpt = { delay: 4000, forceError: null };    // forceError: error | forceThrow "DEMO_FORCED_ERROR" | undefined
 
 export async function stub_postExerciseChatMessage(token: string, signal: AbortSignal | undefined,
     exerciseId: string, newChatMessage: ChatMessageDto): Promise<string> {
@@ -101,7 +105,7 @@ export async function stub_postExerciseChatMessage(token: string, signal: AbortS
 }
 
 
-const demoGetExerciseChatMessages: DemoOpt = { delay: 1000, forceError: null };    // forceError = "DEMO_FORCED_ERROR"
+const demoGetExerciseChatMessages: DemoOpt = { delay: 1000, forceError: null };    // forceError: error | forceThrow "DEMO_FORCED_ERROR" | undefined
 
 export async function stub_getExerciseChatMessages(token: string, signal: AbortSignal | undefined, exerciseId: string, studentId: string) {
     void token;
@@ -109,7 +113,7 @@ export async function stub_getExerciseChatMessages(token: string, signal: AbortS
 
     await demoFunction(demoGetExerciseChatMessages);
 
-    if (exerciseId !== "60659bf0-0b5a-11f1-b4ac-0800200c9a66" ||
+    if (exerciseId !== "cb47b48f-af74-522f-9428-00b63ecd5dff" ||
         (studentId !== "3b795346-78d9-5464-87a7-f18e37343066" &&        //nick.mentor@example.com
             studentId !== "8cb9fe4e-5dc7-5be5-8cd4-0038cd267ab7"))          //carol.student@example.com
         throw httpError("http", "NotFoundError", 404);
@@ -126,7 +130,7 @@ const demoChatMessages: ChatMessageDto[] =
                 {
                     "attachmentId": "att_0001",
                     "fileName": "Solution.cs",
-                    "url": "/chatsExercise/csharp-basic/60659bf0-0b5a-11f1-b4ac-0800200c9a66/f48222bd2bfd412a__Solution.cs"
+                    "url": "/chatsExercise/csharp-basic/cb47b48f-af74-522f-9428-00b63ecd5dff/f48222bd2bfd412a__Solution.cs"
                 }
             ],
         },
@@ -146,7 +150,7 @@ const demoChatMessages: ChatMessageDto[] =
                 {
                     "attachmentId": "att_0001",
                     "fileName": "Solution.cs",
-                    "url": "/chatsExercise/csharp-basic/60659bf0-0b5a-11f1-b4ac-0800200c9a66/f48222bd2bfd412a__Solution.cs"
+                    "url": "/chatsExercise/csharp-basic/cb47b48f-af74-522f-9428-00b63ecd5dff/f48222bd2bfd412a__Solution.cs"
                 }
             ],
         },
@@ -166,7 +170,7 @@ const demoChatMessages: ChatMessageDto[] =
                 {
                     "attachmentId": "att_0001",
                     "fileName": "Solution.cs",
-                    "url": "/chatsExercise/csharp-basic/60659bf0-0b5a-11f1-b4ac-0800200c9a66/f48222bd2bfd412a__Solution.cs"
+                    "url": "/chatsExercise/csharp-basic/cb47b48f-af74-522f-9428-00b63ecd5dff/f48222bd2bfd412a__Solution.cs"
                 }
             ],
         },
@@ -186,7 +190,7 @@ const demoChatMessages: ChatMessageDto[] =
                 {
                     "attachmentId": "att_0001",
                     "fileName": "Solution.cs",
-                    "url": "/chatsExercise/csharp-basic/60659bf0-0b5a-11f1-b4ac-0800200c9a66/f48222bd2bfd412a__Solution.cs"
+                    "url": "/chatsExercise/csharp-basic/cb47b48f-af74-522f-9428-00b63ecd5dff/f48222bd2bfd412a__Solution.cs"
                 }
             ],
         },
@@ -200,7 +204,7 @@ const demoChatMessages: ChatMessageDto[] =
     ];
 
 
-const demoExerciseChatThread: DemoOpt = { delay: 1000, forceError: null };    // forceError = "DEMO_FORCED_ERROR"
+const demoExerciseChatThread: DemoOpt = { delay: 1000, forceError: null };    // forceError: error | forceThrow "DEMO_FORCED_ERROR" | undefined
 
 export async function stub_getExerciseChatThread(token: string, signal: AbortSignal | undefined, courseId: string, exerciseId: string, userId: string) {
     void token;
@@ -209,7 +213,7 @@ export async function stub_getExerciseChatThread(token: string, signal: AbortSig
     await demoFunction(demoExerciseChatThread);
 
     if (courseId !== "csharp-basic" ||
-        exerciseId !== "60659bf0-0b5a-11f1-b4ac-0800200c9a66" ||
+        exerciseId !== "cb47b48f-af74-522f-9428-00b63ecd5dff" ||
         userId !== "3b795346-78d9-5464-87a7-f18e37343066") {
         throw httpError("http", "NotFoundError", 404);
     }
@@ -221,7 +225,7 @@ const demoChatThread: ChatThreadDto =
     "threadId": "thr_c1_e1_s_alice",
     "scope": {
         "courseId": "csharp-basic",
-        "exerciseId": "60659bf0-0b5a-11f1-b4ac-0800200c9a66",
+        "exerciseId": "cb47b48f-af74-522f-9428-00b63ecd5dff",
         "studentId": "3b795346-78d9-5464-87a7-f18e37343066"
     },
     "lastMessageAt": "2026-02-19T19:40:20.000Z",

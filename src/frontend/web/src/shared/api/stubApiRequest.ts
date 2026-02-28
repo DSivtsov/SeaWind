@@ -1,10 +1,18 @@
+import type { ApiError } from "@/shared/api/apiError";
+
 const sleep = (ms: number) => new Promise<void>((r) => setTimeout(r, ms));
 
-export type DemoOpt = { delay?: number, forceError: string | null };
+//const error: ApiError = httpError("http", "msg", 404);
+export type DemoOpt =
+    | { delay?: number; forceError?: null }
+    | { delay?: number; forceError: ApiError }
+    | { delay?: number; forceThrow?: string }; // намеренно "не ApiError"
 
-export async function demoFunction({ delay, forceError }: DemoOpt): Promise<void> {
-    if (delay !== undefined) await sleep(delay);
-    if (forceError) throw new Error(forceError);
+export async function demoFunction(opt: DemoOpt): Promise<void> {
+    if (opt.delay !== undefined) await sleep(opt.delay);
+
+    if ("forceError" in opt && opt.forceError) throw opt.forceError;
+    if ("forceThrow" in opt) throw new Error(opt.forceThrow);
 }
 
 export function generateUUIDNoDash(): string {

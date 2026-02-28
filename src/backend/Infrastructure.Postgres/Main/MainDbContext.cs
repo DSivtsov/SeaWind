@@ -13,6 +13,10 @@ public class MainDbContext : DbContext
 
     public DbSet<Lecture> Lectures => Set<Lecture>();
 
+    public DbSet<Exercise> Exercises => Set<Exercise>();
+
+    public DbSet<ExerciseContent> ExerciseContents => Set<ExerciseContent>();
+
     protected override void OnModelCreating(ModelBuilder builder)
     {
         // Таблицы будут создаваться в схеме main
@@ -20,6 +24,7 @@ public class MainDbContext : DbContext
 
         builder.ApplyConfigurationsFromAssembly(typeof(CourseTableConfig).Assembly);
         builder.ApplyConfigurationsFromAssembly(typeof(LectureTableConfig).Assembly);
-
+        builder.ApplyConfigurationsFromAssembly(typeof(ExerciseTableConfig).Assembly);
+        builder.ApplyConfigurationsFromAssembly(typeof(ExerciseContentTableConfig).Assembly);
     }
 }

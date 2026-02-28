@@ -1,5 +1,5 @@
 ﻿using Application.DtoAdmin;
-using Application.UseCasesAdmin;
+using Application.UseCases;
 
 namespace Application.Abstractions.Repositories;
 

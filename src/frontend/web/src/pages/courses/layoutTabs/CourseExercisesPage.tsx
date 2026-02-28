@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Badge, Box, Card, Grid, Group, Skeleton, Stack, Text } from "@mantine/core";
 import { useAuthContext } from "@/shared/auth/authContext";
@@ -17,40 +17,46 @@ export function CourseExercisesPage() {
   const { courseId } = useParams<{ courseId: string }>();
   const authCtx = useAuthContext();
   const navigate = useNavigate();
-
   const token = authCtx.state.token ?? null;
-
   const [exercisesPageState, setExercisesPageState] = useState<ExercisesPageState>({ kind: "loading" });
+  const refController = useRef<AbortController>(null);
 
-  useEffect(() => {
+  const load = useCallback(async () => {
     if (!courseId || !token) {
       // Defensive: RouteGuard should prevent entering here without token.
       setExercisesPageState({ kind: "error", error: httpError("parse", "Missing courseId or token"), });
       return;
     }
+
+    refController.current?.abort();
     const abortController = new AbortController();
+    refController.current = abortController;
 
-    (async function () {
-      try {
-        setExercisesPageState({ kind: "loading" });
+    try {
+      setExercisesPageState({ kind: "loading" });
 
-        const exercises: CourseExerciseDto[] = await getAllExercisesByCourseIdOrdered(courseId, token, abortController.signal);
+      const exercises: CourseExerciseDto[] = await getAllExercisesByCourseIdOrdered(courseId, token, abortController.signal);
 
-        if (!exercises || exercises.length === 0) {
-          setExercisesPageState({ kind: "empty" });
-          return;
-        }
-
-        setExercisesPageState({ kind: "ready", exercises: exercises });
-      } catch (e) {
-        if (abortController.signal.aborted) return;
-        setExercisesPageState({ kind: "error", error: e as ApiError });
+      if (!exercises || exercises.length === 0) {
+        setExercisesPageState({ kind: "empty" });
+        return;
       }
-    })();
 
-    return () => abortController.abort();
+      setExercisesPageState({ kind: "ready", exercises: exercises });
+    } catch (e) {
+      if (abortController.signal.aborted) return;
+      setExercisesPageState({ kind: "error", error: e as ApiError });
+    }
   }, [courseId, token]);
 
+  useEffect(() => {
+
+    load();
+
+    return () => refController.current?.abort();
+  }, [load]);
+
+  const retry = load;
 
   const openExerciseChat = (exercise: CourseExerciseDto) => {
     //navigate(`${exercise.id}/chat`);
@@ -68,6 +74,7 @@ export function CourseExercisesPage() {
         emptyView={emptyView}
         errorText="Проблема с сервером. Не могу получить информацию об упражнениях курса."
         error={exercisesPageState.kind === "error" ? exercisesPageState.error : undefined}
+        onRetry={retry}
       >
         {exercisesPageState.kind === "ready" && readyView(exercisesPageState.exercises, openExerciseChat)}
       </PageShell>

@@ -7,7 +7,9 @@ public interface ICourseRepository
 {
     Task<IEnumerable<Course>> GetAlCoursesAsync();
     
-    Task<IEnumerable<Lecture>> GetAllLecturesByCourseIdOrderedAscAsyn(string id);
+    Task<IEnumerable<Lecture>> GetAllLecturesByCourseIdOrderedAscAsyn(string courseId);
+
+    Task<IEnumerable<Exercise>> GetAllExercisesByCourseIdOrderedAscAsyn(string courseId);
 
     Task<Course?> GetCourseByIdAsync(string courseId);
 }

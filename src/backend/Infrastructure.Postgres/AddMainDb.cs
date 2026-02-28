@@ -23,6 +23,8 @@ internal static class AddMainDb
 
         // Репозитории MainDbContext
         services.AddScoped<ICourseRepository, CourseRepositoryPostgres>();
+        services.AddScoped<IExerciseRepository, ExerciseRepositoryPostgres>();
+        services.AddScoped<IExerciseContentRepository, ExerciseContentRepositoryPostgres>();
 
         return services;
     }

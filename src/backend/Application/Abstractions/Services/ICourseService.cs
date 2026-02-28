@@ -6,7 +6,9 @@ public interface ICourseService
 {
     Task<IEnumerable<CourseDto>> GetAllCoursesAsync();
 
-    Task<CourseDto?> GetCourseByIdAsync(string id);
+    Task<CourseDto?> GetCourseByIdAsync(string courseId);
 
-    Task<IEnumerable<LectureListItemDto>> GetAllLecturesByCourseIdAsync(string id);
+    Task<IEnumerable<LectureListItemDto>> GetAllLecturesByCourseIdOrderedAsync(string courseId);
+
+    Task<IEnumerable<ExercisesListItemDto>> GetAllExercisesByCourseIdOrderedAsync(string courseId);
 }

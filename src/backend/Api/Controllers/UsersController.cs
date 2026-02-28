@@ -3,7 +3,7 @@ using Api.Exceptions;
 using Application.Abstractions.Repositories;
 using Application.Abstractions.Services;
 using Application.DtoAdmin;
-using Application.UseCasesAdmin;
+using Application.UseCases;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;

@@ -2,7 +2,7 @@
 using Application.Abstractions.Services;
 using Application.DtoAdmin;
 
-namespace Application.UseCasesAdmin;
+namespace Application.UseCases;
 
 public enum UpdateUserRoleResult
 {

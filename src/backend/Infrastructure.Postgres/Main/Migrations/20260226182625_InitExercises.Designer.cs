@@ -3,6 +3,7 @@ using System;
 using Infrastructure.Postgres.Main;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Postgres.Main.Migrations
 {
     [DbContext(typeof(MainDbContext))]
-    partial class MainDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260226182625_InitExercises")]
+    partial class InitExercises
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -89,28 +92,6 @@ namespace Infrastructure.Postgres.Main.Migrations
                         });
                 });
 
-            modelBuilder.Entity("Application.Models.ExerciseContent", b =>
-                {
-                    b.Property<Guid>("ExerciseId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("ContentBlocksJson")
-                        .IsRequired()
-                        .HasColumnType("jsonb")
-                        .HasColumnName("content_blocks");
-
-                    b.Property<string>("Details")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("ExerciseId");
-
-                    b.ToTable("exercise_content", "main", t =>
-                        {
-                            t.HasCheckConstraint("CK_ExerciseContent_ContentBlocks_IsArray", "jsonb_typeof(content_blocks) = 'array'");
-                        });
-                });
-
             modelBuilder.Entity("Application.Models.Lecture", b =>
                 {
                     b.Property<Guid>("Id")
@@ -170,15 +151,6 @@ namespace Infrastructure.Postgres.Main.Migrations
                     b.HasOne("Application.Models.Course", null)
                         .WithMany()
                         .HasForeignKey("CourseId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Application.Models.ExerciseContent", b =>
-                {
-                    b.HasOne("Application.Models.Exercise", null)
-                        .WithOne()
-                        .HasForeignKey("Application.Models.ExerciseContent", "ExerciseId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

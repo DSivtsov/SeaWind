@@ -1,18 +1,23 @@
 import {
-    stub_getExerciseChatMessages, stub_getExerciseChatThread, stub_getExerciseContentBlock, stub_getExerciseData,
+    stub_getExerciseChatMessages, stub_getExerciseChatThread,
     stub_postAttachmentMessage,
     stub_postExerciseChatMessage
 } from "@/pages/courses/exerciseChat/stubCourseExerciseChatApi";
-import { type CourseExerciseDto } from "@/pages/courses/layoutTabs/courseLayoutTabsApi";
 import type { ApiError } from "@/shared/api/apiError";
+import { apiRequest } from "@/shared/api/apiRequests";
 import type { Role } from "@/shared/auth/meApi";
+
+export type ExerciseDto = {
+    orderNo: number;
+    title: string;
+};
 
 export type ExerciseContentBlockDto = {
     details: string
 
     blocks: Array<
-        { kind: "picture"; contentUrl: string }
-        | { kind: "code"; contentUrl: string; language: "csharp" | "json" | "text" }
+        { kind: "Picture"; urlFile: string }
+        | { kind: "Code"; urlFile: string; typeContent: "CSharp" | "Json" | "Text" }
     >
 }
 
@@ -68,15 +73,19 @@ export type ChatMessageUi = ChatMessageDto & {
     statusUpload: UploadStatus
 }
 
-export async function getExerciseData(exerciseId: string, token: string, signal?: AbortSignal): Promise<CourseExerciseDto> {
+export async function getExerciseData(exerciseId: string, token: string, signal?: AbortSignal): Promise<ExerciseDto> {
+    const urlGetExerciseDataById = `/api/exercises/${encodeURIComponent(exerciseId)}`;
 
-    return await stub_getExerciseData(token, signal, exerciseId);
+    return apiRequest<ExerciseDto>(urlGetExerciseDataById, { method: "GET", parse: "json", signal }, token);
+    //return await stub_getExerciseData(token, signal, exerciseId);
 }
 
 export async function getExerciseContentBlock(exerciseId: string, token: string,
     signal?: AbortSignal): Promise<ExerciseContentBlockDto> {
+    const urlGetExerciseContentBlockById = `/api/exercises/${encodeURIComponent(exerciseId)}/content`;
 
-    return await stub_getExerciseContentBlock(token, signal, exerciseId);
+    return apiRequest<ExerciseContentBlockDto>(urlGetExerciseContentBlockById, { method: "GET", parse: "json", signal }, token);
+    //return await stub_getExerciseContentBlock(token, signal, exerciseId);
 }
 
 export async function loadCode(codeUrl: string, signal: AbortSignal) {
