@@ -58,7 +58,7 @@
 * Middleware `UseHttpsRedirection()`на **API** выключен по умолчанию (**HTTPS** обеспечивается через **proxy-server nginx**)
 * Версия Node.js зафиксирована
 * **Pull Request** создаются под задачи (**Task**) из **EPIC Backlog** (таск-трекер **GitHub Projects**)
-* **CI** проверяет `build, тесты и миграции`
+* **CI** проверяет backend build/test и frontend typecheck/build
 * **SSOT:**
   * **Build/Test** — только через `dotnet CLI (Release)`
   * **Run** (PROD) — только через `dotnet CLI (Release)` или `Docker Compose CLI (Release)`
