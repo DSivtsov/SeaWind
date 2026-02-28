@@ -1,0 +1,346 @@
+import { useAuthContext } from "@/shared/auth/authContext";
+import { AppFrame } from "@/shared/layout/AppFrame";
+import {
+    Stack, Box, Badge, Button, Card, Divider, Group, ScrollArea, SegmentedControl, Tabs,
+    Text, TextInput, Image
+} from "@mantine/core";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { AppHeaderSimple } from "@/shared/layout/AppHeaderSimple";
+import {
+    getExerciseContentBlock, getExerciseData, loadCode, type ExerciseContentBlockDto
+} from "@/pages/courses/exerciseChat/courseExerciseChatApi";
+import { ContentError, ContentSkeleton, ZoneShell, type UiZoneState } from "@/shared/components/ZoneShell";
+import { type ApiError } from "@/shared/api/apiError";
+import type { CourseExerciseDto } from "@/pages/courses/layoutTabs/courseLayoutTabsApi";
+import { CodeHighlight, CodeHighlightAdapterProvider, createShikiAdapter } from '@mantine/code-highlight';
+import { loadShiki } from '@/shared/functions/loadShiki';
+import { ChatExercises } from "@/pages/courses/exerciseChat/ChatExercises";
+
+const heightExerciseContent = 160;
+const shikiAdapter = createShikiAdapter(loadShiki);
+
+export function CourseExerciseChat() {
+    const location = useLocation();
+    const navigate = useNavigate();
+
+    const { exerciseId } = useParams();
+    const authCtx = useAuthContext();
+    const token = authCtx.state.token;
+    const userId = authCtx.me.kind === "ready" ? authCtx.me.user.userId : null;
+
+    const [courseExerciseState, setCourseExerciseState] = useState<UiZoneState<CourseExerciseDto>>({ kind: "loading" });
+    const [exerciseContentBlockState, setExerciseContentBlockState] = useState<UiZoneState<ExerciseContentBlockDto>>({ kind: "loading" });
+
+    const controllerRef = useRef<AbortController | null>(null);
+
+    const [codeContentBlockState, setCodeContentBlockState] = useState<UiZoneState<string | null>>({ kind: "empty" });
+    const [picContentBlockState, setPicContentBlockState] = useState<UiZoneState<string | null>>({ kind: "empty" });
+
+    function handleBack() {
+        const from = location.state?.from as string | undefined;
+
+        if (typeof from === "string" && from.length > 0) {
+            navigate(from);
+        } else {
+            navigate("/courses"); // fallback
+        }
+    }
+
+    const loadExerciseData = useCallback(async () => {
+        controllerRef.current?.abort();
+
+        const abortController = new AbortController();
+        controllerRef.current = abortController;
+
+        if (!exerciseId || !token) {
+            // Defensive: RouteGuard should prevent entering here without token.
+            setCourseExerciseState({ kind: "error", message: "Missing data or token" });
+            setExerciseContentBlockState({ kind: "error", message: "Missing data or token" });
+            return;
+        }
+
+        try {
+            setCourseExerciseState({ kind: "loading" });
+            setExerciseContentBlockState({ kind: "loading" });
+
+            const courseExercise: CourseExerciseDto = await getExerciseData(exerciseId, token, abortController.signal);
+
+            setCourseExerciseState({ kind: "ready", data: courseExercise });
+
+            const exerciseContentBlockDto: ExerciseContentBlockDto = await getExerciseContentBlock(exerciseId, token,
+                abortController.signal);
+
+            setExerciseContentBlockState({ kind: "ready", data: exerciseContentBlockDto });
+
+        } catch (e) {
+            if (abortController.signal.aborted) return;
+            setCourseExerciseState({ kind: "error", message: (e as ApiError).message });
+            setExerciseContentBlockState({ kind: "error", message: (e as ApiError).message });
+        }
+    }, [exerciseId, token]);
+
+    const onRetry = loadExerciseData;
+
+    useEffect(() => {
+        loadExerciseData();
+        return () => controllerRef.current?.abort();
+    }, [loadExerciseData]);
+
+    const contentBlock = useMemo(() => {
+        let picUrl: string | null = null;
+        let codeUrl: string | null = null;
+
+        if (exerciseContentBlockState.kind === "ready") {
+            for (const b of exerciseContentBlockState.data.blocks) {
+                if (b.kind === "picture") picUrl = b.contentUrl;
+                if (b.kind === "code") codeUrl = b.contentUrl;
+            }
+        }
+        return { picUrl, codeUrl };
+    }, [exerciseContentBlockState]);
+
+    useEffect(() => {
+        const abortController = new AbortController();
+
+        const run = async () => {
+            if (!token) {
+                setCodeContentBlockState({ kind: "empty" });
+                setPicContentBlockState({ kind: "empty" });
+                return;
+            }
+
+            // ставим loading только тем, что реально будем грузить/показывать
+            if (contentBlock.codeUrl) setCodeContentBlockState({ kind: "loading" });
+            else setCodeContentBlockState({ kind: "empty" });
+
+            if (contentBlock.picUrl) setPicContentBlockState({ kind: "loading" });
+            else setPicContentBlockState({ kind: "empty" });
+
+            try {
+                if (contentBlock.codeUrl) {
+                    const code = await loadCode(contentBlock.codeUrl, abortController.signal);
+                    if (abortController.signal.aborted) return;
+                    setCodeContentBlockState({ kind: "ready", data: code });
+                }
+
+                if (contentBlock.picUrl) {
+                    if (abortController.signal.aborted) return;
+                    // тут ты НЕ грузишь картинку, а просто сохраняешь url
+                    setPicContentBlockState({ kind: "ready", data: contentBlock.picUrl });
+                }
+            } catch (e) {
+                if (abortController.signal.aborted) return;
+                const message = (e as ApiError).message;
+                setCodeContentBlockState({ kind: "error", message });
+                setPicContentBlockState({ kind: "error", message });
+            }
+        };
+
+        void run();
+
+        return () => abortController.abort();
+
+    }, [contentBlock.codeUrl, contentBlock.picUrl, token]);
+
+
+    const headerSimple =
+        <AppHeaderSimple
+            headerTitle="Course Exercise Chat"
+            headerDescription="For Student and Mentor Only"
+            exitBackOnClick={handleBack}
+        />;
+
+    /*
+        Exit target by role: Student → /courses/:courseId/exercises,
+        Mentor → /mentor/exercises/inbox (navigate replace).
+    */
+
+    const showTitleVm = (data: CourseExerciseDto) =>
+        <Stack gap="xs">
+            <Badge variant="outline">Exercise #{data.orderNo}</Badge>
+            <Text size="sm" c="dimmed">
+                {data.title}
+            </Text>
+        </Stack>;
+
+    const showExerciseDetail = (data: ExerciseContentBlockDto) =>
+        <ScrollArea h="100%" type="auto">
+            <Text size="sm" c="dimmed" style={{ whiteSpace: "pre-line" }} >
+                {data.details}
+            </Text>
+        </ScrollArea>;
+
+    const showCodeContentBlock = (data: string | null) =>
+        <ScrollArea h={heightExerciseContent} type="auto">
+            {data && <CodeHighlight code={data} language="csharp" radius="md" />}
+        </ScrollArea>;
+
+    const showPicContentBlock = (data: string | null) =>
+        <>
+            {data && <Image src={data} fit="contain" h={heightExerciseContent} />}
+        </>;
+
+    return (
+        <div className="layout-publicBg">
+            <AppFrame header={headerSimple} >
+                <CodeHighlightAdapterProvider adapter={shikiAdapter}>
+                    <Group align="stretch" wrap="nowrap" gap="md" h="100%" p="md">
+                        {/* LEFT: Exercise */}
+                        <Stack flex={1} mih={0} miw={0}>
+                            <Card withBorder>
+                                <ZoneShell<CourseExerciseDto> state={courseExerciseState}
+                                    loadingView={<ContentSkeleton size="xs" />}
+                                    error={(msg) => <ContentError smallSize={true} message={msg} onRetry={onRetry}
+                                        title="Ошибка. Не смог загрузить данные задания"
+                                    />}
+                                >
+                                    {showTitleVm}
+                                </ZoneShell>
+                            </Card>
+
+                            <Card withBorder flex={1} mih={0} >
+                                <Stack gap="sm" pb="sm">
+                                    <Text fw={600}>Описание задания</Text>
+                                    <Divider />
+                                </Stack>
+                                <Box flex={1} mih={0}>
+                                    <ZoneShell state={exerciseContentBlockState}
+                                        loadingView={<ContentSkeleton size="xs" />}
+                                        error={(msg) => <ContentError smallSize={true} message={msg} onRetry={onRetry}
+                                            title="Ошибка. Не смог загрузить подробное описание задания"
+                                        />}
+                                    >
+                                        {showExerciseDetail}
+                                    </ZoneShell>
+                                </Box>
+                            </Card>
+
+                            <Card withBorder>
+                                <Stack gap="sm">
+                                    <Text fw={600}>Дополнительная информация</Text>
+
+                                    <Tabs defaultValue="code" keepMounted={false}>
+                                        <Tabs.List>
+                                            <Tabs.Tab value="code">Code</Tabs.Tab>
+                                            <Tabs.Tab value="picture">Picture</Tabs.Tab>
+                                        </Tabs.List>
+
+                                        <Tabs.Panel value="code" pt="sm">
+                                            <Card withBorder radius="md">
+                                                <ScrollArea type="auto"  >
+                                                    <ZoneShell<string | null> state={codeContentBlockState}
+                                                        loadingView={<ContentSkeleton size="xs" />}
+                                                        error={(msg) => <ContentError smallSize={true} message={msg} onRetry={onRetry}
+                                                            title="Ошибка. Не смог загрузить данные задания"
+                                                        />}
+                                                    >
+                                                        {showCodeContentBlock}
+                                                    </ZoneShell>
+                                                </ScrollArea>
+                                            </Card>
+                                        </Tabs.Panel>
+
+                                        <Tabs.Panel value="picture" pt="sm">
+                                            <Card withBorder radius="md">
+                                                <ZoneShell<string | null> state={picContentBlockState}
+                                                    loadingView={<ContentSkeleton size="xs" />}
+                                                    error={(msg) => <ContentError smallSize={true} message={msg} onRetry={onRetry}
+                                                        title="Ошибка. Не смог загрузить данные задания"
+                                                    />}
+                                                >
+                                                    {showPicContentBlock}
+                                                </ZoneShell>
+                                            </Card>
+                                        </Tabs.Panel>
+                                    </Tabs>
+                                </Stack>
+                            </Card>
+                        </Stack>
+
+                        {/* CENTER: Chat */}
+                        <ChatExercises exerciseId={exerciseId} userId={userId} />
+
+                        {/* RIGHT: Status & Time */}
+                        <Box style={{ width: 300, flex: "0 0 300px" }}>
+                            <Stack gap="md">
+                                {/* Student only. Disabled when Mentor is checking or Mark=2. */}
+                                <Card withBorder>
+                                    <Stack gap="sm">
+                                        <Text fw={600}>Exercise Status</Text>
+
+                                        <Group justify="space-between" align="center">
+                                            <Text size="sm">Current mark</Text>
+                                            <Badge variant="light">1</Badge>
+                                        </Group>
+
+                                        <Divider />
+
+                                        <Button fullWidth>
+                                            Send on Check
+                                        </Button>
+                                    </Stack>
+                                </Card>
+
+                                {/* Mentor only. Enabled when ChatWriteRight=Mentor and Mark != 2. */}
+                                <Card withBorder>
+                                    <Stack gap="sm">
+                                        <Text fw={600}>Exercise Status</Text>
+
+                                        <SegmentedControl
+                                            fullWidth
+                                            defaultValue="1"
+                                            data={[
+                                                { label: "0", value: "0" },
+                                                { label: "1", value: "1" },
+                                                { label: "2", value: "2" },
+                                            ]}
+                                        />
+
+                                        <Group grow>
+                                            <Button variant="light">Return</Button>
+                                            <Button>Accept</Button>
+                                        </Group>
+                                    </Stack>
+                                </Card>
+
+                                <Card withBorder>
+                                    <Stack gap="sm">
+                                        <Text fw={600}>Mentor time</Text>
+
+                                        <TextInput
+                                            label="Current session time"
+                                            value="00:12:34"
+                                            readOnly
+                                            description={
+                                                <Text component="span" size="sm" c="red">
+                                                    Session running
+                                                </Text>
+                                            }
+                                        />
+
+                                        <TextInput
+                                            label="Total"
+                                            value="01:45:10"
+                                            readOnly
+                                            description="Accumulated time"
+                                        />
+
+                                        <Group grow>
+                                            <Button variant="light">Start</Button>
+                                            <Button variant="light">Pause</Button>
+                                        </Group>
+
+                                        <Button color="red" variant="light" fullWidth>
+                                            End
+                                        </Button>
+                                    </Stack>
+                                </Card>
+                            </Stack>
+                        </Box>
+                    </Group>
+                </CodeHighlightAdapterProvider>
+            </AppFrame >
+        </div >
+    );
+}

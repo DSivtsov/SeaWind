@@ -4,6 +4,7 @@ import { AppRoutes } from "./AppRoutes";
 //Mantine Provider & styles
 import '@mantine/core/styles.css';
 import '@mantine/notifications/styles.css';
+import '@mantine/code-highlight/styles.css';
 import { MantineProvider, createTheme } from '@mantine/core';
 import { Notifications } from '@mantine/notifications';
 import { AuthProvider } from '@/shared/auth/AuthProvider';

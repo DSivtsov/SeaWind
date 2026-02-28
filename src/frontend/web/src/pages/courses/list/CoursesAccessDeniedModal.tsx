@@ -1,26 +1,21 @@
+import { assertNever } from "@/shared/functions/assertNever";
+import type { RedirectReason } from "@/shared/auth/authListeners";
 import { Code, Group, Modal, Text, ThemeIcon } from "@mantine/core";
 import { IconAlertTriangle, IconInfoCircle } from "@tabler/icons-react";
 
-type LoginReason = "forbidden" | "unauthorized";
-
-export type AccessDeniedInfo = {
-  reason: LoginReason;
+export type RedirectInfo = {
+  reason: RedirectReason;
   fromLocation?: string
 };
 
 type AccessDeniedModalProps = {
-  info: AccessDeniedInfo;
+  info: RedirectInfo;
   onClose: () => void;
 };
 
 export function CoursesAccessDeniedModal({ info, onClose }: AccessDeniedModalProps) {
   const { reason, fromLocation } = info;
-  const isForbidden = reason === "forbidden";
-  const titleText = isForbidden ? "Доступ запрещён" : "Требуется вход";
-  const message = isForbidden ? "Недостаточно прав для выполнения действия" : "Чтобы продолжить, войдите в систему";
-
-  const icon = isForbidden ? <IconAlertTriangle size={18} /> : <IconInfoCircle size={18} />;
-  const iconColor = isForbidden ? "yellow" : "blue";
+  const { iconColor, icon, titleText, message } = getTitleAndText(reason);
 
   const title = (
     <Group gap="sm">
@@ -46,3 +41,36 @@ export function CoursesAccessDeniedModal({ info, onClose }: AccessDeniedModalPro
     </Modal>
   );
 }
+
+function getTitleAndText(reason: "unauthorized" | "forbidden" | "invalid_state") {
+  switch (reason) {
+    case "forbidden":
+      return {
+        iconColor: "yellow",
+        icon: <IconAlertTriangle size={18} />,
+        titleText: "Доступ запрещён",
+        message: "Недостаточно прав для выполнения действия",
+      };
+
+    case "unauthorized":
+      return {
+        iconColor: "blue",
+        icon: <IconInfoCircle size={18} />,
+        titleText: "Требуется вход",
+        message: "Чтобы продолжить, войдите в систему",
+      };
+
+    case "invalid_state":
+      return {
+        iconColor: "red",
+        icon: <IconAlertTriangle size={18} />,
+        titleText: "Ошибка состояния",
+        message:
+          "Страница оказалась в некорректном состоянии. Выполнен возврат на список курсов.",
+      };
+  }
+
+  return assertNever(reason);
+}
+
+

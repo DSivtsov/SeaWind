@@ -7,6 +7,33 @@ export async function demoFunction({ delay, forceError }: DemoOpt): Promise<void
     if (forceError) throw new Error(forceError);
 }
 
+export function generateUUIDNoDash(): string {
+    return crypto.randomUUID().replace(/-/g, "");
+}
+/* Для сегмента URL/папки достаточно правила:
+привести к lower-case
+заменить пробелы на -
+разрешить только [a-z0-9_-]
+всё остальное → -
+схлопнуть повторяющиеся -
+обрезать длину (например 60)
+если пусто → "x"
+*/
+
+export function generateSafeName(name: string): string {
+    const raw = name.trim().toLowerCase();
+
+    const replaced = raw
+        .replace(/\s+/g, "-")
+        .replace(/[^a-z0-9_-]+/g, "-")
+        .replace(/-+/g, "-")
+        .replace(/^-+|-+$/g, "");
+
+    const clipped = replaced.slice(0, 60);
+
+    return clipped.length > 0 ? clipped : "x";
+}
+
 //const demoGetCourse: DemoOpt = { delay: 1000, forceError: null };    // forceError = "DEMO_FORCED_ERROR"
 //const demoGetCourseLectures: DemoOpt = { delay: 1500, forceError: null };    // forceError = "DEMO_FORCED_ERROR"
 

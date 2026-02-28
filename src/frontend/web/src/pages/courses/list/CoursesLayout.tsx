@@ -1,6 +1,6 @@
 import { LoginModal } from "@/pages/auth/LoginModal";
 import { RegistrationModal } from "@/pages/auth/RegistrationModal";
-import { CoursesAccessDeniedModal, type AccessDeniedInfo } from "@/pages/courses/list/CoursesAccessDeniedModal";
+import { CoursesAccessDeniedModal, type RedirectInfo } from "@/pages/courses/list/CoursesAccessDeniedModal";
 import { CoursesListPage } from "@/pages/courses/list/CoursesListPage";
 import { AppFrame } from "@/shared/layout/AppFrame";
 import { AppHeaderCourses } from "@/shared/layout/AppHeaderCourses";
@@ -15,7 +15,7 @@ export function CoursesLayout() {
     const [loginOpened, login] = useDisclosure(false);
     const location = useLocation();
     const navigate = useNavigate();
-    const [accessDeniedInfo, setAccessDeniedInfo] = useState<AccessDeniedInfo | undefined>(undefined);
+    const [accessDeniedInfo, setAccessDeniedInfo] = useState<RedirectInfo | undefined>(undefined);
 
     const { close: closeReg } = reg;
     const { close: closeLogin } = login;
@@ -28,7 +28,7 @@ export function CoursesLayout() {
 
     //Handel route changes with state included AccessDeniedInfo
     useEffect(() => {
-        const info = location.state as AccessDeniedInfo | undefined;
+        const info = location.state as RedirectInfo | undefined;
         if (!info) return;
 
         setAccessDeniedInfo(info);

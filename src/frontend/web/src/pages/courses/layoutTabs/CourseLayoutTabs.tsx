@@ -1,4 +1,4 @@
-import { getCourseById } from "@/pages/courses/layoutTabs/CourseLayoutTabsApi";
+import { getCourseById } from "@/pages/courses/layoutTabs/courseLayoutTabsApi";
 import type { CourseDto } from "@/pages/courses/list/CoursesApi";
 import { useAuthContext } from "@/shared/auth/authContext";
 import { AppHeaderDefault } from "@/shared/layout/AppHeaderDefault";
@@ -7,8 +7,8 @@ import { Stack, Box, Skeleton } from "@mantine/core";
 import { useState, useEffect } from "react";
 import { Outlet, useLocation, useNavigate, useParams } from "react-router-dom";
 import { PageShell } from "@/shared/components/PageShell";
-import { ReadyCourseView, } from "@/pages/courses/layoutTabs/ReadyCourseView";
-import { getActiveTabText, isCourseTab, type CourseTab } from "./COURSE_TABS";
+import { CourseView, } from "@/pages/courses/layoutTabs/CourseView";
+import { isCourseTab, type CourseTab } from "./COURSE_TABS";
 import { httpError, type ApiError } from "@/shared/api/apiError";
 import { AppFooterDefault } from "@/shared/layout/AppFooterDefault";
 
@@ -63,10 +63,17 @@ export function CourseLayoutTabs() {
         return () => abortController.abort();
     }, [courseId, token]);
 
+    const COURSE_TABS_HEADER_DESCR: Record<CourseTab, { header: string, descr: string; }> = {
+        lectures: { header: "Лекции курса", descr: "Переходи к нужной" },
+        exercises: { header: "Упражнения курса", descr: "Переходи к нужному" },
+        workshops: { header: "Семинары курса", descr: "Переходи к нужному" },
+    };
+
+
     const headerDefaultForActiveTab =
         <AppHeaderDefault
-            headerTitle={getActiveTabText(activeTab) + " курса"}
-            headerDescription="Переходи к нужной"
+            headerTitle={COURSE_TABS_HEADER_DESCR[activeTab].header}
+            headerDescription={COURSE_TABS_HEADER_DESCR[activeTab].descr}
             allCoursesOnClick={() => {
                 navigate("/courses");
             }}
@@ -83,7 +90,7 @@ export function CourseLayoutTabs() {
                         error={courseLayoutState.kind === "error" ? courseLayoutState.error : undefined}
                     >
                         {courseLayoutState.kind === "ready"
-                            && <ReadyCourseView course={courseLayoutState.course} activeTab={activeTab} />}
+                            && <CourseView course={courseLayoutState.course} activeTab={activeTab} />}
                     </PageShell>
                 </Box>
                 <Outlet />

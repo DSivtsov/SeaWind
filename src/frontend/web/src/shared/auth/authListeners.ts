@@ -1,6 +1,6 @@
-export type AccessDeniedReason = "unauthorized" | "forbidden";
+export type RedirectReason = "unauthorized" | "forbidden" | "invalid_state";
 
-type Listener = (reason: AccessDeniedReason) => void;
+type Listener = (reason: RedirectReason) => void;
 
 // AuthProvider — главный обработчик,
 // но в будущем могут появиться: логирование, метрики
@@ -26,7 +26,7 @@ export function onAccessDenied(listener: Listener): () => void {
  *
  * MVP: fan-out notification only, no direct UI logic here.
  */
-export function emitAccessDenied(reason: AccessDeniedReason): void {
+export function emitAccessDenied(reason: RedirectReason): void {
     for (const listener of unauthorizedListeners) {
         listener(reason);
     }

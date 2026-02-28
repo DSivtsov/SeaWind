@@ -1,4 +1,4 @@
-import type { AccessDeniedInfo } from "@/pages/courses/list/CoursesAccessDeniedModal";
+import type { RedirectInfo } from "@/pages/courses/list/CoursesAccessDeniedModal";
 import { useAuthContext } from "@/shared/auth/authContext";
 import { Navigate, Outlet, useLocation } from "react-router-dom";
 import { pickRequirement } from "@/shared/components/pickRequirement";
@@ -9,7 +9,7 @@ export function RouteGuard() {
 
   if (!authCtx.isAuthenticated) {
 
-    const info: AccessDeniedInfo = { reason: "unauthorized", fromLocation: location.pathname };
+    const info: RedirectInfo = { reason: "unauthorized", fromLocation: location.pathname };
     return <Navigate to="/courses" replace state={info} />;
   }
 
