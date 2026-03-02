@@ -1,4 +1,3 @@
-import { stub_getAllExercisesByCourseIdOrdered } from "@/pages/courses/layoutTabs/stubCourseLayoutTabsApi";
 import type { CourseDto } from "@/pages/courses/list/CoursesApi";
 import { apiRequest } from "@/shared/api/apiRequests";
 
@@ -30,8 +29,9 @@ export async function getAllLecturesByCourseIdOrdered(courseId: string, token: s
 }
 
 export async function getAllExercisesByCourseIdOrdered(courseId: string, token: string, signal?: AbortSignal): Promise<CourseExerciseDto[]> {
+    const urlGetAllExercisesByCourseId = `/api/courses/${encodeURIComponent(courseId)}/exercises`;
 
-    return stub_getAllExercisesByCourseIdOrdered(courseId, token, signal);
+    return apiRequest<CourseExerciseDto[]>(urlGetAllExercisesByCourseId, { method: "GET", parse: "json", signal }, token);
 }
 
 

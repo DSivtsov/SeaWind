@@ -21,7 +21,7 @@ type ChatExercisesProps = {
     userId: string | null
 };
 
-export function ChatExercises({ exerciseId, userId }: ChatExercisesProps) {
+export function ExerciseChat({ exerciseId, userId }: ChatExercisesProps) {
     const authCtx = useAuthContext();
     const location = useLocation();
     const token = authCtx.state.token;

@@ -8,14 +8,14 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { AppHeaderSimple } from "@/shared/layout/AppHeaderSimple";
 import {
-    getExerciseContentBlock, getExerciseData, loadCode, type ExerciseContentBlockDto
+    getExerciseContentBlock, getExerciseData, loadCode, type ExerciseContentBlockDto,
+    type ExerciseDto
 } from "@/pages/courses/exerciseChat/courseExerciseChatApi";
 import { ContentError, ContentSkeleton, ZoneShell, type UiZoneState } from "@/shared/components/ZoneShell";
 import { type ApiError } from "@/shared/api/apiError";
-import type { CourseExerciseDto } from "@/pages/courses/layoutTabs/courseLayoutTabsApi";
 import { CodeHighlight, CodeHighlightAdapterProvider, createShikiAdapter } from '@mantine/code-highlight';
 import { loadShiki } from '@/shared/functions/loadShiki';
-import { ChatExercises } from "@/pages/courses/exerciseChat/ChatExercises";
+import { ExerciseChat } from "@/pages/courses/exerciseChat/ExerciseChat";
 
 const heightExerciseContent = 160;
 const shikiAdapter = createShikiAdapter(loadShiki);
@@ -29,7 +29,7 @@ export function CourseExerciseChat() {
     const token = authCtx.state.token;
     const userId = authCtx.me.kind === "ready" ? authCtx.me.user.userId : null;
 
-    const [courseExerciseState, setCourseExerciseState] = useState<UiZoneState<CourseExerciseDto>>({ kind: "loading" });
+    const [courseExerciseState, setCourseExerciseState] = useState<UiZoneState<ExerciseDto>>({ kind: "loading" });
     const [exerciseContentBlockState, setExerciseContentBlockState] = useState<UiZoneState<ExerciseContentBlockDto>>({ kind: "loading" });
 
     const controllerRef = useRef<AbortController | null>(null);
@@ -62,22 +62,39 @@ export function CourseExerciseChat() {
 
         try {
             setCourseExerciseState({ kind: "loading" });
-            setExerciseContentBlockState({ kind: "loading" });
 
-            const courseExercise: CourseExerciseDto = await getExerciseData(exerciseId, token, abortController.signal);
-
+            const courseExercise: ExerciseDto = await getExerciseData(exerciseId, token, abortController.signal);
             setCourseExerciseState({ kind: "ready", data: courseExercise });
+        } catch (e) {
+            if (abortController.signal.aborted) return;
+
+            const err = e as ApiError;
+            if (err.status === 404) {
+                setCourseExerciseState({ kind: "error", message: "404 — Failed to load exercise" });
+                return;
+            }
+
+            setCourseExerciseState({ kind: "error", message: err.message });
+        }
+
+        try {
+            setExerciseContentBlockState({ kind: "loading" });
 
             const exerciseContentBlockDto: ExerciseContentBlockDto = await getExerciseContentBlock(exerciseId, token,
                 abortController.signal);
-
             setExerciseContentBlockState({ kind: "ready", data: exerciseContentBlockDto });
 
         } catch (e) {
             if (abortController.signal.aborted) return;
-            setCourseExerciseState({ kind: "error", message: (e as ApiError).message });
-            setExerciseContentBlockState({ kind: "error", message: (e as ApiError).message });
+
+            const err = e as ApiError;
+            if (err.status === 404) {
+                setExerciseContentBlockState({ kind: "error", message: "404 — Failed to load exercise content" });
+                return;
+            }
+            setExerciseContentBlockState({ kind: "error", message: err.message });
         }
+
     }, [exerciseId, token]);
 
     const onRetry = loadExerciseData;
@@ -93,8 +110,8 @@ export function CourseExerciseChat() {
 
         if (exerciseContentBlockState.kind === "ready") {
             for (const b of exerciseContentBlockState.data.blocks) {
-                if (b.kind === "picture") picUrl = b.contentUrl;
-                if (b.kind === "code") codeUrl = b.contentUrl;
+                if (b.kind === "Picture") picUrl = b.urlFile;
+                if (b.kind === "Code") codeUrl = b.urlFile;
             }
         }
         return { picUrl, codeUrl };
@@ -109,7 +126,6 @@ export function CourseExerciseChat() {
                 setPicContentBlockState({ kind: "empty" });
                 return;
             }
-
             // ставим loading только тем, что реально будем грузить/показывать
             if (contentBlock.codeUrl) setCodeContentBlockState({ kind: "loading" });
             else setCodeContentBlockState({ kind: "empty" });
@@ -156,7 +172,7 @@ export function CourseExerciseChat() {
         Mentor → /mentor/exercises/inbox (navigate replace).
     */
 
-    const showTitleVm = (data: CourseExerciseDto) =>
+    const showTitleVm = (data: ExerciseDto) =>
         <Stack gap="xs">
             <Badge variant="outline">Exercise #{data.orderNo}</Badge>
             <Text size="sm" c="dimmed">
@@ -189,15 +205,15 @@ export function CourseExerciseChat() {
                         {/* LEFT: Exercise */}
                         <Stack flex={1} mih={0} miw={0}>
                             <Card withBorder>
-                                <ZoneShell<CourseExerciseDto> state={courseExerciseState}
+                                <ZoneShell<ExerciseDto> state={courseExerciseState}
                                     loadingView={<ContentSkeleton size="xs" />}
                                     error={(msg) => <ContentError smallSize={true} message={msg} onRetry={onRetry}
-                                        title="Ошибка. Не смог загрузить данные задания"
+                                        title="Ошибка. Не удалось загрузить данные задания."
                                     />}
                                 >
                                     {showTitleVm}
                                 </ZoneShell>
-                            </Card>
+                            </Card >
 
                             <Card withBorder flex={1} mih={0} >
                                 <Stack gap="sm" pb="sm">
@@ -256,13 +272,14 @@ export function CourseExerciseChat() {
                                     </Tabs>
                                 </Stack>
                             </Card>
-                        </Stack>
+                        </Stack >
 
                         {/* CENTER: Chat */}
-                        <ChatExercises exerciseId={exerciseId} userId={userId} />
+                        <ExerciseChat exerciseId={exerciseId} userId={userId} />
 
                         {/* RIGHT: Status & Time */}
-                        <Box style={{ width: 300, flex: "0 0 300px" }}>
+                        < Box style={{ width: 300, flex: "0 0 300px" }
+                        }>
                             <Stack gap="md">
                                 {/* Student only. Disabled when Mentor is checking or Mark=2. */}
                                 <Card withBorder>
@@ -337,9 +354,9 @@ export function CourseExerciseChat() {
                                     </Stack>
                                 </Card>
                             </Stack>
-                        </Box>
-                    </Group>
-                </CodeHighlightAdapterProvider>
+                        </Box >
+                    </Group >
+                </CodeHighlightAdapterProvider >
             </AppFrame >
         </div >
     );

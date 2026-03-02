@@ -3,7 +3,7 @@ using Application.Abstractions.Services;
 using Application.DtoCourse;
 using Application.Models;
 
-namespace Application.UseCasesCourse;
+namespace Application.UseCases;
 
 public class CourseService : ICourseService
 {
@@ -19,11 +19,18 @@ public class CourseService : ICourseService
         return courses.Select(c => new CourseDto(c.Id, c.Title,  c.Description));
     }
 
-    public async Task<IEnumerable<LectureListItemDto>> GetAllLecturesByCourseIdAsync(string id)
+    public async Task<IEnumerable<ExercisesListItemDto>> GetAllExercisesByCourseIdOrderedAsync(string id)
+    {
+        IEnumerable<Exercise> exercises = await _courseRepository.GetAllExercisesByCourseIdOrderedAscAsyn(id);
+
+        return exercises.Select(lec => new ExercisesListItemDto(lec.Id, lec.OrderNo, lec.Title, lec.ShortDescription));
+    }
+
+    public async Task<IEnumerable<LectureListItemDto>> GetAllLecturesByCourseIdOrderedAsync(string id)
     {
         IEnumerable<Lecture> lectures = await _courseRepository.GetAllLecturesByCourseIdOrderedAscAsyn(id);
 
-        return lectures.Select(lec => new LectureListItemDto(lec.Id, lec.CourseId, lec.OrderNo, lec.Title,
+        return lectures.Select(lec => new LectureListItemDto(lec.Id, lec.OrderNo, lec.Title,
             lec.VideoUrl, lec.Description));
     }
 

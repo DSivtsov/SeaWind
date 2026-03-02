@@ -33,4 +33,13 @@ public class CourseRepositoryPostgres : ICourseRepository
                         .OrderBy(lec => lec.OrderNo)
                         .ToListAsync();
     }
+
+    public async Task<IEnumerable<Exercise>> GetAllExercisesByCourseIdOrderedAscAsyn(string courseId)
+    {
+        return await _mainDbContext.Exercises
+                .AsNoTracking()
+                .Where(lec => lec.CourseId == courseId)
+                .OrderBy(lec => lec.OrderNo)
+                .ToListAsync();
+    }
 }

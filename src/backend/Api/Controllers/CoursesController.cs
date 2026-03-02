@@ -67,9 +67,28 @@ public class CoursesController : ControllerBase
     public async Task<ActionResult<IEnumerable<LectureListItemDto>>> GetAllLecturesByCourseIdOrderedAsync(
         [FromRoute] string courseId)
     {
-        var dtos = await _service.GetAllLecturesByCourseIdAsync(courseId);
+        var dtos = await _service.GetAllLecturesByCourseIdOrderedAsync(courseId);
 
         return Ok(dtos);
     }
-    
+
+    /// <summary>
+    /// Получить все упражнения курса по courseId
+    /// </summary>
+    /// <param name="courseId">Id курса</param>
+    /// <returns>
+    /// Возвращает коллекцию упражнений курса, отсортированных по возрастанию OrderNo.
+    /// Если упражнения не найдены — возвращает пустую коллекцию.
+    /// </returns>
+    [HttpGet("{courseId}/exercises")]
+    [Authorize]
+    [ProducesResponseType(typeof(IEnumerable<ExercisesListItemDto>), StatusCodes.Status200OK)]
+    public async Task<ActionResult<IEnumerable<ExercisesListItemDto>>> GetAllExercisesByCourseIdOrderedAsync(
+    [FromRoute] string courseId)
+    {
+        var dtos = await _service.GetAllExercisesByCourseIdOrderedAsync(courseId);
+
+        return Ok(dtos);
+    }
+
 }

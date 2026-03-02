@@ -1,6 +1,6 @@
 ﻿using Application.Abstractions.Repositories;
 using Application.Abstractions.Services;
-using Application.UseCasesCourse;
+using Application.UseCases;
 using AutoFixture;
 using Moq;
 

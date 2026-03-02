@@ -46,6 +46,8 @@ public static class AddDbSeeders
         // Нужно указать сидеры которые будут загружать данные
         services.AddScoped<ISeeder<MainDbContext>, CourseSeeder>();
         services.AddScoped<ISeeder<MainDbContext>, LectureSeeder>();
+        services.AddScoped<ISeeder<MainDbContext>, ExerciseSeeder>();
+        services.AddScoped<ISeeder<MainDbContext>, ExerciseContentSeeder>();
         services.AddScoped<ISeeder<AppIdentityDbContext>, AppUserSeeder>();
         services.AddScoped<ISeeder<AppIdentityDbContext>, AspNetUserRolesSeeder>();
 

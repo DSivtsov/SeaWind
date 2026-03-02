@@ -1,6 +1,5 @@
 using Application.Abstractions.Services;
-using Application.UseCasesAdmin;
-using Application.UseCasesCourse;
+using Application.UseCases;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Application;
@@ -11,6 +10,7 @@ public static class ApplicationDI
     {
         services.AddScoped<ICourseService, CourseService>();
         services.AddScoped<IAdminUserService, AdminUserService>();
+        services.AddScoped<IExerciseService, ExerciseService>();
         return services;
     }
 }

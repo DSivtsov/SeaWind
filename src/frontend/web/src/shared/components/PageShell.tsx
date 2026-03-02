@@ -44,7 +44,7 @@ const renderContent = (props: PageShellProps) => {
 
 function errorView(errorText: string | undefined, error: ApiError | undefined, onRetry: (() => void) | undefined) {
     //console.log(`error?.correlationId[${error?.correlationId}]`);
-    return <Stack gap="xs">
+    return <Stack gap="xs" align="center">
         <Text c="red.7">{errorText ?? "Что-то пошло не так."}</Text>
 
         {error && (
@@ -59,7 +59,7 @@ function errorView(errorText: string | undefined, error: ApiError | undefined, o
         )}
 
         {onRetry ? (
-            <Button variant="filled" radius="xl" color="gray" rightSection={<IconReload size={14} />} onClick={onRetry}>
+            <Button variant="filled" maw={150} size="xs" color="gray" rightSection={<IconReload size={14} />} onClick={onRetry}>
                 Retry
             </Button>
         ) : null}

@@ -1,7 +1,7 @@
 ﻿using Application.Abstractions.Repositories;
 using Application.DtoAdmin;
 using Application.Models;
-using Application.UseCasesAdmin;
+using Application.UseCases;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 

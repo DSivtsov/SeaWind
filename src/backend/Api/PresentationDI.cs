@@ -1,4 +1,5 @@
 ﻿using Api.Filters;
+using Application.Common;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.AspNetCore.StaticFiles;
 using System.Text.Json.Serialization;
@@ -21,14 +22,24 @@ public static class PresentationDI
                 optControllers.Filters.Add<CustomExceptionFilter>();
             })
             .AddJsonOptions(opt =>
-            {
-                // Игнорировать циклические ссылки
-                opt.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
-                // Не добавлять свойства со значениями null
-                opt.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+                {
+                    var dst = opt.JsonSerializerOptions;
+                    var src = AppJson.SerializerOpt;
 
+                    // БАЗА из AppJson
+                    dst.PropertyNamingPolicy = src.PropertyNamingPolicy;
+                    dst.PropertyNameCaseInsensitive = src.PropertyNameCaseInsensitive;
+                    dst.UnmappedMemberHandling = src    .UnmappedMemberHandling;
+                    dst.AllowTrailingCommas = src.AllowTrailingCommas;
 
-            })
+                    dst.Converters.Clear();
+                    foreach (var c in src.Converters)
+                        dst.Converters.Add(c);
+
+                    // API-специфика (то, что у тебя уже было)
+                    dst.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+                    dst.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+                })
             .AddTraceIdToProblemDetails();
 
         // CORS только для DEV (Vite dev-server на 5173 только по http)

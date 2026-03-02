@@ -18,28 +18,28 @@ export async function stub_getAllExercisesByCourseIdOrdered(courseId: string, to
 
 export const Exercises: CourseExerciseDto[] = [
     {
-        id: "60659bf0-0b5a-11f1-b4ac-0800200c9a66",
+        id: "cb47b48f-af74-522f-9428-00b63ecd5dff",
         orderNo: 1,
         title: "Функции и базовые вычисления",
         shortDescription:
             "Набор задач на реализацию Function с параметрами и числовыми вычислениями.",
     },
     {
-        id: "60659bf1-0b5a-11f1-b4ac-0800200c9a66",
+        id: "cb47b48f-af74-522f-9428-00b63ecd5df0",
         orderNo: 2,
         title: "Условные конструкции",
         shortDescription:
             "Практика использования if/else и логических операторов для принятия решений.",
     },
     {
-        id: "60659bf2-0b5a-11f1-b4ac-0800200c9a66",
+        id: "cb47b48f-af74-522f-9428-00b63ecd5df1",
         orderNo: 3,
         title: "Циклы и повторяющиеся вычисления",
         shortDescription:
             "Работа с for и while для реализации повторяющихся алгоритмов.",
     },
     {
-        id: "60659bf3-0b5a-11f1-b4ac-0800200c9a66",
+        id: "cb47b48f-af74-522f-9428-00b63ecd5df2",
         orderNo: 4,
         title: "Работа со строками",
         shortDescription:

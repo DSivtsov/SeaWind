@@ -55,6 +55,62 @@ namespace Infrastructure.Postgres.Main.Migrations
                         });
                 });
 
+            modelBuilder.Entity("Application.Models.Exercise", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("CourseId")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)");
+
+                    b.Property<int>("OrderNo")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("ShortDescription")
+                        .HasMaxLength(400)
+                        .HasColumnType("character varying(400)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CourseId", "OrderNo")
+                        .IsUnique();
+
+                    b.ToTable("exercises", "main", t =>
+                        {
+                            t.HasCheckConstraint("CK_exercises_OrderNo", "\"OrderNo\" > 0");
+                        });
+                });
+
+            modelBuilder.Entity("Application.Models.ExerciseContent", b =>
+                {
+                    b.Property<Guid>("ExerciseId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("ContentBlocksJson")
+                        .IsRequired()
+                        .HasColumnType("jsonb")
+                        .HasColumnName("content_blocks");
+
+                    b.Property<string>("Details")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("ExerciseId");
+
+                    b.ToTable("exercise_content", "main", t =>
+                        {
+                            t.HasCheckConstraint("CK_ExerciseContent_ContentBlocks_IsArray", "jsonb_typeof(content_blocks) = 'array'");
+                        });
+                });
+
             modelBuilder.Entity("Application.Models.Lecture", b =>
                 {
                     b.Property<Guid>("Id")
@@ -107,6 +163,24 @@ namespace Infrastructure.Postgres.Main.Migrations
 
                             t.HasCheckConstraint("CK_lectures_Status", "\"Status\" IN ('Published','Draft')");
                         });
+                });
+
+            modelBuilder.Entity("Application.Models.Exercise", b =>
+                {
+                    b.HasOne("Application.Models.Course", null)
+                        .WithMany()
+                        .HasForeignKey("CourseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Application.Models.ExerciseContent", b =>
+                {
+                    b.HasOne("Application.Models.Exercise", null)
+                        .WithOne()
+                        .HasForeignKey("Application.Models.ExerciseContent", "ExerciseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Application.Models.Lecture", b =>
