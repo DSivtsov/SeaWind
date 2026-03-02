@@ -43,6 +43,8 @@ namespace Infrastructure.Postgres.Seeding.SeedDataFiles
             if (tableAnalysis.IsValidationWarningsExist)
             {
                 LogValidationWarnings(tableAnalysis.ValidationWarnings);
+                _logSeeder.LogWarning("DataFile preparing is canceled - detected errors in seed files");
+                return false;
             }
 
             try

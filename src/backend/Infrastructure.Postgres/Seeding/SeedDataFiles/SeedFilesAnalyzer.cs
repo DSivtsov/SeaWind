@@ -141,19 +141,19 @@ namespace Infrastructure.Postgres.Seeding.SeedDataFiles
 
             foreach ((string pKey, string fileName) item in _listSkippedFixedPK)
             {
-                validationWarnings.Add($"Will skip record with invalid value [{item.pKey}] for PK/FK use. Entity=[{item.fileName}].");
+                validationWarnings.Add($"Error: record with invalid value [{item.pKey}] for PK/FK use. Entity=[{item.fileName}].");
             }
 
             foreach ((string pKey, string fileName) item in _listDublicatePK)
             {
-                validationWarnings.Add($"Will skip record with duplicate PKey[{item.pKey}]. Entity=[{item.fileName}]");
+                validationWarnings.Add($"Error: record with duplicate PKey[{item.pKey}]. Entity=[{item.fileName}]");
             }
 
             foreach ((string fKey, string fileName) item in _hashFKeyFileName)
             {
                 if (!_dictPKey.ContainsKey(item.fKey.ToLowerInvariant()))
                 {
-                    validationWarnings.Add($"Will skip record with invalid FKey[{item.fKey}]. Entity=[{item.fileName}]");
+                    validationWarnings.Add($"Error: record with invalid FKey[{item.fKey}]. Entity=[{item.fileName}]");
                 }
             }
 
