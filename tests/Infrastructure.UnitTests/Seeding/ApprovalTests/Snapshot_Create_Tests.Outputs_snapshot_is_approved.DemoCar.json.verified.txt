@@ -22,5 +22,11 @@
     "Model": "Hyundai Tucson",
     "Owner": "a7af87d1-6944-5626-b507-d044eba69a54",
     "RegNumber": "Н 013 КВ 57"
+  },
+  {
+    "Id": "dcd3605a-1a42-5fc2-8562-a2ca5c37d7b0",
+    "Model": "Volga",
+    "Owner": "c994f6ca-61ec-55ae-8e92-c828b54bd119",
+    "RegNumber": "Н 013 КВ 57"
   }
 ]
