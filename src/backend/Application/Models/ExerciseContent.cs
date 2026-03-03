@@ -1,4 +1,20 @@
-﻿namespace Application.Models;
+﻿using Application.Common;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+
+namespace Application.Models;
+
+[JsonConverter(typeof(JsonStringEnumConverter))]
+public enum KindExerciseContentBlock { Picture, Code }
+
+[JsonConverter(typeof(JsonStringEnumConverter))]
+public enum TypeExerciseContentBlock { CSharp, Json, Text }
+
+/// <summary>
+/// Структурный блок, входящий в состав контента упражнения (ExerciseContent).
+/// </summary>
+public sealed record ExerciseContentBlock(KindExerciseContentBlock Kind, string UrlFile,
+    TypeExerciseContentBlock? TypeContent);
 
 /// <summary>
 /// Модель с дополнительной информацией к упражнению.
@@ -23,5 +39,23 @@ public sealed class ExerciseContent
         ExerciseId = exerciseId;
         Details = details;
         ContentBlocksJson = string.IsNullOrWhiteSpace(contentBlocksJson) ? "[]" : contentBlocksJson;
+    }
+
+    public List<ExerciseContentBlock> ReadBlocks()
+    {
+        var json = ContentBlocksJson;
+        if (string.IsNullOrWhiteSpace(json))
+            return new List<ExerciseContentBlock>();
+
+        return JsonSerializer.Deserialize<List<ExerciseContentBlock>>(json, AppJson.SerializerOpt)
+               ?? new List<ExerciseContentBlock>();
+    }
+
+    public ExerciseContent WriteBlocks(List<ExerciseContentBlock> blocks)
+    {
+        string contentBlocksJson =
+            JsonSerializer.Serialize(blocks ?? new List<ExerciseContentBlock>(), AppJson.SerializerOpt);
+
+        return new ExerciseContent(ExerciseId, Details, contentBlocksJson);
     }
 }

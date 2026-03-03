@@ -28,7 +28,7 @@ public class ExerciseService : IExerciseService
         var entity = await _exerciseContentRepository.GetByExerciseContentByIdAsync(exerciseId);
         if (entity is null) return null;
 
-        var blocks = ExerciseContentBlockSerializer.ReadBlocks(entity);
+        var blocks = entity.ReadBlocks();
         return new ExerciseContentDto(entity.Details ?? "", blocks);
     }
 
