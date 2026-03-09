@@ -12,8 +12,4 @@
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
 		<PackageReference Include="MongoDB.Driver" />
 	</ItemGroup>
-	<ItemGroup>
-	  <Folder Include="ExerciseChat\" />
-	  <Folder Include="SupportChat\" />
-	</ItemGroup>
 </Project>

@@ -3,8 +3,9 @@
     "Default": "Host=localhost;Port=55432;Database=workshopcode;Username=wc_app;Password=wc_app_pwd;"
   },
   "Mongo": {
-    "SupportChat": "mongodb://root:example@localhost:7017/supportchat?authSource=admin",
-    "ExerciseChat": "mongodb://root:example@localhost:7017/exercisechat?authSource=admin"
+    "ConnectionString": "mongodb://root:example@localhost:7017/?authSource=admin",
+    "SupportChatDatabase": "supportchat",
+    "ExerciseChatDatabase": "exercisechat"
   },
   "Logging": {
     "LogLevel": {
