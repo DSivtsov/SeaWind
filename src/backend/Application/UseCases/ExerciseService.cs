@@ -2,28 +2,28 @@
 using Application.Abstractions.Services;
 using Application.Dto.Exercise;
 using Application.DtoCourse;
-using Application.Models;
 
 namespace Application.UseCases;
 
 public class ExerciseService : IExerciseService
 {
     private readonly IExerciseRepository _exerciseRepository;
-    internal readonly IExerciseContentRepository _exerciseContentRepository;
+    private readonly IExerciseContentRepository _exerciseContentRepository;
+
     public ExerciseService(IExerciseRepository exerciseRepository, IExerciseContentRepository exerciseContentRepository)
     {
         _exerciseRepository = exerciseRepository;
         _exerciseContentRepository = exerciseContentRepository;
     }
 
-    public async Task<ExerciseDto?> GetExerciseByIdAsync(Guid exerciseId)
+    public async Task<ExerciseDto?> GetExerciseAsync(Guid exerciseId)
     {
         var exercise = await _exerciseRepository.GetExerciseByIdAsync(exerciseId);
 
         return exercise is null ? null : new ExerciseDto(exercise.OrderNo, exercise.Title);
     }
 
-    public async Task<ExerciseContentDto?> GetExerciseContentByExerciseId(Guid exerciseId)
+    public async Task<ExerciseContentDto?> GetExerciseContentAsync(Guid exerciseId)
     {
         var entity = await _exerciseContentRepository.GetByExerciseContentByIdAsync(exerciseId);
         if (entity is null) return null;
@@ -31,5 +31,4 @@ public class ExerciseService : IExerciseService
         var blocks = entity.ReadBlocks();
         return new ExerciseContentDto(entity.Details ?? "", blocks);
     }
-
 }

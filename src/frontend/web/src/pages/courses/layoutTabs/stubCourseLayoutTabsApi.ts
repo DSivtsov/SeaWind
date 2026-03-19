@@ -23,6 +23,7 @@ export const Exercises: CourseExerciseDto[] = [
         title: "Функции и базовые вычисления",
         shortDescription:
             "Набор задач на реализацию Function с параметрами и числовыми вычислениями.",
+        mark: null,
     },
     {
         id: "cb47b48f-af74-522f-9428-00b63ecd5df0",
@@ -30,6 +31,7 @@ export const Exercises: CourseExerciseDto[] = [
         title: "Условные конструкции",
         shortDescription:
             "Практика использования if/else и логических операторов для принятия решений.",
+        mark: null,
     },
     {
         id: "cb47b48f-af74-522f-9428-00b63ecd5df1",
@@ -37,6 +39,7 @@ export const Exercises: CourseExerciseDto[] = [
         title: "Циклы и повторяющиеся вычисления",
         shortDescription:
             "Работа с for и while для реализации повторяющихся алгоритмов.",
+        mark: null,
     },
     {
         id: "cb47b48f-af74-522f-9428-00b63ecd5df2",
@@ -44,6 +47,8 @@ export const Exercises: CourseExerciseDto[] = [
         title: "Работа со строками",
         shortDescription:
             "Обработка строк, поиск символов и преобразование текста.",
+        mark: null,
+
     },
 ];
 

@@ -10,5 +10,5 @@ public interface ICourseService
 
     Task<IEnumerable<LectureListItemDto>> GetAllLecturesByCourseIdOrderedAsync(string courseId);
 
-    Task<IEnumerable<ExercisesListItemDto>> GetAllExercisesByCourseIdOrderedAsync(string courseId);
+    Task<IEnumerable<ExercisesListItemWithMarkDto>> GetAllExercisesByCourseIdOrderedAsync(string courseId);
 }

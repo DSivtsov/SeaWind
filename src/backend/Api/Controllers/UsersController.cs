@@ -1,12 +1,11 @@
 ﻿using Api.Dtos;
-using Api.Exceptions;
+using Application.Common.Exceptions;
 using Application.Abstractions.Repositories;
 using Application.Abstractions.Services;
 using Application.DtoAdmin;
 using Application.UseCases;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 
 namespace Api.Controllers;
 
@@ -38,20 +37,11 @@ public sealed class UsersController : ControllerBase
     [HttpGet]
     [Authorize]
     [ProducesResponseType(typeof(UserMeDto), StatusCodes.Status200OK)]
-    public ActionResult<UserMeDto> GetMe()
+    public ActionResult<UserMeDto> GetMe([FromServices] ICurrentUserService currentUserService)
     {
-        // В рамках MVP формат JWT фиксирован,
-        // поэтому наличие клеймов токена (userId, Role и Email) считается детерминированным
-        string userId = User.FindFirstValue(ClaimTypes.NameIdentifier)
-            ?? throw new InvariantViolationException("Missing NameIdentifier claim.");
+        var currentUser = currentUserService.GetUserInfo();
 
-        string role = User.FindFirstValue(ClaimTypes.Role)
-            ?? throw new InvariantViolationException("Missing Role claim.");
-
-        string email = User.FindFirstValue(ClaimTypes.Email)
-            ?? throw new InvariantViolationException("Missing Email claim.");
-
-        return Ok(new UserMeDto(userId, role, email));
+        return Ok(new UserMeDto(currentUser.UserId, currentUser.Role, currentUser.Email));
     }
 
     /// <summary>
@@ -81,7 +71,7 @@ public sealed class UsersController : ControllerBase
             return Ok(dtosQueryEmpty);
         }
 
-        var dtos = await _adminRepo.GetAllUsersWithRolesAsync(query.UserName,query.Role);
+        var dtos = await _adminRepo.GetAllUsersWithRolesAsync(query.UserName, query.Role);
 
         return Ok(dtos);
     }
@@ -124,9 +114,11 @@ public sealed class UsersController : ControllerBase
         {
             UpdateUserRoleResult.Updated => NoContent(),
             UpdateUserRoleResult.NoChange => NoContent(),
-            UpdateUserRoleResult.RoleNotFound => BadRequest(new { code = "RoleNotFound" }),
-            UpdateUserRoleResult.UserNotFound => NotFound(new { code = "UserNotFound" }),
-            _ => StatusCode(500)
+            UpdateUserRoleResult.RoleNotFound =>
+                throw new ValidationException($"Роль [{req.Role}] не найдена."),
+            UpdateUserRoleResult.UserNotFound =>
+                throw new NotFoundException($"Пользователь [{userId}] не найден."),
+            _ => throw new InvariantViolationException($"Unexpected UpdateUserRoleResult: {r}")
         };
     }
 }

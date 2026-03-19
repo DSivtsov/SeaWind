@@ -1,60 +1,56 @@
-import type { ChatAttachmentDto, ChatMessageDto, ChatMessageUi } from "@/pages/courses/exerciseChat/courseExerciseChatApi";
-import type { Role } from "@/shared/auth/meApi";
+import type {
+    Attachment, MessageDto, Message, ExerciseChatDto,
+    MessageUploadResponse
+} from "@/pages/courses/exerciseChat/courseExerciseChatApi";
+import type { ChatRole } from "@/pages/courses/exerciseChat/ExerciseChatShell";
 import type { UiZoneState } from "@/shared/components/ZoneShell";
 
 export type CreateOptimisticMessageParams = {
-    author: { userId: string; role: Role }
+    threadId: string
+    authorId: string
+    authorRole: ChatRole
     text: string | null
-    attachments: ChatAttachmentDto[]
+    attachments: Attachment[]
 }
 
-export function getClientMessages(
-    chatServerMessages: ChatMessageDto[]
-): ChatMessageUi[] {
-    return chatServerMessages.map((m) => {
-        if (!m.messageId) {
-            throw new Error("Server message must contain messageId");
-        }
+export function getMaxServerSeq(chatServerMessages: MessageDto[]): number {
+    return chatServerMessages.reduce((max, m) => Math.max(max, m.seq), 0);
+}
 
+export function toClientMessages(chatServerMessages: MessageDto[]): Message[] {
+    return chatServerMessages.map((dto) => {
         return {
-            ...m,
-            clientGuid: m.messageId,
-            statusUpload: "loaded",
+            ...dto,
+            statusUpload: "synced",
         };
     });
 }
 
 export function createOptimisticMessage(
-    params: CreateOptimisticMessageParams
-): ChatMessageUi {
-    const clientGuid = crypto.randomUUID();
-
-    const newMsg: ChatMessageUi = {
+    params: CreateOptimisticMessageParams, nextClientSeqRef: number): Message {
+    const newMsg: Message = {
         ...params,
-        messageId: undefined,
+        id: `client-${params.threadId}-${nextClientSeqRef}`,
         createdAt: new Date().toISOString(),
-
-        clientGuid,
-        statusUpload: "loading",
+        seq: nextClientSeqRef,
+        statusUpload: "uploading",
     };
-
     return newMsg;
 }
 
-export function markMessageAsLoaded(
-    message: ChatMessageUi,
-    serverMessageId: string
-): ChatMessageUi {
+export function updatedLoadedMessage(message: Message, res: MessageUploadResponse): Message {
     return {
         ...message,
-        messageId: serverMessageId,
-        statusUpload: "loaded",
+        id: res.id,
+        seq: res.serverSeq,
+        createdAt: res.createdAt,
+        statusUpload: "synced",
     };
 }
 
 export function markMessageAsError(
-    message: ChatMessageUi
-): ChatMessageUi {
+    message: Message
+): Message {
     return {
         ...message,
         statusUpload: "error",
@@ -62,18 +58,51 @@ export function markMessageAsError(
 }
 
 export function markMessageAsLoading(
-    message: ChatMessageUi
-): ChatMessageUi {
+    message: Message
+): Message {
     return {
         ...message,
-        statusUpload: "loading",
+        statusUpload: "uploading",
     };
 }
 
-export function findMessageByClientGuid(
-    state: UiZoneState<ChatMessageUi[]>,
-    clientGuid: string
-): ChatMessageUi | null {
+export function findMessageBySelectedSeq(
+    state: UiZoneState<Message[]>,
+    selectedSeq: number
+): Message | null {
     if (state.kind !== "ready") return null;
-    return state.data.find((m) => m.clientGuid === clientGuid) ?? null;
+    return state.data.find((m) => m.seq === selectedSeq) ?? null;
+}
+
+export type ChatPerms = {
+    canWrite: boolean;
+    canEdit: (msg: Message) => boolean;
+    canDelete: (msg: Message) => boolean;
+};
+
+export function getChatPerms({ exercise, threadLocks }: ExerciseChatDto, role: ChatRole): ChatPerms {
+    const IsFinished = exercise.mark === 2;
+    const canWrite = !IsFinished &&
+        (role === "Student" && exercise.status === "OnStudent") || (role === "Mentor" && exercise.status === "OnMentor");
+
+    const canEdit = (msg: Message): boolean => canWrite && (msg.statusUpload === "synced" && msg.seq > threadLocks.lockSeq);
+    const canDelete = canEdit;
+
+    return { canWrite, canEdit, canDelete };
+}
+
+const INFO_TEXT: Record<ChatRole, { write: string; read: string }> = {
+    Student: {
+        write: "Опубликуйте решение или задайте вопрос",
+        read: "Работа на проверке — писать может Mentor",
+    },
+    Mentor: {
+        write: "Проведите ревью или задайте вопрос",
+        read: "Ожидается сообщение студента — писать может Student",
+    },
+};
+
+export function getChatTitleInfo(canWrite: boolean, userRole: ChatRole): string {
+    const roleTexts = INFO_TEXT[userRole];
+    return canWrite ? roleTexts.write : roleTexts.read;
 }

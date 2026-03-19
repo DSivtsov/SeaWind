@@ -6,21 +6,23 @@ import { emitAccessDenied } from "@/shared/auth/authListeners";
 export async function singleAttempt<T>(path: string, opts: RequestOptions, token: string | null): Promise<T> {
     const parse = opts.parse ?? "json";
 
-    const headers: Record<string, string> = {
-        Accept: parse === "text" ? "text/plain, */*" : "application/json",
-    };
+    const headers: Record<string, string> = {};
+
+    if (parse === "json") headers.Accept = "application/json";
+    if (parse === "text") headers.Accept = "text/plain, */*";
+    if (parse === "blob") headers.Accept = "*/*";
 
     if (token) headers.Authorization = `Bearer ${token}`;
 
-    let body: string | undefined;
+    let body: BodyInit | undefined;
 
     if ("body" in opts && opts.body !== undefined) {
         if (typeof opts.body === "string") {
-            // text request
             headers["Content-Type"] = "text/plain; charset=utf-8";
             body = opts.body;
+        } else if (opts.body instanceof FormData) {
+            body = opts.body;
         } else {
-            // json request
             headers["Content-Type"] = "application/json";
             body = JSON.stringify(opts.body);
         }
@@ -55,6 +57,15 @@ export async function singleAttempt<T>(path: string, opts: RequestOptions, token
 
         // For 204 No Content etc.
         if (res.status === 204) return undefined as T;
+
+        if (parse === "blob") {
+            try {
+                const blob = await res.blob();
+                return blob as T;
+            } catch {
+                throw httpError("parse", "Expected blob", res.status, correlationId);
+            }
+        }
 
         const text = await res.text();
         const trimmed = text.trim();

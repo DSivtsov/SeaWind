@@ -42,7 +42,7 @@ export function CoursesAccessDeniedModal({ info, onClose }: AccessDeniedModalPro
   );
 }
 
-function getTitleAndText(reason: "unauthorized" | "forbidden" | "invalid_state") {
+function getTitleAndText(reason: "unauthorized" | "forbidden" | "invalid_state" | "exercise_chat_mentor_error") {
   switch (reason) {
     case "forbidden":
       return {
@@ -67,6 +67,15 @@ function getTitleAndText(reason: "unauthorized" | "forbidden" | "invalid_state")
         titleText: "Ошибка состояния",
         message:
           "Страница оказалась в некорректном состоянии. Выполнен возврат на список курсов.",
+      };
+
+    case "exercise_chat_mentor_error":
+      return {
+        iconColor: "red",
+        icon: <IconAlertTriangle size={18} />,
+        titleText: "Ошибка при попытке доступа",
+        message:
+          "Произошла ошибка при попытке открыть чат упражнения. Доступ запрещен.",
       };
   }
 

@@ -19,11 +19,12 @@ public class CourseService : ICourseService
         return courses.Select(c => new CourseDto(c.Id, c.Title,  c.Description));
     }
 
-    public async Task<IEnumerable<ExercisesListItemDto>> GetAllExercisesByCourseIdOrderedAsync(string id)
+    public async Task<IEnumerable<ExercisesListItemWithMarkDto>> GetAllExercisesByCourseIdOrderedAsync(string id)
     {
         IEnumerable<Exercise> exercises = await _courseRepository.GetAllExercisesByCourseIdOrderedAscAsyn(id);
 
-        return exercises.Select(lec => new ExercisesListItemDto(lec.Id, lec.OrderNo, lec.Title, lec.ShortDescription));
+        return exercises.Select(lec => new ExercisesListItemWithMarkDto(lec.Id, lec.OrderNo, lec.Title,
+            lec.ShortDescription, null));
     }
 
     public async Task<IEnumerable<LectureListItemDto>> GetAllLecturesByCourseIdOrderedAsync(string id)

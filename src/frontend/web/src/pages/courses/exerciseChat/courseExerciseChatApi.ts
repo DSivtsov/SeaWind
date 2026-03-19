@@ -1,11 +1,6 @@
-import {
-    stub_getExerciseChatMessages, stub_getExerciseChatThread,
-    stub_postAttachmentMessage,
-    stub_postExerciseChatMessage
-} from "@/pages/courses/exerciseChat/stubCourseExerciseChatApi";
+import type { ChatRole, DashboardChatInput } from "@/pages/courses/exerciseChat/ExerciseChatShell";
 import type { ApiError } from "@/shared/api/apiError";
 import { apiRequest } from "@/shared/api/apiRequests";
-import type { Role } from "@/shared/auth/meApi";
 
 export type ExerciseDto = {
     orderNo: number;
@@ -21,60 +16,69 @@ export type ExerciseContentBlockDto = {
     >
 }
 
-export type ChatThreadDto = {
-    threadId: string
+export type StudentExerciseStatus = "OnStudent" | "OnMentor"
 
-    scope: {
-        courseId: string
-        exerciseId: string
-        studentId: string
-    }
+export type StudentExerciseMark = 0 | 1 | 2
 
-    lastMessageAt: string | null
-    lastMessagePreview: string | null
-
-    counters: {
-        total: number
-        unreadByStudent: number
-        unreadByMentor: number
+export type ExerciseChatDto = {
+    exercise:
+    {
+        status: StudentExerciseStatus
+        mark: StudentExerciseMark | null
+        threadId: string;
+    },
+    threadLocks:
+    {
+        lockSeq: number
     }
 }
 
-export type ChatMessageDto = {
-    messageId?: string
-
-    author: {
-        userId: string
-        role: Role
-    }
-
-    createdAt: string
+export type MessageDto = {
+    id: string
+    seq: number
+    authorId: string
+    authorRole: ChatRole
     text: string | null
-
-    attachments: ChatAttachmentDto[]
+    createdAt: string
+    attachments: Attachment[]
 }
 
-export type ChatAttachmentDto = {
-    attachmentId: string
-    fileName: string
-    url: string
+export type MessageUploadRequest = {
+    clientSeq: number
+    text: string | null
+    attachmentIds: string[]
+}
+
+export type MessageUploadResponse = {
+    clientSeq: number
+    id: string
+    serverSeq: number
+    createdAt: string
+}
+
+export type UploadStatus = "uploading" | "synced" | "error";
+
+export type Message = MessageDto & {
+    statusUpload: UploadStatus
+}
+
+export type Attachment = {
+    id: string  //id появляется после загрузки Attachment на сервер, до этого момента AttachmentDto нет, а есть только File
+    fileNameOriginal: string
+}
+
+export type ChangeStatusThreadResponse = {
+    serverSeq: number
 }
 
 export type AttachmentsState =
     | { kind: "loading" }
     | { kind: "error"; error: ApiError }
-    | { kind: "empty"; attachments: ChatAttachmentDto[] }
-    | { kind: "loaded"; attachments: ChatAttachmentDto[] };
-
-export type UploadStatus = "loading" | "loaded" | "error";
-
-export type ChatMessageUi = ChatMessageDto & {
-    clientGuid: string
-    statusUpload: UploadStatus
-}
+    | { kind: "empty"; attachments: Attachment[] }
+    | { kind: "loaded"; attachments: Attachment[] };
 
 export async function getExerciseData(exerciseId: string, token: string, signal?: AbortSignal): Promise<ExerciseDto> {
-    const urlGetExerciseDataById = `/api/exercises/${encodeURIComponent(exerciseId)}`;
+    const urlGetExerciseDataById = `/api/exercises/${exerciseId}`;
 
     return apiRequest<ExerciseDto>(urlGetExerciseDataById, { method: "GET", parse: "json", signal }, token);
     //return await stub_getExerciseData(token, signal, exerciseId);
@@ -82,7 +86,7 @@ export async function getExerciseData(exerciseId: string, token: string, signal?
 
 export async function getExerciseContentBlock(exerciseId: string, token: string,
     signal?: AbortSignal): Promise<ExerciseContentBlockDto> {
-    const urlGetExerciseContentBlockById = `/api/exercises/${encodeURIComponent(exerciseId)}/content`;
+    const urlGetExerciseContentBlockById = `/api/exercises/${exerciseId}/content`;
 
     return apiRequest<ExerciseContentBlockDto>(urlGetExerciseContentBlockById, { method: "GET", parse: "json", signal }, token);
     //return await stub_getExerciseContentBlock(token, signal, exerciseId);
@@ -96,42 +100,72 @@ export async function loadCode(codeUrl: string, signal: AbortSignal) {
     return await res.text();
 }
 
-export async function getExerciseChatMessages(exerciseId: string, studentId: string, token: string,
-    signal?: AbortSignal): Promise<ChatMessageDto[]> {
+export async function getExerciseChatMessages(threadId: string, token: string, signal?: AbortSignal): Promise<MessageDto[]> {
+    const urlGetExerciseChatMessages = `/api/threads/${threadId}/messages`;
 
-    return await stub_getExerciseChatMessages(token, signal, exerciseId, studentId);
+    return apiRequest<MessageDto[]>(urlGetExerciseChatMessages, { method: "GET", parse: "json", signal }, token);
+
+    //return await stub_getExerciseChatMessages(token, signal, threadId);
 }
 
-export async function postAttachmentMessage(exerciseId: string, file: File,
-    token: string, signal?: AbortSignal): Promise<ChatAttachmentDto> {
-    // POST /api/exerciseChat/{courseId}/{exerciseId}/attachments
-    /*
-        const uploadUrl = `/api/exerciseChat/${courseId}/${exerciseId}/attachments`;
-        const form = new FormData();
-        form.append("file", file);
-        await fetch(uploadUrl, { method: "POST", body: form, signal });
-         */
+export async function getMissedExerciseChatMessages(threadId: string, beginSeq: number, tillSeq: number,
+    token: string, signal?: AbortSignal): Promise<MessageDto[]> {
+    const urlGetExerciseChatMessages = `/api/threads/${threadId}/messages?BeginSeq=${beginSeq}&TillSeq=${tillSeq}`;
 
-    // возвращает contentUrl, по которому фронт потом скачает:
-    // "/chatsExercise/{courseId}/{exerciseId}/{attachmentId}__{safeName}"
-    return await stub_postAttachmentMessage(token, signal, exerciseId, file);
+    return apiRequest<MessageDto[]>(urlGetExerciseChatMessages, { method: "GET", parse: "json", signal }, token);
+    //return await stub_????
 }
 
+export async function postMessageAttachments(threadId: string, uploadfiles: File[],
+    token: string, signal?: AbortSignal): Promise<Attachment[]> {
+    const urlPostMessageAttachments = `/api/threads/${threadId}/attachments`;
 
-export async function postExerciseChatMessage(exerciseId: string, newChatMessage: ChatMessageDto,
-    token: string, signal?: AbortSignal): Promise<string> {
-    /*
-POST POST /api/exerciseChat/{courseId}/{exerciseId}/messages
-body: { newChatMessage }
-→ возвращает “каноническое” сообщение (с server ids)
-*/
+    const form = new FormData();
+    uploadfiles.forEach(file => form.append("Files", file));
 
-    return await stub_postExerciseChatMessage(token, signal, exerciseId, newChatMessage);
+    return apiRequest<Attachment[]>(urlPostMessageAttachments, { method: "POST", parse: "json", body: form, signal }, token);
+    //return await stub_postAttachmentMessage(token, signal, threadId, uploadfiles);
 }
 
-export async function getExerciseChatThread(courseId: string, exerciseId: string, userId: string, token: string,
-    signal?: AbortSignal): Promise<ChatThreadDto> {
+export async function postExerciseChatMessage(threadId: string, body: MessageUploadRequest, token: string,
+    signal?: AbortSignal): Promise<MessageUploadResponse> {
+    const urlPostExerciseChatMessage = `/api/threads/${threadId}/messages`;
 
-    return await stub_getExerciseChatThread(token, signal, courseId, exerciseId, userId);
+    return apiRequest<MessageUploadResponse>(urlPostExerciseChatMessage, { method: "POST", parse: "json", body, signal }, token);
+    //return await stub_postExerciseChatMessage(token, signal, threadId, body);
 }
 
+export async function getExerciseChatData(exerciseId: string, dashboardChat: DashboardChatInput, token: string,
+    signal?: AbortSignal): Promise<ExerciseChatDto> {
+
+    let urlGetExerciseChatData = `/api/exercises/${exerciseId}/chat-thread`;
+
+    if (dashboardChat.role === "Mentor" && dashboardChat.studentId) {
+        const params = new URLSearchParams({
+            studentId: dashboardChat.studentId
+        });
+
+        urlGetExerciseChatData += `?${params.toString()}`;
+    }
+
+    return apiRequest<ExerciseChatDto>(urlGetExerciseChatData, { method: "GET", parse: "json", signal }, token);
+    //return await stub_getExerciseChatData....
+}
+
+export async function downloadAttachmentApi(attachmentId: string, token: string): Promise<Blob> {
+    const downloadUrl = `/api/attachments/${attachmentId}/download`;
+
+    return apiRequest<Blob>(downloadUrl, { method: "GET", parse: "blob" }, token);
+}
+
+export async function putChangeStatusThreadAsync(threadId: string, newStatus: StudentExerciseStatus, mark: number | null, token: string,
+    signal: AbortSignal): Promise<ChangeStatusThreadResponse> {
+    const urlPutChangeStatusThread = `/api/threads/${threadId}/status`;
+
+    const body = {
+        newStatus: newStatus,
+        mark: mark
+    };
+
+    return apiRequest<ChangeStatusThreadResponse>(urlPutChangeStatusThread, { method: "PUT", parse: "json", body, signal }, token);
+}

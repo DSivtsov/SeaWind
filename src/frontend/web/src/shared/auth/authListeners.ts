@@ -1,4 +1,4 @@
-export type RedirectReason = "unauthorized" | "forbidden" | "invalid_state";
+export type RedirectReason = "unauthorized" | "forbidden" | "invalid_state" | "exercise_chat_mentor_error";
 
 type Listener = (reason: RedirectReason) => void;
 

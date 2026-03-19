@@ -25,6 +25,7 @@ internal static class AddMainDb
         services.AddScoped<ICourseRepository, CourseRepositoryPostgres>();
         services.AddScoped<IExerciseRepository, ExerciseRepositoryPostgres>();
         services.AddScoped<IExerciseContentRepository, ExerciseContentRepositoryPostgres>();
+        services.AddScoped<IStudentExerciseRepository, StudentExerciseRepositoryPostgres>();
 
         return services;
     }

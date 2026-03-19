@@ -1,5 +1,4 @@
-﻿using Api.Exceptions;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.WebUtilities;
@@ -10,11 +9,14 @@ public class CustomExceptionFilter : IExceptionFilter
 {
     private readonly ProblemDetailsFactory _problemDetailsFactory;
     private readonly IHostEnvironment _env;
+    private readonly ILogger<CustomExceptionFilter> _logger;
 
-    public CustomExceptionFilter(ProblemDetailsFactory pdf, IHostEnvironment env)
+    public CustomExceptionFilter(ProblemDetailsFactory pdf, IHostEnvironment env,
+        ILogger<CustomExceptionFilter> logger)
     {
         _problemDetailsFactory = pdf;
         _env = env;
+        _logger = logger;
     }
 
     // Централизованное формирование ProblemDetails (RFC 7807)
@@ -23,8 +25,25 @@ public class CustomExceptionFilter : IExceptionFilter
     {
         var ex = context.Exception;
 
-        var status = ExceptionToStatusCodeMap.StatusCodeValues.TryGetValue(ex.GetType(), out int s)
-            ? s : StatusCodes.Status500InternalServerError;
+        if (context.Exception is OperationCanceledException)
+        {
+            context.ExceptionHandled = true;
+            return;
+        }
+
+        var isCustomError = ExceptionToStatusCodeMap.StatusCodeValues.TryGetValue(ex.GetType(), out int status);
+
+        if (!isCustomError)
+            status = StatusCodes.Status500InternalServerError;
+
+        if (isCustomError)
+        {
+            _logger.LogInformation("Custom error {StatusCode}: {Message}", status, ex.Message);
+        }
+        else
+        {
+            _logger.LogError(ex, "Unhandled exception");
+        }
 
         var problem = _problemDetailsFactory.CreateProblemDetails(
             context.HttpContext,
@@ -34,7 +53,7 @@ public class CustomExceptionFilter : IExceptionFilter
             instance: context.HttpContext.Request.Path
         );
 
-        if (status == StatusCodes.Status500InternalServerError && _env.IsDevelopment())
+        if (!isCustomError && status == StatusCodes.Status500InternalServerError && _env.IsDevelopment())
         {
             ShowStack(ex, problem);
         }

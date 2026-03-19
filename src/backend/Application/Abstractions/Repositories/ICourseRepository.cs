@@ -12,4 +12,5 @@ public interface ICourseRepository
     Task<IEnumerable<Exercise>> GetAllExercisesByCourseIdOrderedAscAsyn(string courseId);
 
     Task<Course?> GetCourseByIdAsync(string courseId);
+    Task<List<ExercisesListItemWithMarkDto>> GetExercisesAscWithMarkAsync(string courseId, string studentId);
 }

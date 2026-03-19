@@ -1,9 +1,11 @@
+using Api.Configuration;
 using Api.Filters;
 using Api.Identity;
+using Api.Services;
 using Api.Trace;
 using Application;
-using Infrastructure.Postgres;
 using Infrastructure.Mongo;
+using Infrastructure.Postgres;
 using Infrastructure.Postgres.Seeding;
 
 namespace Api;
@@ -18,6 +20,8 @@ public class Program
         builder.AddConfiguration();
 
         var cfg = builder.Configuration;
+
+        builder.Services.AddAppSettingsOptions(cfg);
 
         builder.Services
             .AddApplication()
@@ -46,6 +50,12 @@ public class Program
 
         // Подключения Seeder сервисов 
         builder.Services.DbSeedersDI(cfg);
+
+        // Регистрация HostedService для фоновых задач приложения
+        builder.Services.AddHostedServices();
+
+        // Доступ к текущему HttpContext (используется для получения текущего пользователя из JWT)
+        builder.Services.AddHttpContextAccessor();
 
         var app = builder.Build();
 

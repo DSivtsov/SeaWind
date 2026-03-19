@@ -30,7 +30,7 @@ export default defineConfig({
         changeOrigin: true,
         secure: false,
       },
-      "/chatsExercise": {
+      "/chatsExercise-attachments": {
         target,
         changeOrigin: true,
         secure: false,
