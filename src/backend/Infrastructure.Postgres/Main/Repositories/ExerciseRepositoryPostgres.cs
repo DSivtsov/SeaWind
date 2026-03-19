@@ -13,6 +13,15 @@ public class ExerciseRepositoryPostgres : IExerciseRepository
         _mainDbContext = mainDbContext;
     }
 
+    public Task<string> GetCourseIdByExerciseIdAsync(Guid exerciseId, CancellationToken ct)
+    {
+        return _mainDbContext.Exercises
+            .AsNoTracking()
+            .Where(x => x.Id == exerciseId)
+            .Select(x => x.CourseId)
+            .SingleAsync(ct);
+    }
+
     public async Task<Exercise?> GetExerciseByIdAsync(Guid exerciseId)
     {
         return await _mainDbContext.Exercises

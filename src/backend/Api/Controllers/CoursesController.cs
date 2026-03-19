@@ -1,7 +1,11 @@
-﻿using Application.Abstractions.Services;
+﻿using Application.Abstractions.Repositories;
+using Application.Abstractions.Services;
+using Application.Common.Enums;
+using Application.Common.Exceptions;
 using Application.DtoCourse;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security;
 
 namespace Api.Controllers;
 
@@ -11,9 +15,15 @@ namespace Api.Controllers;
 public class CoursesController : ControllerBase
 {
     private readonly ICourseService _service;
-    public CoursesController(ICourseService service)
+    private readonly ICourseRepository _courseRepository;
+    private readonly ICurrentUserService _currentUserService;
+
+    public CoursesController(ICourseService service, ICourseRepository courseRepository,
+        ICurrentUserService currentUserService)
     {
         _service = service;
+        _courseRepository = courseRepository;
+        _currentUserService = currentUserService;
     }
 
     /// <summary>
@@ -48,7 +58,8 @@ public class CoursesController : ControllerBase
     {
         var dto = await _service.GetCourseByIdAsync(courseId);
 
-        if (dto is null) return NotFound();
+        if (dto is null)
+            throw new NotFoundException($"Курс [{courseId}] не найден.");
 
         return Ok(dto);
     }
@@ -73,22 +84,30 @@ public class CoursesController : ControllerBase
     }
 
     /// <summary>
-    /// Получить все упражнения курса по courseId
+    /// Получить список упражнений курса.
     /// </summary>
-    /// <param name="courseId">Id курса</param>
+    /// <param name="courseId">Идентификатор курса.</param>
     /// <returns>
     /// Возвращает коллекцию упражнений курса, отсортированных по возрастанию OrderNo.
-    /// Если упражнения не найдены — возвращает пустую коллекцию.
+    /// Для студента дополнительно возвращается значение Mark из StudentExercise.
+    /// Если упражнения не найдены — возвращается пустая коллекция.
     /// </returns>
     [HttpGet("{courseId}/exercises")]
     [Authorize]
-    [ProducesResponseType(typeof(IEnumerable<ExercisesListItemDto>), StatusCodes.Status200OK)]
-    public async Task<ActionResult<IEnumerable<ExercisesListItemDto>>> GetAllExercisesByCourseIdOrderedAsync(
-    [FromRoute] string courseId)
+    [ProducesResponseType(typeof(IEnumerable<ExercisesListItemWithMarkDto>), StatusCodes.Status200OK)]
+    public async Task<ActionResult<IEnumerable<ExercisesListItemWithMarkDto>>> GetExercisesListAsync(
+        [FromRoute] string courseId)
     {
-        var dtos = await _service.GetAllExercisesByCourseIdOrderedAsync(courseId);
+        var currentUser = _currentUserService.GetUserInfo();
+        var chatRole = Enum.Parse<ExerciseChatRole>(currentUser.Role);
+
+        var dtos = chatRole switch
+        {
+            ExerciseChatRole.Student => await _courseRepository.GetExercisesAscWithMarkAsync(courseId, currentUser.UserId),
+            ExerciseChatRole.Mentor => await _service.GetAllExercisesByCourseIdOrderedAsync(courseId),
+            _ => throw new ForbiddenException($"Неподдерживаемый тип пользователя {chatRole}"),
+        };
 
         return Ok(dtos);
     }
-
 }

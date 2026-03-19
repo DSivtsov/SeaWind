@@ -14,8 +14,8 @@ export function pickRequirement(pathname: string): Requirement {
         return { kind: "role-only", roles: ["Mentor"] };
     }
 
-    // Exercise chat (student + mentor)
-    if (/^\/courses\/[^/]+\/exercises\/[^/]+\/chat$/.test(pathname)) {
+    // Exercise Dashboard (student + mentor)
+    if (/^\/courses\/[^/]+\/exercises\/[^/]+\/dashboard$/.test(pathname)) {
         return { kind: "role-only", roles: ["Student", "Mentor"] };
     }
 

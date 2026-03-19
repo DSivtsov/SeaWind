@@ -1,4 +1,4 @@
-﻿using Api.Exceptions;
+﻿using Application.Common.Exceptions;
 using Application.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;

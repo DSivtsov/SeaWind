@@ -1,8 +1,8 @@
-import type { ExerciseContentBlockDto, ChatMessageDto, ChatThreadDto, ChatAttachmentDto, ExerciseDto }
+import type { ExerciseContentBlockDto, MessageDto, Attachment, ExerciseDto, ExerciseChatDto, MessageUploadResponse, MessageUploadRequest }
     from "@/pages/courses/exerciseChat/courseExerciseChatApi";
 import { Exercises } from "@/pages/courses/layoutTabs/stubCourseLayoutTabsApi";
 import { httpError } from "@/shared/api/apiError";
-import { demoFunction, generateSafeName, generateUUIDNoDash, type DemoOpt } from "@/shared/api/stubApiRequest";
+import { demoFunction, generateUUIDNoDash, type DemoOpt } from "@/shared/api/stubApiRequest";
 
 // import {type ApiError}  from "@/shared/api/apiError";
 // const error: ApiError = httpError("http", "msg", 404);
@@ -71,170 +71,190 @@ const demoContentBlock: ExerciseContentBlockDto = {
 const demoPostAttachmentMessage: DemoOpt = { delay: 3000, forceError: null };    // forceError: error | forceThrow "DEMO_FORCED_ERROR" | undefined
 
 export async function stub_postAttachmentMessage(token: string, signal: AbortSignal | undefined,
-    exerciseId: string, file: File): Promise<ChatAttachmentDto> {
+    threadId: string, uploadfiles: File[]): Promise<Attachment[]> {
     // временно не используются
     void token;
     void signal;
+    void threadId;
 
     await demoFunction(demoPostAttachmentMessage);
-    const safeExerciseId = generateSafeName(exerciseId);
-    const attachmentId = generateUUIDNoDash();
-    const safeFileName = generateSafeName(file.name);
 
-    return {
-        attachmentId: attachmentId,
-        fileName: file.name,
-        url: `/chatsExercise/${safeExerciseId}/${attachmentId}__${safeFileName}`,
-    };
+    const attachments: Attachment[] = uploadfiles.map(file => {
+        return {
+            id: generateUUIDNoDash(),
+            fileNameOriginal: file.name
+        };
+    });
+
+    return attachments;
 }
 
 
 const demoPostExerciseChatMessages: DemoOpt = { delay: 4000, forceError: null };    // forceError: error | forceThrow "DEMO_FORCED_ERROR" | undefined
 
 export async function stub_postExerciseChatMessage(token: string, signal: AbortSignal | undefined,
-    exerciseId: string, newChatMessage: ChatMessageDto): Promise<string> {
+    threadId: string, body: MessageUploadRequest): Promise<MessageUploadResponse> {
     // временно не используются
     void token;
     void signal;
-    void exerciseId;
-    void newChatMessage;
+    void threadId;
+    void body;
 
     await demoFunction(demoPostExerciseChatMessages);
-    const messageId = generateUUIDNoDash();
-    return messageId;
+
+    const idServer = generateUUIDNoDash();
+    const seqServer = body.clientSeq;   // случай совпадения clientSeq и seq на сервере
+    //const seqServer = body.clientSeq + 2; // случай seqServer не совпадает с  clientSeq
+
+    return {
+        clientSeq: body.clientSeq,
+        id: idServer,
+        serverSeq: seqServer,
+        createdAt: new Date().toISOString(),
+    };
 }
 
 
 const demoGetExerciseChatMessages: DemoOpt = { delay: 1000, forceError: null };    // forceError: error | forceThrow "DEMO_FORCED_ERROR" | undefined
 
-export async function stub_getExerciseChatMessages(token: string, signal: AbortSignal | undefined, exerciseId: string, studentId: string) {
+export async function stub_getExerciseChatMessages(token: string, signal: AbortSignal | undefined, threadId: string) {
     void token;
     void signal;
 
     await demoFunction(demoGetExerciseChatMessages);
 
-    if (exerciseId !== "cb47b48f-af74-522f-9428-00b63ecd5dff" ||
-        (studentId !== "3b795346-78d9-5464-87a7-f18e37343066" &&        //nick.mentor@example.com
-            studentId !== "8cb9fe4e-5dc7-5be5-8cd4-0038cd267ab7"))          //carol.student@example.com
-        throw httpError("http", "NotFoundError", 404);
+    if (threadId !== "69b03bf20279d4f213043b05")
+        return [];
+    //(studentId !== "3b795346-78d9-5464-87a7-f18e37343066" &&        //nick.mentor@example.com
+    // studentId !== "8cb9fe4e-5dc7-5be5-8cd4-0038cd267ab7"))          //carol.student@example.com
+    //throw httpError("http", "NotFoundError", 404);
+
     return demoChatMessages;
 }
-const demoChatMessages: ChatMessageDto[] =
+const demoChatMessages: MessageDto[] =
     [
         {
-            "messageId": "msg_0001",
-            "author": { "userId": "8cb9fe4e-5dc7-5be5-8cd4-0038cd267ab7", "role": "Student" },
+            "id": "msg_0001",
+            seq: 1,
+            "authorId": "8cb9fe4e-5dc7-5be5-8cd4-0038cd267ab7",
+            "authorRole": "Student",
             "createdAt": "2026-02-19T19:38:05.000Z",
             "text": "Я сделал решение. Посмотри, пожалуйста.",
             "attachments": [
                 {
-                    "attachmentId": "att_0001",
-                    "fileName": "Solution.cs",
-                    "url": "/chatsExercise/csharp-basic/cb47b48f-af74-522f-9428-00b63ecd5dff/f48222bd2bfd412a__Solution.cs"
+                    "id": "69acfcf9cf201d619996bd81",
+                    "fileNameOriginal": "Solution.cs",
+                    //"downloadUrl": "cb47b48f-af74-522f-9428-00b63ecd5dff/f48222bd2bfd412a__Solution.cs",
                 }
             ],
         },
         {
-            "messageId": "msg_0002",
-            "author": { "userId": "3b795346-78d9-5464-87a7-f18e37343066", "role": "Mentor" },
+            "id": "msg_0002",
+            seq: 2,
+            "authorId": "3b795346-78d9-5464-87a7-f18e37343066",
+            "authorRole": "Mentor",
             "createdAt": "2026-02-19T19:40:20.000Z",
             "text": "Ок, поправь naming и убери var в примере. После этого можно отправлять на проверку.",
             "attachments": [],
         },
         {
-            "messageId": "msg_0003",
-            "author": { "userId": "8cb9fe4e-5dc7-5be5-8cd4-0038cd267ab7", "role": "Student" },
+            "id": "msg_0003",
+            seq: 3,
+            "authorId": "8cb9fe4e-5dc7-5be5-8cd4-0038cd267ab7",
+            "authorRole": "Student",
             "createdAt": "2026-02-19T19:38:05.000Z",
             "text": "Я сделал решение. Посмотри, пожалуйста.",
             "attachments": [
                 {
-                    "attachmentId": "att_0001",
-                    "fileName": "Solution.cs",
-                    "url": "/chatsExercise/csharp-basic/cb47b48f-af74-522f-9428-00b63ecd5dff/f48222bd2bfd412a__Solution.cs"
+                    "id": "69acfcf9cf201d619996bd81",
+                    "fileNameOriginal": "Solution.cs",
+                    //"downloadUrl": "cb47b48f-af74-522f-9428-00b63ecd5dff/f48222bd2bfd412a__Solution.cs",
                 }
             ],
         },
         {
-            "messageId": "msg_0004",
-            "author": { "userId": "3b795346-78d9-5464-87a7-f18e37343066", "role": "Mentor" },
+            "id": "msg_0004",
+            seq: 4,
+            "authorId": "3b795346-78d9-5464-87a7-f18e37343066",
+            "authorRole": "Mentor",
             "createdAt": "2026-02-19T19:40:20.000Z",
             "text": "Ок, поправь naming и убери var в примере. После этого можно отправлять на проверку.",
             "attachments": [],
         },
         {
-            "messageId": "msg_0005",
-            "author": { "userId": "8cb9fe4e-5dc7-5be5-8cd4-0038cd267ab7", "role": "Student" },
+            "id": "msg_0005",
+            seq: 5,
+            "authorId": "8cb9fe4e-5dc7-5be5-8cd4-0038cd267ab7",
+            "authorRole": "Student",
             "createdAt": "2026-02-19T19:38:05.000Z",
             "text": "Я сделал решение. Посмотри, пожалуйста.",
             "attachments": [
                 {
-                    "attachmentId": "att_0001",
-                    "fileName": "Solution.cs",
-                    "url": "/chatsExercise/csharp-basic/cb47b48f-af74-522f-9428-00b63ecd5dff/f48222bd2bfd412a__Solution.cs"
+                    "id": "69acfcf9cf201d619996bd81",
+                    "fileNameOriginal": "Solution.cs",
+                    //"downloadUrl": "cb47b48f-af74-522f-9428-00b63ecd5dff/f48222bd2bfd412a__Solution.cs",
                 }
             ],
         },
         {
-            "messageId": "msg_0006",
-            "author": { "userId": "3b795346-78d9-5464-87a7-f18e37343066", "role": "Mentor" },
+            "id": "msg_0006",
+            seq: 6,
+            "authorId": "3b795346-78d9-5464-87a7-f18e37343066",
+            "authorRole": "Mentor",
             "createdAt": "2026-02-19T19:40:20.000Z",
             "text": "Ок, поправь naming и убери var в примере. После этого можно отправлять на проверку.",
             "attachments": [],
         },
         {
-            "messageId": "msg_0007",
-            "author": { "userId": "8cb9fe4e-5dc7-5be5-8cd4-0038cd267ab7", "role": "Student" },
+            "id": "msg_0007",
+            seq: 7,
+            "authorId": "8cb9fe4e-5dc7-5be5-8cd4-0038cd267ab7",
+            "authorRole": "Student",
             "createdAt": "2026-02-19T19:38:05.000Z",
             "text": "Я сделал решение. Посмотри, пожалуйста.",
             "attachments": [
                 {
-                    "attachmentId": "att_0001",
-                    "fileName": "Solution.cs",
-                    "url": "/chatsExercise/csharp-basic/cb47b48f-af74-522f-9428-00b63ecd5dff/f48222bd2bfd412a__Solution.cs"
+                    "id": "69acfcf9cf201d619996bd81",
+                    "fileNameOriginal": "Solution.cs",
+                    //"downloadUrl": "cb47b48f-af74-522f-9428-00b63ecd5dff/f48222bd2bfd412a__Solution.cs",
                 }
             ],
         },
         {
-            "messageId": "msg_0008",
-            "author": { "userId": "3b795346-78d9-5464-87a7-f18e37343066", "role": "Mentor" },
+            "id": "msg_0008",
+            seq: 8,
+            "authorId": "3b795346-78d9-5464-87a7-f18e37343066",
+            "authorRole": "Mentor",
             "createdAt": "2026-02-19T19:40:20.000Z",
             "text": "Ок, поправь naming и убери var в примере. После этого можно отправлять на проверку.",
             "attachments": [],
         },
     ];
 
+const demoExerciseChatStatus: DemoOpt = { delay: 1000, forceError: null };    // forceError: error | forceThrow: "DEMO_FORCED_ERROR" | undefined
 
-const demoExerciseChatThread: DemoOpt = { delay: 1000, forceError: null };    // forceError: error | forceThrow "DEMO_FORCED_ERROR" | undefined
-
-export async function stub_getExerciseChatThread(token: string, signal: AbortSignal | undefined, courseId: string, exerciseId: string, userId: string) {
+export async function stub_getExerciseChatData(token: string, signal: AbortSignal | undefined, exerciseId: string) {
     void token;
     void signal;
 
-    await demoFunction(demoExerciseChatThread);
+    await demoFunction(demoExerciseChatStatus);
 
-    if (courseId !== "csharp-basic" ||
-        exerciseId !== "cb47b48f-af74-522f-9428-00b63ecd5dff" ||
-        userId !== "3b795346-78d9-5464-87a7-f18e37343066") {
+    if (exerciseId !== "cb47b48f-af74-522f-9428-00b63ecd5dff") {
         throw httpError("http", "NotFoundError", 404);
     }
-    return demoChatThread;
+    return ExerciseChatDto;
 }
 
-const demoChatThread: ChatThreadDto =
+const ExerciseChatDto: ExerciseChatDto =
 {
-    "threadId": "thr_c1_e1_s_alice",
-    "scope": {
-        "courseId": "csharp-basic",
-        "exerciseId": "cb47b48f-af74-522f-9428-00b63ecd5dff",
-        "studentId": "3b795346-78d9-5464-87a7-f18e37343066"
+    exercise:
+    {
+        "status": "OnStudent",
+        "mark": null,
+        "threadId": "69a9d551501cae1989b429b1",
     },
-    "lastMessageAt": "2026-02-19T19:40:20.000Z",
-    "lastMessagePreview": "Ок, поправь naming и убери var в примере.",
-    "counters": {
-        "total": 2,
-        "unreadByStudent": 1,
-        "unreadByMentor": 0
+    threadLocks:
+    {
+        lockSeq: 2
     }
 };
-
-

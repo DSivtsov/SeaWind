@@ -19,7 +19,20 @@ type TextRequestOptions = {
   signal?: AbortSignal;
 };
 
-export type RequestOptions = JsonRequestOptions | TextRequestOptions;
+type BlobRequestOptions = {
+  method: "GET";
+  parse: "blob";
+  signal?: AbortSignal;
+};
+
+type FormRequestOptions = {
+  method: "POST" | "PUT" | "PATCH";
+  parse?: "json" | "empty";
+  body: FormData;
+  signal?: AbortSignal;
+};
+
+export type RequestOptions = JsonRequestOptions | TextRequestOptions | BlobRequestOptions | FormRequestOptions;
 
 export function buildUrl(path: string): string {
   return path;

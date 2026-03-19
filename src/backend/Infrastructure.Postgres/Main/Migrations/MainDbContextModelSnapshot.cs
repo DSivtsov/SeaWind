@@ -165,6 +165,65 @@ namespace Infrastructure.Postgres.Main.Migrations
                         });
                 });
 
+            modelBuilder.Entity("Application.Models.StudentExercise", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("AssignedMentorId")
+                        .HasMaxLength(36)
+                        .HasColumnType("character varying(36)");
+
+                    b.Property<DateTime?>("CheckedAt")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("CourseId")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)");
+
+                    b.Property<Guid>("ExerciseId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int?>("Mark")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("RequestedCheckAt")
+                        .HasColumnType("timestamp");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(12)
+                        .HasColumnType("character varying(12)");
+
+                    b.Property<string>("StudentId")
+                        .IsRequired()
+                        .HasMaxLength(36)
+                        .HasColumnType("character varying(36)");
+
+                    b.Property<string>("ThreadId")
+                        .IsRequired()
+                        .HasMaxLength(24)
+                        .HasColumnType("character varying(24)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CourseId");
+
+                    b.HasIndex("ExerciseId");
+
+                    b.HasIndex("StudentId", "ExerciseId")
+                        .IsUnique();
+
+                    b.ToTable("student_exercises", "main", t =>
+                        {
+                            t.HasCheckConstraint("CK_student_exercises_Mark", "\"Mark\" IS NULL OR (\"Mark\" BETWEEN 0 AND 2)");
+
+                            t.HasCheckConstraint("CK_student_exercises_Status", "\"Status\" IN ('OnStudent','OnMentor')");
+                        });
+                });
+
             modelBuilder.Entity("Application.Models.Exercise", b =>
                 {
                     b.HasOne("Application.Models.Course", null)
@@ -188,6 +247,21 @@ namespace Infrastructure.Postgres.Main.Migrations
                     b.HasOne("Application.Models.Course", null)
                         .WithMany()
                         .HasForeignKey("CourseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Application.Models.StudentExercise", b =>
+                {
+                    b.HasOne("Application.Models.Course", null)
+                        .WithMany()
+                        .HasForeignKey("CourseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Application.Models.Exercise", null)
+                        .WithMany()
+                        .HasForeignKey("ExerciseId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

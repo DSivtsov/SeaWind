@@ -1,4 +1,4 @@
-import { Alert, Button, Skeleton, Stack, Text } from "@mantine/core";
+import { Alert, Box, Button, Center, Skeleton, Stack, Text } from "@mantine/core";
 import { IconAlertCircle } from "@tabler/icons-react";
 import type { ReactNode } from "react";
 
@@ -29,7 +29,12 @@ type ContentEmptyProps = {
 
 export function ContentEmpty({ message }: ContentEmptyProps) {
     return (
-        <Text>{message ?? "Данных нет"}</Text>);
+        <Center h="100%" py="xl">
+            <Text c="gray.6" ta="center" size="lg">
+                📭 {message ?? "Здесь пока пусто"}
+            </Text>
+        </Center>
+    );
 }
 
 type ContentErrorProps = {
@@ -41,24 +46,25 @@ type ContentErrorProps = {
 
 export function ContentError({ smallSize = false, title, message, onRetry }: ContentErrorProps) {
     return (
-        <Stack gap={smallSize ? "xs" : "md"}>
-            <Alert
-                icon={<IconAlertCircle size={16} />}
-                title={title ?? "Ошибка"}
-                color="red"
-                variant="light"
-            >
-                <Text size={smallSize ? "xs" : "sm"}>
-                    {message ?? "Не удалось загрузить данные."}
-                </Text>
-            </Alert>
-
-            {onRetry && (
-                <Button variant="light" onClick={onRetry}>
-                    Повторить
-                </Button>
-            )}
-        </Stack>
+        <Box pt={smallSize ? "xs" : "md"}>
+            <Stack gap={smallSize ? "xs" : "md"}>
+                <Alert
+                    icon={<IconAlertCircle size={16} />}
+                    title={title ?? "Ошибка"}
+                    color="red"
+                    variant="light"
+                >
+                    <Text size={smallSize ? "xs" : "sm"}>
+                        {message ?? "Не удалось загрузить данные."}
+                    </Text>
+                </Alert>
+                {onRetry && (
+                    <Button variant="light" onClick={onRetry}>
+                        Повторить
+                    </Button>
+                )}
+            </Stack>
+        </Box>
     );
 }
 
@@ -89,7 +95,7 @@ export function ContentSkeleton({ size = "lg" }: ContentSkeletonProps) {
     }[size];
 
     return (
-        <Stack gap={config.gap}>
+        <Stack gap={config.gap} pt={config.gap} pb={config.gap} >
             <Skeleton height={config.title} width="40%" radius="sm" />
             {size !== "xs" &&
                 <>

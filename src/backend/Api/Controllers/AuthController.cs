@@ -1,5 +1,5 @@
 ﻿using Api.Dtos;
-using Api.Exceptions;
+using Application.Common.Exceptions;
 using Api.Identity;
 using Application.Models;
 using Microsoft.AspNetCore.Identity;
@@ -71,21 +71,21 @@ public sealed class AuthController : ControllerBase
                 throw new ConflictException("Учётная запись с такими данными уже существует.");
 
             if (res.Errors.Any(e => e.Code == "InvalidEmail"))
-                throw new BadRequestException("Email имеет некорректный формат.");
+                throw new ValidationException("Email имеет некорректный формат.");
 
             if (res.Errors.Any(e => e.Code == nameof(IdentityErrorDescriber.PasswordTooShort)))
-                throw new BadRequestException("Пароль должен быть не менее 6 символов.");
+                throw new ValidationException("Пароль должен быть не менее 6 символов.");
 
             if (res.Errors.Any(e => e.Code == nameof(IdentityErrorDescriber.PasswordRequiresLower)))
-                throw new BadRequestException("Пароль должен содержать хотя бы одну строчную букву (a-z)");
+                throw new ValidationException("Пароль должен содержать хотя бы одну строчную букву (a-z)");
 
             if (res.Errors.Any(e => e.Code == nameof(IdentityErrorDescriber.PasswordRequiresUpper)))
-                throw new BadRequestException("Пароль должен содержать хотя бы одну заглавную букву (A-Z)");
+                throw new ValidationException("Пароль должен содержать хотя бы одну заглавную букву (A-Z)");
 
             if (res.Errors.Any(e => e.Code == nameof(IdentityErrorDescriber.PasswordRequiresDigit)))
-                throw new BadRequestException("Пароль должен содержать хотя бы одну цифру");
+                throw new ValidationException("Пароль должен содержать хотя бы одну цифру");
 
-            throw new BadRequestException("Ошибка регистрации.");
+            throw new ValidationException("Ошибка регистрации.");
         }
 
         res = await _userManager.AddToRoleAsync(user, DEFAULT_ROLE);

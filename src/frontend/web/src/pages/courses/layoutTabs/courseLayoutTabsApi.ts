@@ -14,6 +14,7 @@ export type CourseExerciseDto = {
     orderNo: number;
     title: string;
     shortDescription?: string;
+    mark: number | null;
 };
 
 export async function getCourseById(courseId: string, token: string, signal?: AbortSignal): Promise<CourseDto> {

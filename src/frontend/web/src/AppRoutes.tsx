@@ -23,7 +23,9 @@ import { CourseLayoutTabs } from "@/pages/courses/layoutTabs/CourseLayoutTabs";
 import { AdminLayout } from "@/pages/admin/AdminLayout";
 import { AdminManageUserRoles } from "@/pages/admin/AdminManageUserRoles";
 import { CourseExercisesPage } from "@/pages/courses/layoutTabs/CourseExercisesPage";
-import { CourseExerciseChat } from "@/pages/courses/exerciseChat/CourseExerciseChat";
+import { ExerciseDashboard } from "@/pages/courses/exerciseChat/ExerciseDashboard";
+import { MentorLayout } from "@/pages/mentor/MentorLayout";
+import { MentorExerciseChatInbox } from "@/pages/mentor/MentorExerciseChatInbox";
 
 export function AppRoutes() {
   return (
@@ -65,12 +67,12 @@ export function AppRoutes() {
         </Route>
 
         {/* Student&Mentor: full-screen chat (outside tabs, no direct navigation) */}
-        <Route path="/exercises/:exerciseId/chat" element={<CourseExerciseChat />} />
+        <Route path="/exercises/:exerciseId/dashboard" element={<ExerciseDashboard />} />
 
         {/* Mentor area */}
-        <Route path="/mentor" element={<PagePlaceholder title="MentorLayout (wrapper)" />}>
-          <Route index element={<Navigate to="exercises/inbox" replace />} />
-          <Route path="exercises/inbox" element={<PagePlaceholder title="Mentor · CourseExerciseChat Inbox" />} />
+        <Route path="/mentor" element={<MentorLayout />}>
+          <Route index element={<Navigate to="exercises-chats-inbox" replace />} />
+          <Route path="exercises-chats-inbox" element={<MentorExerciseChatInbox />} />
           <Route path="workshop-manage" element={<PagePlaceholder title="Mentor · ManageWorkshop" />} />
           <Route path="hours-spent" element={<PagePlaceholder title="Mentor · EditHoursSpent" />} />
         </Route>

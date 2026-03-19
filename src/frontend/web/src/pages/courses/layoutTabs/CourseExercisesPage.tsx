@@ -1,11 +1,12 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { Badge, Box, Card, Grid, Group, Skeleton, Stack, Text } from "@mantine/core";
+import { Badge, Box, Card, Grid, Group, Skeleton, Stack, Text, Tooltip } from "@mantine/core";
 import { useAuthContext } from "@/shared/auth/authContext";
 import { getAllExercisesByCourseIdOrdered, type CourseExerciseDto }
   from "@/pages/courses/layoutTabs/courseLayoutTabsApi";
 import { PageShell } from "@/shared/components/PageShell";
 import { httpError, type ApiError } from "@/shared/api/apiError";
+import { IconSquare, IconSquareCheck } from "@tabler/icons-react";
 
 type ExercisesPageState =
   | { kind: "loading" }
@@ -20,6 +21,9 @@ export function CourseExercisesPage() {
   const token = authCtx.state.token ?? null;
   const [exercisesPageState, setExercisesPageState] = useState<ExercisesPageState>({ kind: "loading" });
   const refController = useRef<AbortController>(null);
+
+  const userRole = authCtx.me.kind === "ready" ? authCtx.me.user.role : null;
+  const isStudent = userRole === "Student";
 
   const load = useCallback(async () => {
     if (!courseId || !token) {
@@ -58,12 +62,12 @@ export function CourseExercisesPage() {
 
   const retry = load;
 
-  const openExerciseChat = (exercise: CourseExerciseDto) => {
-    //navigate(`${exercise.id}/chat`);
-    navigate(`/exercises/${exercise.id}/chat`, {
-      state: { from: `/courses/${courseId}/exercises` }
-    });
-    return;
+  const openExerciseDashboard = (exerciseId: string) => {
+    if (isStudent) {
+      navigate(`/exercises/${exerciseId}/dashboard`, {
+        state: { from: `/courses/${courseId}/exercises` }
+      });
+    }
   };
 
   return (
@@ -76,7 +80,7 @@ export function CourseExercisesPage() {
         error={exercisesPageState.kind === "error" ? exercisesPageState.error : undefined}
         onRetry={retry}
       >
-        {exercisesPageState.kind === "ready" && readyView(exercisesPageState.exercises, openExerciseChat)}
+        {exercisesPageState.kind === "ready" && readyView(exercisesPageState.exercises, isStudent, openExerciseDashboard)}
       </PageShell>
     </Box>
   );
@@ -99,33 +103,57 @@ const loadingView = <Grid gutter="md">
 
 const emptyView = <Text>В этом курсе ещё нет упражнений</Text>;
 
-function readyView(
-  exercises: CourseExerciseDto[],
-  openExerciseChat: (lecture: CourseExerciseDto) => void) {
+function readyView(exercises: CourseExerciseDto[], isStudent: boolean, openExerciseDashboard: (exerciseId: string) => void) {
+
+  const showMark = (mark: number | null) => {
+    if (!isStudent || mark === null) return null;
+
+    const completed = mark > 0;
+
+    const icon = completed
+      ? <IconSquareCheck color="green" />
+      : <IconSquare color="gray" />;
+
+    const label = completed
+      ? "Упражнение зачтено"
+      : "Упражнение не начато";
+
+    const color = completed ? "green" : "gray";
+
+    return (
+      <Tooltip label={label} color={color}>
+        {icon}
+      </Tooltip>
+    );
+  };
+
   return <Grid gutter="md">
-    {exercises.map((lec) => (
-      <Grid.Col key={lec.id} span={{ base: 12, sm: 6, lg: 4 }}>
+    {exercises.map((exercise) => (
+      <Grid.Col key={exercise.id} span={{ base: 12, sm: 6, lg: 4 }}>
         <Card
           withBorder
           radius="md"
           padding="md"
           role="button"
           tabIndex={0}
-          onClick={() => openExerciseChat(lec)}
+          onClick={() => openExerciseDashboard(exercise.id)}
           onKeyDown={(e) => {
-            if (e.key === "Enter" || e.key === " ") openExerciseChat(lec);
+            if (e.key === "Enter" || e.key === " ") openExerciseDashboard(exercise.id);
           }}
         >
           <Stack gap="xs">
             <Group justify="space-between" align="center">
-              <Badge variant="light">Exercise № {lec.orderNo}</Badge>
+              <Group>
+                <Badge variant="light">Exercise № {exercise.orderNo}</Badge>
+                {showMark(exercise.mark)}
+              </Group>
               <Badge variant="outline">▶</Badge>
             </Group>
             <Text fw={600} lineClamp={2}>
-              {lec.title}
+              {exercise.title}
             </Text>
             <Text size="sm" c="dimmed" lineClamp={3}>
-              {lec.shortDescription ?? ""}
+              {exercise.shortDescription ?? ""}
             </Text>
             <Text size="xs" c="dimmed">
               Нажмите ▶ для перехода к детальному описанию и сдаче упражнения.
