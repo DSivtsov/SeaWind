@@ -23,10 +23,11 @@
 | `/courses/:courseId/lectures`          | `CourseLecturesPage.tsx`   | Просмотр списка лекций курса         |
 | `/courses/:courseId/exercises`         | `CourseExercisesPage`      | Список упражнений курса              |
 | `/courses/:courseId/workshop-sessions` | `PagePlaceholder.tsx`      | Сессии воркшопов курса (stub)        |
-| `/exercises/:exerciseId/chat`          | `CourseExerciseChat.tsx`   | Рабочий экран упражнения: исходные данные и описание задачи, чат Student↔Mentor и панель Mentor (оценка выполнения и учёт трудозатрат на проверку упражнения)      |
+| `/exercises/:exerciseId/chat`          |  `ExerciseDashboard.tsx`   | Рабочий экран упражнения: исходные данные и описание задачи, чат Student↔Mentor и панель Mentor (оценка выполнения и учёт трудозатрат на проверку упражнения)      |
 | `/admin/hours-added`                   | `PagePlaceholder.tsx`      | Управление временем студентов (stub) |
 | `/admin/support/inbox`                 | `PagePlaceholder.tsx`      | Support Chat (Admin, stub)           |
 | `/admin/users-roles`                   | `AdminManageUserRoles.tsx` | Управление ролями пользователей      |
+| `/mentor/exercises-chats-inbox`        | `MentorExerciseChatInbox`  | Inbox чатов упражнений для ментора   |
 
 ---
 
