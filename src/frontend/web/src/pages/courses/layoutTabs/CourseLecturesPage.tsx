@@ -13,7 +13,8 @@ type LecturesPageState =
   | { kind: "empty" }
   | { kind: "ready"; lectures: CourseLectureDto[] };
 
-function isValidHttpUrl(url: string): boolean {
+function isValidHttpUrl(url: string | undefined): boolean {
+  if (!url) return false;
   try {
     const u = new URL(url);
     return u.protocol === "http:" || u.protocol === "https:";
@@ -67,16 +68,6 @@ export function CourseLecturesPage() {
 
   const retry = load;
 
-  const openLectureVideo = (lecture: CourseLectureDto) => {
-    const url = (lecture.videoUrl ?? "").trim();
-    if (!url || !isValidHttpUrl(url)) {
-      setBadLinkOpened(true);
-      return;
-    }
-
-    window.open(url, "_blank", "noopener,noreferrer");
-  };
-
   return (
     <Box p="md">
       <Modal
@@ -96,7 +87,7 @@ export function CourseLecturesPage() {
         error={lecturesPageState.kind === "error" ? lecturesPageState.error : undefined}
         onRetry={retry}
       >
-        {lecturesPageState.kind === "ready" && readyView(lecturesPageState.lectures, openLectureVideo)}
+        {lecturesPageState.kind === "ready" && readyView(lecturesPageState.lectures, setBadLinkOpened)}
       </PageShell>
     </Box>
   );
@@ -119,40 +110,54 @@ const loadingView = <Grid gutter="md">
 
 const emptyView = <Text>В этом курсе ещё нет лекций</Text>;
 
-function readyView(
-  lectures: CourseLectureDto[],
-  openLectureVideo: (lecture: CourseLectureDto) => void) {
-  return <Grid gutter="md">
-    {lectures.map((lec) => (
-      <Grid.Col key={lec.id} span={{ base: 12, sm: 6, lg: 4 }}>
-        <Card
-          withBorder
-          radius="md"
-          padding="md"
-          role="button"
-          tabIndex={0}
-          onClick={() => openLectureVideo(lec)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" || e.key === " ") openLectureVideo(lec);
-          }}
-        >
-          <Stack gap="xs">
-            <Group justify="space-between" align="center">
-              <Badge variant="light">Lecture № {lec.orderNo}</Badge>
-              <Badge variant="outline">▶</Badge>
-            </Group>
-            <Text fw={600} lineClamp={2}>
-              {lec.title}
-            </Text>
-            <Text size="sm" c="dimmed" lineClamp={3}>
-              {lec.description ?? ""}
-            </Text>
-            <Text size="xs" c="dimmed">
-              Нажмите ▶ для открытия видеоурока.
-            </Text>
-          </Stack>
-        </Card>
-      </Grid.Col>
-    ))}
-  </Grid>;
+function readyView(lectures: CourseLectureDto[], setBadLinkOpened: (state: boolean) => void) {
+  return (
+    <Grid gutter="md">
+      {lectures.map((lec) => {
+        const ref = (lec.videoUrl ?? "").trim() || undefined;
+        const isValid = isValidHttpUrl(ref);
+
+        return (
+          <Grid.Col key={lec.id} span={{ base: 12, sm: 6, lg: 4 }}>
+            <a
+              href={isValid ? ref : undefined}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ textDecoration: "none" }}
+              onClick={(e) => {
+                if (!isValid) {
+                  e.preventDefault();
+                  setBadLinkOpened(true);
+                }
+              }}
+            >
+              <Card
+                withBorder
+                radius="md"
+                padding="md"
+                role="button"
+                tabIndex={0}
+              >
+                <Stack gap="xs">
+                  <Group justify="space-between" align="center">
+                    <Badge variant="light">Lecture № {lec.orderNo}</Badge>
+                    <Badge variant="outline">▶</Badge>
+                  </Group>
+                  <Text fw={600} lineClamp={2}>
+                    {lec.title}
+                  </Text>
+                  <Text size="sm" c="dimmed" lineClamp={3}>
+                    {lec.description ?? ""}
+                  </Text>
+                  <Text size="xs" c="dimmed">
+                    Нажмите ▶ для открытия видеоурока.
+                  </Text>
+                </Stack>
+              </Card>
+            </a>
+          </Grid.Col>
+        );
+      })}
+    </Grid>
+  );
 }

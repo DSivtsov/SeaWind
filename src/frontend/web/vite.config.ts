@@ -19,6 +19,15 @@ export default defineConfig({
   },
 
   server: {
+    warmup: {
+      clientFiles: [
+        "./src/main.tsx",
+        "./src/App.tsx",
+        "./src/AppRoutes.tsx",
+        "./src/common/app.css",
+        "./src/pages/landing/landing.css"
+      ]
+    },
     proxy: {
       '/api': {
         target,
