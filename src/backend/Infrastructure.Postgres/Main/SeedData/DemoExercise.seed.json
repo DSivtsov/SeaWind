@@ -1,345 +1,51 @@
 [
   {
     "Id": "!exercise.1",
-    "CourseId": "!course.ID1",
+    "CourseId": "!course.ID2",
     "OrderNo": 1,
     "Title": "Функции и базовые вычисления",
-    "ShortDescription": "Набор задач на реализацию методов с параметрами и числовыми вычислениями."
+    "ShortDescription": "Реализация методов с параметрами и простыми числовыми вычислениями."
   },
   {
     "Id": "!exercise.2",
-    "CourseId": "!course.ID1",
-    "OrderNo": 5,
-    "Title": "Строки и ввод-вывод",
-    "ShortDescription": "Практика работы со строками: форматирование, поиск, замены, парсинг простых значений."
+    "CourseId": "!course.ID2",
+    "OrderNo": 2,
+    "Title": "Массивы: проход и поиск",
+    "ShortDescription": "Работа с массивами: перебор, поиск элементов и подсчёт."
   },
   {
     "Id": "!exercise.3",
-    "CourseId": "!course.ID1",
-    "OrderNo": 4,
-    "Title": "Условные конструкции",
-    "ShortDescription": "Задачи на if/else и логические операторы: ветвление, проверки диапазонов, простые правила."
+    "CourseId": "!course.ID2",
+    "OrderNo": 3,
+    "Title": "Мини-проект: консольный калькулятор",
+    "ShortDescription": "Собрать простой калькулятор с меню команд и обработкой ввода."
   },
   {
     "Id": "!exercise.4",
-    "CourseId": "!course.ID1",
-    "OrderNo": 6,
-    "Title": "Циклы и накопление результата",
-    "ShortDescription": "Практика for/while: суммы, произведения, счётчики, поиск минимума/максимума."
+    "CourseId": "!course.ID2",
+    "OrderNo": 4,
+    "Title": "Условные конструкции",
+    "ShortDescription": "Практика if/else: проверки, ветвление и простые логические правила."
   },
   {
     "Id": "!exercise.5",
-    "CourseId": "!course.ID1",
-    "OrderNo": 2,
-    "Title": "Массивы: проход и поиск",
-    "ShortDescription": "Базовые операции с массивами: заполнение, линейный поиск, подсчёт, простая статистика."
+    "CourseId": "!course.ID3",
+    "OrderNo": 1,
+    "Title": "Сцена и GameObject",
+    "ShortDescription": "Создание сцены, добавление объектов и работа с Transform."
   },
   {
     "Id": "!exercise.6",
-    "CourseId": "!course.ID1",
-    "OrderNo": 3,
-    "Title": "Мини‑проект: консольный калькулятор",
-    "ShortDescription": "Собрать меню команд + функции вычислений; обработка неверного ввода (минимально)."
+    "CourseId": "!course.ID3",
+    "OrderNo": 2,
+    "Title": "Простейший скрипт поведения",
+    "ShortDescription": "Скрипт на C#: движение объекта и вывод в Console."
   },
   {
     "Id": "!exercise.7",
-    "CourseId": "!course.ID2",
-    "OrderNo": 1,
-    "Title": "Сцена и GameObject",
-    "ShortDescription": "Создать сцену, настроить камеру, добавить объекты и проверить трансформации."
-  },
-  {
-    "Id": "!exercise.8",
-    "CourseId": "!course.ID2",
+    "CourseId": "!course.ID3",
     "OrderNo": 3,
     "Title": "Компоненты и Inspector",
-    "ShortDescription": "Добавить компоненты (SpriteRenderer/Collider), настроить параметры через Inspector."
-  },
-  {
-    "Id": "!exercise.9",
-    "CourseId": "!course.ID2",
-    "OrderNo": 2,
-    "Title": "Простейший скрипт поведения",
-    "ShortDescription": "Скрипт на C#: движение по клавишам и вывод отладочной информации в Console."
-  },
-  {
-    "Id": "!exercise.10",
-    "CourseId": "!course.ID3",
-    "OrderNo": 1,
-    "Title": "Классы и инкапсуляция",
-    "ShortDescription": "Создать классы с полями/свойствами, защитить состояние через методы."
-  },
-  {
-    "Id": "!exercise.11",
-    "CourseId": "!course.ID3",
-    "OrderNo": 2,
-    "Title": "Наследование и полиморфизм",
-    "ShortDescription": "Базовый класс + 2 наследника, переопределение методов, работа через базовый тип."
-  },
-  {
-    "Id": "!exercise.12",
-    "CourseId": "!course.ID3",
-    "OrderNo": 3,
-    "Title": "Интерфейсы и композиция",
-    "ShortDescription": "Вынести поведение в интерфейс(ы) и собрать объект из компонентов (композиция)."
-  },
-  {
-    "Id": "!exercise.13",
-    "CourseId": "!course.ID4",
-    "OrderNo": 1,
-    "Title": "List и базовые операции",
-    "ShortDescription": "Добавление/удаление/поиск, проход foreach, простые преобразования."
-  },
-  {
-    "Id": "!exercise.14",
-    "CourseId": "!course.ID4",
-    "OrderNo": 3,
-    "Title": "Dictionary: ключ‑значение",
-    "ShortDescription": "Словарь для быстрых поисков: подсчёт частот, индекс по имени/Id."
-  },
-  {
-    "Id": "!exercise.15",
-    "CourseId": "!course.ID4",
-    "OrderNo": 2,
-    "Title": "HashSet и уникальность",
-    "ShortDescription": "Задачи на уникальные элементы и пересечения множеств."
-  },
-  {
-    "Id": "!exercise.16",
-    "CourseId": "!course.ID5",
-    "OrderNo": 1,
-    "Title": "Select/Where: простые запросы",
-    "ShortDescription": "Отфильтровать и спроецировать данные; цепочки Where → Select."
-  },
-  {
-    "Id": "!exercise.17",
-    "CourseId": "!course.ID5",
-    "OrderNo": 2,
-    "Title": "GroupBy/OrderBy",
-    "ShortDescription": "Группировки и сортировки: топ‑N, агрегаты Count/Sum/Max."
-  },
-  {
-    "Id": "!exercise.18",
-    "CourseId": "!course.ID6",
-    "OrderNo": 1,
-    "Title": "async/await: базовый сценарий",
-    "ShortDescription": "Написать асинхронные методы с задержками и корректным ожиданием."
-  },
-  {
-    "Id": "!exercise.19",
-    "CourseId": "!course.ID6",
-    "OrderNo": 2,
-    "Title": "Отмена через CancellationToken",
-    "ShortDescription": "Добавить отмену операции, корректно обработать отмену без падения приложения."
-  },
-  {
-    "Id": "!exercise.20",
-    "CourseId": "!course.ID7",
-    "OrderNo": 1,
-    "Title": "2D персонаж и движение",
-    "ShortDescription": "Собрать 2D персонажа (Sprite), движение по вводу, ограничение скорости."
-  },
-  {
-    "Id": "!exercise.21",
-    "CourseId": "!course.ID7",
-    "OrderNo": 2,
-    "Title": "Камера и границы уровня",
-    "ShortDescription": "Настроить follow‑камеру и простые границы (clamp по координатам)."
-  },
-  {
-    "Id": "!exercise.22",
-    "CourseId": "!course.ID7",
-    "OrderNo": 3,
-    "Title": "Сбор предметов",
-    "ShortDescription": "Триггеры + счётчик; подобрать предметы и обновлять UI‑текст."
-  },
-  {
-    "Id": "!exercise.23",
-    "CourseId": "!course.ID8",
-    "OrderNo": 1,
-    "Title": "3D сцена и управление камерой",
-    "ShortDescription": "Создать 3D сцену, настроить камеру, базовое управление вращением/приближением."
-  },
-  {
-    "Id": "!exercise.24",
-    "CourseId": "!course.ID8",
-    "OrderNo": 3,
-    "Title": "Prefab и спавн объектов",
-    "ShortDescription": "Сделать prefab и спавнить объекты по таймеру/кнопке."
-  },
-  {
-    "Id": "!exercise.25",
-    "CourseId": "!course.ID8",
-    "OrderNo": 2,
-    "Title": "Навигация по NavMesh (минимум)",
-    "ShortDescription": "Построить NavMesh и отправлять агента к точке клика."
-  },
-  {
-    "Id": "!exercise.26",
-    "CourseId": "!course.ID9",
-    "OrderNo": 2,
-    "Title": "RigidBody и силы",
-    "ShortDescription": "Движение через AddForce, масса/drag, сравнить с перемещением Transform."
-  },
-  {
-    "Id": "!exercise.27",
-    "CourseId": "!course.ID9",
-    "OrderNo": 1,
-    "Title": "Коллизии и триггеры",
-    "ShortDescription": "Обработка OnCollision/OnTrigger, простые правила взаимодействия."
-  },
-  {
-    "Id": "!exercise.28",
-    "CourseId": "!course.ID10",
-    "OrderNo": 2,
-    "Title": "Canvas и базовый HUD",
-    "ShortDescription": "Собрать Canvas, Text/Buttons, якоря и масштабирование."
-  },
-  {
-    "Id": "!exercise.29",
-    "CourseId": "!course.ID10",
-    "OrderNo": 1,
-    "Title": "UI события и привязка",
-    "ShortDescription": "Кнопки вызывают методы; обновление UI от состояния игры."
-  },
-  {
-    "Id": "!exercise.30",
-    "CourseId": "!course.ID11",
-    "OrderNo": 1,
-    "Title": "Петля геймплея",
-    "ShortDescription": "Описать и реализовать простой loop: цель → действие → награда."
-  },
-  {
-    "Id": "!exercise.31",
-    "CourseId": "!course.ID11",
-    "OrderNo": 2,
-    "Title": "Баланс в цифрах",
-    "ShortDescription": "Подобрать параметры (скорость/урон/награда) и проверить на тестовых сценариях."
-  },
-  {
-    "Id": "!exercise.32",
-    "CourseId": "!course.ID12",
-    "OrderNo": 2,
-    "Title": "Сложность алгоритмов (практика)",
-    "ShortDescription": "Сравнить 2 решения по времени/операциям на наборах разных размеров."
-  },
-  {
-    "Id": "!exercise.33",
-    "CourseId": "!course.ID12",
-    "OrderNo": 1,
-    "Title": "Сортировки: базовые",
-    "ShortDescription": "Реализовать пузырёк/вставки и сравнить с встроенной сортировкой."
-  },
-  {
-    "Id": "!exercise.34",
-    "CourseId": "!course.ID13",
-    "OrderNo": 1,
-    "Title": "Стек и очередь",
-    "ShortDescription": "Реализовать операции push/pop, enqueue/dequeue и применить к задаче."
-  },
-  {
-    "Id": "!exercise.35",
-    "CourseId": "!course.ID13",
-    "OrderNo": 2,
-    "Title": "Дерево (минимально)",
-    "ShortDescription": "Построить бинарное дерево и пройти его (in/pre/post order)."
-  },
-  {
-    "Id": "!exercise.36",
-    "CourseId": "!course.ID14",
-    "OrderNo": 1,
-    "Title": "Локализация ошибки",
-    "ShortDescription": "Найти баг по симптомам: воспроизведение → минимальный пример → фикс."
-  },
-  {
-    "Id": "!exercise.37",
-    "CourseId": "!course.ID14",
-    "OrderNo": 2,
-    "Title": "Отладчик: точки останова",
-    "ShortDescription": "Поставить breakpoints, пошагово пройти и проверить значения переменных."
-  },
-  {
-    "Id": "!exercise.38",
-    "CourseId": "!course.ID15",
-    "OrderNo": 2,
-    "Title": "Имена и структура",
-    "ShortDescription": "Переименовать методы/переменные, разнести по файлам, убрать дублирование."
-  },
-  {
-    "Id": "!exercise.39",
-    "CourseId": "!course.ID15",
-    "OrderNo": 1,
-    "Title": "Рефакторинг без изменения поведения",
-    "ShortDescription": "Выделить методы, убрать магические числа, сохранить тестами поведение."
-  },
-  {
-    "Id": "!exercise.40",
-    "CourseId": "!course.ID16",
-    "OrderNo": 1,
-    "Title": "Коммиты и история",
-    "ShortDescription": "Сделать серию осмысленных коммитов, посмотреть log, сделать простую правку."
-  },
-  {
-    "Id": "!exercise.41",
-    "CourseId": "!course.ID16",
-    "OrderNo": 2,
-    "Title": "Ветки и merge",
-    "ShortDescription": "Создать ветку, сделать изменения, слить обратно; разрешить простой конфликт."
-  },
-  {
-    "Id": "!exercise.42",
-    "CourseId": "!course.ID17",
-    "OrderNo": 1,
-    "Title": "Animator Controller",
-    "ShortDescription": "Настроить состояния, переходы и параметры; переключать анимации из кода."
-  },
-  {
-    "Id": "!exercise.43",
-    "CourseId": "!course.ID17",
-    "OrderNo": 2,
-    "Title": "Animation Events",
-    "ShortDescription": "Использовать события анимации для звука/эффекта в нужный кадр."
-  },
-  {
-    "Id": "!exercise.44",
-    "CourseId": "!course.ID18",
-    "OrderNo": 2,
-    "Title": "AudioSource и клипы",
-    "ShortDescription": "Проигрывание клипов, громкость, loop; запуск из кода."
-  },
-  {
-    "Id": "!exercise.45",
-    "CourseId": "!course.ID18",
-    "OrderNo": 1,
-    "Title": "Звуки событий",
-    "ShortDescription": "Звуки на действия игрока: шаг/удар/подбор предмета (минимально)."
-  },
-  {
-    "Id": "!exercise.46",
-    "CourseId": "!course.ID19",
-    "OrderNo": 1,
-    "Title": "Слои: UI / Gameplay / Data",
-    "ShortDescription": "Разделить ответственность: модели данных, сервисы, представление."
-  },
-  {
-    "Id": "!exercise.47",
-    "CourseId": "!course.ID19",
-    "OrderNo": 2,
-    "Title": "События и зависимости",
-    "ShortDescription": "Сделать простой event bus/колбеки между системами без прямых ссылок."
-  },
-  {
-    "Id": "!exercise.48",
-    "CourseId": "!course.ID20",
-    "OrderNo": 1,
-    "Title": "Интеграция фичи в проект",
-    "ShortDescription": "Добавить фичу по ТЗ: экран, логика, минимальная проверка."
-  },
-  {
-    "Id": "!exercise.49",
-    "CourseId": "!course.ID20",
-    "OrderNo": 2,
-    "Title": "Финальная полировка",
-    "ShortDescription": "Привести к единому стилю: мелкие багфиксы, читабельность, сборка без ошибок."
+    "ShortDescription": "Добавление компонентов и настройка параметров через Inspector."
   }
 ]

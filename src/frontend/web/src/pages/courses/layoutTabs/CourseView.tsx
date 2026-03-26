@@ -25,8 +25,8 @@ export function CourseView({ course, activeTab }: ReadyCourseViewProps) {
     const { isNarrow } = useAppCtx();
     const navigate = useNavigate();
     return (
-        <Group justify="space-between">
-            <Box maw={600}>
+        <Group justify="space-between" wrap="nowrap">
+            <Box flex={1} miw={0}>
                 <Stack gap={"xs"}>
                     <Grid gutter="xs">
                         <Grid.Col span={{ base: 12, sm: 4 }}>

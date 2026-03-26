@@ -1,14 +1,31 @@
 using System;
 
-public static class Example
-{
-    public static int Sum(int a, int b)
+    public static class ConditionalStatementsExample
     {
-        return a + b;
-    }
+        public static string GetGradeCategory(int score)
+        {
+            if (score >= 90)
+            {
+                return "Excellent";
+            }
 
-    public static void Run()
-    {
-        Console.WriteLine(Sum(2, 3));
+            if (score >= 70)
+            {
+                return "Good";
+            }
+
+            if (score >= 50)
+            {
+                return "Pass";
+            }
+
+            return "Fail";
+        }
+
+        public static void Main()
+        {
+            Console.WriteLine(GetGradeCategory(95));
+            Console.WriteLine(GetGradeCategory(72));
+            Console.WriteLine(GetGradeCategory(41));
+        }
     }
-}

@@ -17,18 +17,18 @@
 
 ## 🚀 About
 
-SeaWind is a sample **ASP.NET Core** project.  
+SeaWind is a sample **ASP.NET Core** project.
 It demonstrates best practices for building modern web apps with C#, .NET, and GitHub Actions CI/CD.
 
 ---
 
 ## 🔧 Features
 
-- ASP.NET Core Web API  
-- Entity Framework Core  
-- Authentication & Authorization (JWT)  
-- Unit & Integration Tests  
-- Docker support  
+- ASP.NET Core Web API
+- Entity Framework Core
+- Authentication & Authorization (JWT)
+- Unit & Integration Tests
+- Docker support
 
 ---
 
@@ -54,18 +54,32 @@ git clone https://github.com/DSivtsov/SeaWind.git
 # Запуск проекта для окружения DEV
 Смотри документ [WorkshopCode_ProjectRun] (https://github.com/DSivtsov/SeaWind/wiki/WorkshopCode_ProjectRun)
 
----
+## 🎯 Demo
 
-## ✅ CI/CD Status
+Для демонстрации функциональности системы используйте подготовленные сценарии:
 
-🚧 CI/CD workflow will be added soon (GitHub Actions planned).  
-<!-- Later replace this line with a badge, e.g.:
-[![.NET Build](https://github.com/username/SeaWind/actions/workflows/dotnet.yml/badge.svg)](https://github.com/username/SeaWind/actions/workflows/dotnet.yml)
--->
+- [Demo Scenarios](docs/DemoScenarios.md)
 
----
+Сценарии покрывают:
+- работу студента
+- проверку ментором
+- ветвление по оценке (0 / 1 / 2)
 
-=======
+
+## ✅ CI/CD
+
+CI/CD настроен с использованием GitHub Actions.
+
+Pipeline включает:
+- сборку backend и frontend
+- запуск тестов (с исключением интеграционных TestDB)
+- проверку TypeScript
+- сборку Docker-образа
+- публикацию в GitHub Container Registry
+
+Подробное описание:
+- [ADR 0021 — CI/CD (develop → TST)](docs/adr/0021-create-ci-cd-develop-tst.md)
+
 ## 👥 Project Team
 
 [![Tatyana Basargina](https://img.shields.io/badge/Tatyana-Basargina-blue)](team/TatyanaBasargina.md)
