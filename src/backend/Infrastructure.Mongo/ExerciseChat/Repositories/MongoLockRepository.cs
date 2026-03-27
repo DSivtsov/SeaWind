@@ -15,10 +15,9 @@ public sealed class MongoLockRepository : ILockRepository
         _locks = db.Locks;
     }
 
-    public async Task<LockDto?> TryAcquireLockAsync(string threadId, string ownerId, DateTime utcNow,
-        TimeSpan leaseTime, CancellationToken ct)
+    public async Task<LockDto?> TryAcquireLockAsync(string threadId, string ownerId, TimeSpan leaseTime,
+        CancellationToken ct)
     {
-        var threadObjectId = ObjectId.Parse(threadId);
         var resourceId = ObjectId.Parse(threadId);
         var now = DateTime.UtcNow;
         var expiresAtUtc = now.Add(leaseTime);

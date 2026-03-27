@@ -55,7 +55,7 @@ internal sealed class FakeExerciseChatRepository : IMessageRepository, IThreadRe
     public Task<ChangeStatusThreadResponse> UpdateThreadLockSeq(string threadId, ExerciseChatRole chatRole,
         CancellationToken ct) => Task.FromResult(default(ChangeStatusThreadResponse)!);
 
-    public Task<LockDto?> TryAcquireLockAsync(string threadId, string ownerId, DateTime utcNow, TimeSpan leaseTime,
+    public Task<LockDto?> TryAcquireLockAsync(string threadId, string ownerId, TimeSpan leaseTime,
         CancellationToken ct) => Task.FromResult(default(LockDto));
 
     public Task ReleaseLockAsync(string threadId, string ownerId, CancellationToken ct)
