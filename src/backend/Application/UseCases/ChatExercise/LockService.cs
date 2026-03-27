@@ -15,8 +15,7 @@ namespace Application.UseCases.ChatExercise
 
         public async Task<bool> AcquireLockAsync(string threadId, string lockOwnerId, CancellationToken ct)
         {
-            var lockThread = await _lockRepository.TryAcquireLockAsync(threadId, lockOwnerId, DateTime.UtcNow,
-                leaseTime, ct);
+            var lockThread = await _lockRepository.TryAcquireLockAsync(threadId, lockOwnerId, leaseTime, ct);
 
             return lockThread != null && lockThread.OwnerId == lockOwnerId;
         }
