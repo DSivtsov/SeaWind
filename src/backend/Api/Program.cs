@@ -20,42 +20,43 @@ public class Program
         builder.AddConfiguration();
 
         var cfg = builder.Configuration;
+        var services = builder.Services;
 
-        builder.Services.AddAppSettingsOptions(cfg);
+        services.AddAppSettingsOptions(cfg);
 
-        builder.Services
+        services
             .AddApplication()
             .AddInfrastructure(cfg)
             .AddMongoInfrastructure(cfg)
             .AddPresentation(cfg, builder.Environment);
 
         // Настраиваем JWT аутентификацию и авторизацию
-        builder.Services
+        services
             .AddWorkshopIdentity(builder.Environment)      // Подключение ASP.NET Identity + Identity Stores 
             .AddJwtAuth(cfg);                              // Подключение JWT-аутентификация
 
         if (Environment.GetEnvironmentVariable("WC_USE_TEST_SETTINGS") != "true")
         {
-            builder.Services.AddSwaggerWithJWT();       // Подключение Swagger с поддержкой JWT Bearer-авторизации
+            services.AddSwaggerWithJWT();       // Подключение Swagger с поддержкой JWT Bearer-авторизации
         }
 
         // При запуске в контейнере необходимо указать явное место хранения ключей Data Protection.
-        builder.AddStorageForContainers();
+        services.AddStorageForContainers(cfg);
 
         // Настройка централизованного формата для всех ошибок
-        builder.Services.AddCustomException();
+        services.AddCustomException();
 
         // Добавить сервис "X-Correlation-Id"
-        builder.Services.AddTransient<CorrelationIdMiddleware>();
+        services.AddTransient<CorrelationIdMiddleware>();
 
         // Подключения Seeder сервисов 
-        builder.Services.DbSeedersDI(cfg);
+        services.DbSeedersDI(cfg);
 
         // Регистрация HostedService для фоновых задач приложения
-        builder.Services.AddHostedServices();
+        services.AddHostedServices();
 
         // Доступ к текущему HttpContext (используется для получения текущего пользователя из JWT)
-        builder.Services.AddHttpContextAccessor();
+        services.AddHttpContextAccessor();
 
         var app = builder.Build();
 
