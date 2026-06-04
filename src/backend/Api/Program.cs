@@ -22,6 +22,7 @@ public class Program
         var cfg = builder.Configuration;
         var services = builder.Services;
 
+        // Register strongly-typed application settings (Storage, JWT, etc.)
         services.AddAppSettingsOptions(cfg);
 
         services
@@ -30,10 +31,12 @@ public class Program
             .AddMongoInfrastructure(cfg)
             .AddPresentation(cfg, builder.Environment);
 
+        // RequireConfirmedEmail по умолчанию всегда true
+        var requireConfirmedEmail = cfg.GetValue("Auth:RequireConfirmedEmail", true);
         // Настраиваем JWT аутентификацию и авторизацию
         services
-            .AddWorkshopIdentity(builder.Environment)      // Подключение ASP.NET Identity + Identity Stores 
-            .AddJwtAuth(cfg);                              // Подключение JWT-аутентификация
+            .AddWorkshopIdentity(requireConfirmedEmail)     // Подключение ASP.NET Identity + Identity Stores 
+            .AddJwtAuth(cfg);                               // Подключение JWT-аутентификация
 
         if (Environment.GetEnvironmentVariable("WC_USE_TEST_SETTINGS") != "true")
         {
@@ -60,8 +63,9 @@ public class Program
 
         var app = builder.Build();
 
-        // Запуск Seeder для закрузку демо-данных для окружения DEV
-        if (app.Environment.IsDevelopment())
+        // Запуск Seeder для закрузку демо-данных для окружения DEV или если установлен ключ SEED_ON_STARTUP
+        var seedOnStartup = cfg.GetValue<bool>("Seeding:RunOnStartup");
+        if (app.Environment.IsDevelopment() || seedOnStartup)
         {
             // await using — синтаксис для асинхронного освобождения (IAsyncDisposable).
             await using var scope = app.Services.CreateAsyncScope();

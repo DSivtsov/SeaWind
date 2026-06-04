@@ -106,3 +106,5 @@ docker-compose.*.override.yml
 **/.docker/
 **/.devcontainer/
 **/.compose/
+src/backend/Api/wwwroot/
+src/backend/Api/wwwroot/index.html

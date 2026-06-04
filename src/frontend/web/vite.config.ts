@@ -3,7 +3,7 @@ import react from '@vitejs/plugin-react';
 import path from "path";
 
 // Адрес backend
-const target = process.env.API_URL || 'http://localhost:5000';
+const target = process.env.API_URL || 'http://localhost:80';
 
 export default defineConfig({
   build: {

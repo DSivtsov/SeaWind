@@ -11,7 +11,7 @@ namespace Api.Identity;
 
 public static class SetupIdentity
 {
-    public static IServiceCollection AddWorkshopIdentity(this IServiceCollection services, IWebHostEnvironment env)
+    public static IServiceCollection AddWorkshopIdentity(this IServiceCollection services, bool requireConfirmedEmail)
     {
         // Регистрирует базовые сервисы ASP.NET Core Identity без UI (UserManager, SignInManager и др.)
         // Используется для управления пользователями (регистрация, вход, смена пароля и т.п.)
@@ -21,7 +21,7 @@ public static class SetupIdentity
                     opt.ClaimsIdentity.UserIdClaimType = ClaimTypes.NameIdentifier;
                     opt.ClaimsIdentity.UserNameClaimType = ClaimTypes.Email;
                     opt.ClaimsIdentity.RoleClaimType = ClaimTypes.Role;
-                    opt.SignIn.RequireConfirmedEmail = env.IsProduction();
+                    opt.SignIn.RequireConfirmedEmail = requireConfirmedEmail;
                     opt.Lockout.AllowedForNewUsers = true;
                     opt.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(15);
                     opt.Lockout.MaxFailedAccessAttempts = 5;

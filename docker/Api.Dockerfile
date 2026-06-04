@@ -1,9 +1,5 @@
 # build
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
-
-# нужен curl для healthcheck
-RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
-
 WORKDIR /src
 # Критично: скопировать файлы, задающие TFM и версии, ДО restore
 COPY ./global.json ./
@@ -29,6 +25,10 @@ RUN dotnet publish ./Api -c Release -o /app/publish
 
 # run
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
+
+# нужен curl для healthcheck
+RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
+
 WORKDIR /app
 COPY --from=build /app/publish ./
 ARG API_PORT_INT

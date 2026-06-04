@@ -52,7 +52,7 @@ namespace Infrastructure.Postgres.Seeding.SeedDataFiles
                 var pKeysUpdater = new PrimaryKeyValuesUpdater(modeUUID);
                 pKeysUpdater.UpdatePKeyValues(tableAnalysis.PKeys);
 
-                var outputSeedDataFiles = new SeedFilesOutputGenerator(pKeysUpdater, tableAnalysis.RootJsonElementsEntities, pathBase);
+                var outputSeedDataFiles = new SeedFilesOutputGenerator(pKeysUpdater, tableAnalysis.EntityData, pathBase);
                 outputSeedDataFiles.Generate();
             }
             catch (Exception ex)

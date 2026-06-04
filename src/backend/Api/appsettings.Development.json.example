@@ -16,6 +16,9 @@
       "SeedingMainDbContext": "Information"
     }
   },
+  "Auth": {
+    "RequireConfirmedEmail": false
+  },
   "_comment": "Jwt:Key должен быть длиной не менее 32 символов (256 бит) и состоять только из ASCII-символов: A–Z, a–z, 0–9, -, _, =. Лучше использовать Base64-строку.",
   "Jwt": {
     "Key": "DXaA1_usIbb-9txBxhqG36Hua0zXa2UWuXwafsFCfiA="

@@ -6,41 +6,43 @@ namespace Infrastructure.Postgres.Seeding.SeedDataFiles
     internal class SeedFilesOutputGenerator
     {
         private readonly PrimaryKeyValuesUpdater _pKeysUpdater;
-        private readonly IReadOnlyCollection<(string entityName, JsonElement rootElement)> _rootJsonElementsEntities;
+        private readonly IReadOnlyDictionary<string, EntitySeedData> _entityData;
         private readonly string _pathBase;
         private readonly HashSet<string> _existPKeyRef = new();
+        private string? _currentEntityKey;
 
         internal SeedFilesOutputGenerator(PrimaryKeyValuesUpdater pKeysUpdater,
-            IReadOnlyCollection<(string entityName, JsonElement rootElement)> rootJsonElementsEntities,
+            IReadOnlyDictionary<string, EntitySeedData> entityData,
                 string pathBase)
         {
             _pKeysUpdater = pKeysUpdater ?? throw new ArgumentNullException(nameof(pKeysUpdater));
-            _rootJsonElementsEntities = rootJsonElementsEntities ?? throw new ArgumentNullException(nameof(rootJsonElementsEntities));
+            _entityData = entityData ?? throw new ArgumentNullException(nameof(entityData));
             _pathBase = pathBase;
         }
 
         internal void Generate()
         {
-            foreach ((string entityName, JsonElement rootElement) item in _rootJsonElementsEntities)
+            foreach (KeyValuePair<string, EntitySeedData> item in _entityData)
             {
-                CreateDataFileForEntity(item.entityName, item.rootElement);
+                _currentEntityKey = item.Key;
+                CreateDataFileForEntity(item.Value);
             }
         }
 
-        private void CreateDataFileForEntity(string entityName, JsonElement rootElement)
+        private void CreateDataFileForEntity(EntitySeedData entityData)
         {
-            var currentFileName = SeedFilesConvention.GenerateDataFileName(entityName);
+            var currentFileName = SeedFilesConvention.GenerateDataFileName(entityData.EntityName);
 
             using var currentWriter = new DataFileWriter(Path.Combine(_pathBase, currentFileName));
 
             currentWriter.BeginWriteFile();
 
-            WriteJsonElement(entityName, currentWriter, rootElement);
+            WriteJsonElement(currentWriter, entityData.RootElement);
 
             currentWriter.EndWriteFile();
         }
 
-        private void WriteJsonElement(string entityName, DataFileWriter currentWriter, JsonElement rootElement)
+        private void WriteJsonElement(DataFileWriter currentWriter, JsonElement rootElement)
         {
             if (rootElement.ValueKind != JsonValueKind.Array)
                 throw new InvalidDataException("[WriteJsonElement]: [First element] not is JsonValueKind.Array");
@@ -51,17 +53,16 @@ namespace Infrastructure.Postgres.Seeding.SeedDataFiles
                 if (jsonObject.ValueKind != JsonValueKind.Object)
                     throw new InvalidDataException("[WriteJsonElement]: In JsonArray not only JsonValueKind.Object");
 
-                (bool isCorrectRec, List<(string Name, JsonElement Value)>? buffer) rez = GenerateJsonObject(entityName, jsonObject);
+                (bool isCorrectRec, List<(string Name, JsonElement Value)>? buffer) rez = GenerateJsonObject(jsonObject);
 
                 if (rez.isCorrectRec)
                     currentWriter.WriteJsonObject(rez.buffer!);
             }
         }
 
-        private (bool isCorrectRec, List<(string Name, JsonElement Value)>? buffer) GenerateJsonObject(string entityName,
-            JsonElement jsonObject)
+        private (bool isCorrectRec, List<(string Name, JsonElement Value)>? buffer) GenerateJsonObject(JsonElement jsonObject)
         {
-            var seedFilesChecker = new SeedFilesConvention(entityName);
+            var seedFilesChecker = new SeedFilesConvention(_currentEntityKey!);
             List<(string Name, JsonElement Value)> buffer = new();
 
             // цикл по полям объекта
