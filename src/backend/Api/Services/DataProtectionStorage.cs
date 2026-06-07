@@ -4,14 +4,14 @@ namespace Api.Services;
 
 public static class DataProtectionStorage
 {
-    public static void AddStorageForContainers(this WebApplicationBuilder builder)
+    public static void AddStorageForContainers(this IServiceCollection services, IConfiguration cfg)
     {
         // Задает общее имя приложения (ApplicationName) —
         // нужно, если несколько контейнеров/инстансов должны использовать одни и те же ключи шифрования.
-        var dp = builder.Services.AddDataProtection()
-            .SetApplicationName(builder.Configuration["ASPNETCORE_DataProtection__ApplicationName"] ?? "WorkshopCode");
+        var dp = services.AddDataProtection()
+            .SetApplicationName(cfg["ASPNETCORE_DataProtection__ApplicationName"] ?? "WorkshopCode");
 
-        var dpPath = builder.Configuration["DataProtection:Path"];
+        var dpPath = cfg["DataProtection:Path"];
 
         // Если указан путь (в контейнере или launchSettings),
         // ключи будут сохраняться на диск вместо временного хранилища по умолчанию.

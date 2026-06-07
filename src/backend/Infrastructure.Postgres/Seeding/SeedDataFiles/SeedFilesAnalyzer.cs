@@ -15,28 +15,32 @@ namespace Infrastructure.Postgres.Seeding.SeedDataFiles
         /// </summary>
         private string? _currentEntityNameNormalized;
         private SeedFilesConvention? _seedFilesChecker;
-        private List<(string entityName, JsonElement rootElement)> _rootJsonElementsEntities = new ();
+        private Dictionary<string, EntitySeedData> _entityData = new ();
 
         internal TableAnalysis AnalyzeSeedFiles(IEnumerable<string> seedFilePaths)
         {
             foreach (var path in seedFilePaths)
             {
-                _currentEntityNameNormalized = SeedFilesConvention.GetEntityNameLowered(path);
+                var entityName = SeedFilesConvention.GetEntityName(path);
 
-                if (_currentEntityNameNormalized is null)
+                if (entityName is null)
                     throw new InvalidDataException($"Invalid demo seed file name: {path}");
+
+                _currentEntityNameNormalized = entityName.ToLowerInvariant();
 
                 _seedFilesChecker = new SeedFilesConvention(_currentEntityNameNormalized);
 
-                ParseAndScanSeedFile(path);
+                var jsonElement = ParseAndScanSeedFile(path);
+
+                _entityData.Add(_currentEntityNameNormalized, new EntitySeedData(entityName, jsonElement));
             }
 
             List<string> validationWarnings = DetectedWarnings();
 
-            return new TableAnalysis(_dictPKey, _rootJsonElementsEntities, validationWarnings);
+            return new TableAnalysis(_dictPKey, _entityData, validationWarnings);
         }
 
-        private void ParseAndScanSeedFile(string pathfile)
+        private JsonElement ParseAndScanSeedFile(string pathfile)
         {
             using var fs = File.OpenRead(pathfile);
             using var doc = JsonDocument.Parse(fs);
@@ -45,7 +49,7 @@ namespace Infrastructure.Postgres.Seeding.SeedDataFiles
 
             ParseJsonArray(rootElement);
 
-            _rootJsonElementsEntities.Add((_currentEntityNameNormalized!, rootElement.Clone()));
+            return rootElement.Clone();
         }
 
         private void ParseJsonArray(JsonElement rootElement)

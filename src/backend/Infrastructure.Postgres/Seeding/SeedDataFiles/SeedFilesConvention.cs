@@ -39,9 +39,9 @@ internal class SeedFilesConvention
     /// </summary>
     /// <param name="path">Seed file path.</param>
     /// <returns>
-    /// Lower-case entity name if successfully extracted; otherwise, null.
+    /// Entity name if successfully extracted; otherwise, null.
     /// </returns>
-    public static string? GetEntityNameLowered(string path)
+    public static string? GetEntityName(string path)
     {
         ReadOnlySpan<char> key = Path.GetFileNameWithoutExtension(path);
 
@@ -57,7 +57,7 @@ internal class SeedFilesConvention
 
         var entityName = key[start..end];
 
-        return entityName.Length == 0 ? null : entityName.ToString().ToLowerInvariant();
+        return entityName.Length == 0 ? null : entityName.ToString();
     }
 
     public static string GenerateDataFileName(ReadOnlySpan<char> name)
@@ -65,11 +65,7 @@ internal class SeedFilesConvention
         if (name.Length == 0)
             throw new InvalidOperationException("[GetNameCurrentDataFile]: Entity name cannot be empty.");
 
-        string Name = name.Length == 1
-            ? char.ToUpperInvariant(name[0]).ToString()
-            : string.Concat(char.ToUpperInvariant(name[0]), name[1..].ToString());
-
-        return string.Format(OUTPUT_FILE_TEMPLATE, Name);
+        return string.Format(OUTPUT_FILE_TEMPLATE, name.ToString());
     }
 
     // Template !{entity}.n & !{entity}.IDn

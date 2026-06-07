@@ -20,47 +20,52 @@ public class Program
         builder.AddConfiguration();
 
         var cfg = builder.Configuration;
+        var services = builder.Services;
 
-        builder.Services.AddAppSettingsOptions(cfg);
+        // Register strongly-typed application settings (Storage, JWT, etc.)
+        services.AddAppSettingsOptions(cfg);
 
-        builder.Services
+        services
             .AddApplication()
             .AddInfrastructure(cfg)
             .AddMongoInfrastructure(cfg)
             .AddPresentation(cfg, builder.Environment);
 
+        // RequireConfirmedEmail по умолчанию всегда true
+        var requireConfirmedEmail = cfg.GetValue("Auth:RequireConfirmedEmail", true);
         // Настраиваем JWT аутентификацию и авторизацию
-        builder.Services
-            .AddWorkshopIdentity(builder.Environment)      // Подключение ASP.NET Identity + Identity Stores 
-            .AddJwtAuth(cfg);                              // Подключение JWT-аутентификация
+        services
+            .AddWorkshopIdentity(requireConfirmedEmail)     // Подключение ASP.NET Identity + Identity Stores 
+            .AddJwtAuth(cfg);                               // Подключение JWT-аутентификация
 
         if (Environment.GetEnvironmentVariable("WC_USE_TEST_SETTINGS") != "true")
         {
-            builder.Services.AddSwaggerWithJWT();       // Подключение Swagger с поддержкой JWT Bearer-авторизации
+            services.AddSwaggerWithJWT();       // Подключение Swagger с поддержкой JWT Bearer-авторизации
         }
 
         // При запуске в контейнере необходимо указать явное место хранения ключей Data Protection.
-        builder.AddStorageForContainers();
+        services.AddStorageForContainers(cfg);
 
         // Настройка централизованного формата для всех ошибок
-        builder.Services.AddCustomException();
+        services.AddCustomException();
 
         // Добавить сервис "X-Correlation-Id"
-        builder.Services.AddTransient<CorrelationIdMiddleware>();
+        services.AddTransient<CorrelationIdMiddleware>();
 
         // Подключения Seeder сервисов 
-        builder.Services.DbSeedersDI(cfg);
+        services.DbSeedersDI(cfg);
 
         // Регистрация HostedService для фоновых задач приложения
-        builder.Services.AddHostedServices();
+        services.AddHostedServices();
 
         // Доступ к текущему HttpContext (используется для получения текущего пользователя из JWT)
-        builder.Services.AddHttpContextAccessor();
+        services.AddHttpContextAccessor();
 
         var app = builder.Build();
 
-        // Запуск Seeder для закрузку демо-данных для окружения DEV
-        if (app.Environment.IsDevelopment())
+        // Запуск Seeder для закрузку демо-данных для окружения DEV или если установлен ключ SEED_ON_STARTUP
+        var seedOnStartup = cfg.GetValue<bool>("Seeding:RunOnStartup");
+        if (app.Environment.IsDevelopment() || seedOnStartup)
         {
             // await using — синтаксис для асинхронного освобождения (IAsyncDisposable).
             await using var scope = app.Services.CreateAsyncScope();
