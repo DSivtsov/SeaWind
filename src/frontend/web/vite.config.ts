@@ -7,6 +7,7 @@ const target = process.env.API_URL || 'http://localhost:80';
 
 export default defineConfig({
   build: {
+    emptyOutDir: true,
     chunkSizeWarningLimit: 800, // или 1000
   },
 
