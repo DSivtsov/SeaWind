@@ -4,7 +4,7 @@ services:
   db:
     image: postgres:16
     ports:
-      - "${POSTGRES_PORT_EXT}:${POSTGRES_PORT_INT}"
+      - "127.0.0.1:${POSTGRES_PORT_EXT}:${POSTGRES_PORT_INT}"
     restart: unless-stopped
     environment:
       POSTGRES_DB: ${POSTGRES_DB}
@@ -52,7 +52,7 @@ services:
         condition: service_healthy
     restart: unless-stopped
     ports:
-      - "${HTTP_PORT_EXT}:${HTTP_PORT_INT}"
+      - "127.0.0.1:${HTTP_PORT_EXT}:${HTTP_PORT_INT}"
     healthcheck:
       start_period: 30s
       test: [ "CMD-SHELL", "curl -fsS http://localhost:${HTTP_PORT_INT}/health || exit 1" ]
@@ -66,7 +66,7 @@ services:
     container_name: ${MONGO_CONTAINER}
     restart: unless-stopped
     ports:
-      - "${MONGO_PORT_EXT}:${MONGO_PORT_INT}"
+      - "127.0.0.1:${MONGO_PORT_EXT}:${MONGO_PORT_INT}"
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER}
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
