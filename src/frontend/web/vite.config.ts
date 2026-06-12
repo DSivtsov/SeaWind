@@ -2,8 +2,8 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import path from "path";
 
-// Адрес backend
-const target = process.env.API_URL || 'http://localhost:80';
+// Адрес для Vite Proxy при запросах к local backend (API/CDN)
+const target = 'http://localhost:5000';
 
 export default defineConfig({
   build: {
