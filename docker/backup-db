@@ -1,0 +1,92 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+echo "Test Container..."
+cd /opt/workshopcode/docker
+docker compose ps
+
+echo "Create Directory..."
+
+PROJECT_DIR="/opt/workshopcode/docker"
+BACKUP_ROOT="/var/backups/workshopcode"
+
+TODAY="$(date +%F)"
+TARGET_DIR="${BACKUP_ROOT}/${TODAY}"
+
+mkdir -p "${TARGET_DIR}"
+
+cd "${PROJECT_DIR}"
+
+set -a
+source .env
+set +a
+
+echo "Backup PostgreSQL..."
+
+docker compose exec -T db \
+    pg_dump \
+    -U "${APP_USER}" \
+    -d "${POSTGRES_DB}" \
+    -Fc \
+    > "${TARGET_DIR}/postgres.dump"
+
+echo "Backup MongoDB..."
+
+docker compose exec -T mongo \
+    mongodump \
+    --username "${MONGO_USER}" \
+    --password "${MONGO_PASSWORD}" \
+    --authenticationDatabase admin \
+    --archive \
+    > "${TARGET_DIR}/mongo.archive"
+
+tar -czf "${TARGET_DIR}/workshopcode-files.tar.gz" \
+  -C /var/lib \
+  workshopcode
+
+echo "Backup Configuration..."
+
+cp "${PROJECT_DIR}/.env" \
+   "${TARGET_DIR}/.env"
+
+cp "/etc/caddy/Caddyfile" \
+   "${TARGET_DIR}/Caddyfile"
+
+echo
+echo "Done:"
+ls -lah "${TARGET_DIR}"
+
+VERIFY_LOG="${TARGET_DIR}/verify.log"
+
+echo "=== PostgreSQL ===" > "$VERIFY_LOG"
+
+docker compose exec -T db \
+    pg_restore -l \
+    < "${TARGET_DIR}/postgres.dump" \
+    >> "$VERIFY_LOG" 2>&1
+
+echo >> "$VERIFY_LOG"
+echo "=== MongoDB ===" >> "$VERIFY_LOG"
+
+docker compose exec -T mongo \
+    mongorestore \
+    --archive \
+    --dryRun \
+    < "${TARGET_DIR}/mongo.archive" \
+    >> "$VERIFY_LOG" 2>&1
+
+echo "=== Attachments ===" >> "$VERIFY_LOG"
+
+tar -tzf "${TARGET_DIR}/workshopcode-files.tar.gz" > /dev/null
+
+echo "Archive verified OK" >> "$VERIFY_LOG"
+
+echo >> "$VERIFY_LOG"
+echo "=== Configuration ===" >> "$VERIFY_LOG"
+
+test -f "${TARGET_DIR}/.env"
+echo ".env OK" >> "$VERIFY_LOG"
+
+test -f "${TARGET_DIR}/Caddyfile"
+echo "Caddyfile OK" >> "$VERIFY_LOG"
+

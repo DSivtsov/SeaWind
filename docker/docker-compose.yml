@@ -34,6 +34,7 @@ services:
       - .env
     volumes:
       - ./dpkeys:/keys
+      - ${EXERCISE_CHAT_ATTACHMENTS_PATH}:/app/wwwroot/chatsExercise-attachments        
     environment:
       # перекрывает appsettings.Development.json:
       ConnectionStrings__Default: "Host=db;Port=${POSTGRES_PORT_INT};Database=${POSTGRES_DB};Username=${APP_USER};Password=${APP_PASSWORD};Pooling=true"
